@@ -126,8 +126,14 @@ struct MenuView: View {
                             .font(.system(size: 12, weight: .medium, design: .rounded))
                         Spacer()
                         Text("\(Int(manager.intervalMinutes)) min")
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
-                            .foregroundColor(.accentColor)
+                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
+                            .foregroundColor(.primary)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(
+                                RoundedRectangle(cornerRadius: 4)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
                     }
                     
                     Slider(value: $manager.intervalMinutes, in: 15...120, step: 5)
