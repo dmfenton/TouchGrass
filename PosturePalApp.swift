@@ -8,8 +8,16 @@ struct PosturePalApp: App {
         MenuBarExtra {
             MenuView(manager: manager)
         } label: {
-            Image(systemName: manager.isPaused ? "figure.seated.side.air.distribution" : "figure.seated.side")
-                .symbolRenderingMode(.hierarchical)
+            HStack(spacing: 4) {
+                Image(systemName: manager.isPaused ? "figure.seated.side.air.distribution" : "figure.seated.side")
+                    .symbolRenderingMode(.hierarchical)
+                
+                if manager.currentStreak > 0 {
+                    Text("\(manager.currentStreak)")
+                        .font(.system(size: 11, weight: .medium, design: .rounded))
+                        .foregroundColor(.secondary)
+                }
+            }
         }
         .menuBarExtraStyle(.window)
     }
@@ -45,6 +53,48 @@ struct MenuView: View {
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
                 .padding(.top, 12)
+                
+                // Streak Display
+                if manager.currentStreak > 0 || manager.bestStreak > 0 {
+                    HStack(spacing: 16) {
+                        VStack(spacing: 2) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "flame.fill")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.orange)
+                                Text("\(manager.currentStreak)")
+                                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            }
+                            Text("day streak")
+                                .font(.system(size: 10))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        if manager.bestStreak > 0 {
+                            Divider()
+                                .frame(height: 20)
+                            
+                            VStack(spacing: 2) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "trophy.fill")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.yellow)
+                                    Text("\(manager.bestStreak)")
+                                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                                }
+                                Text("best")
+                                    .font(.system(size: 10))
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 6)
+                    .padding(.horizontal, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.orange.opacity(0.08))
+                    )
+                }
                 
                 // Countdown Display
                 if !manager.isPaused {
@@ -140,6 +190,20 @@ struct MenuView: View {
                         .controlSize(.small)
                 }
                 .padding(.horizontal, 16)
+                
+                // Adaptive Timing Toggle
+                Toggle(isOn: $manager.adaptiveIntervalEnabled) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "wand.and.stars")
+                            .font(.system(size: 12))
+                        Text("Smart Timing")
+                            .font(.system(size: 12, weight: .medium, design: .rounded))
+                    }
+                }
+                .toggleStyle(.checkbox)
+                .controlSize(.small)
+                .padding(.horizontal, 16)
+                .help("Automatically adjust reminder frequency based on your engagement")
                 
                 // Login Item Toggle
                 Toggle(isOn: $manager.fakeLoginToggle) {

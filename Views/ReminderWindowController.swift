@@ -7,8 +7,8 @@ final class ReminderWindowController {
 
     func show(message: String,
               onOK: @escaping () -> Void,
+              onSnooze5: @escaping () -> Void,
               onSnooze10: @escaping () -> Void,
-              onSnooze20: @escaping () -> Void,
               onSkip: @escaping () -> Void) {
         dismiss()
 
@@ -21,18 +21,18 @@ final class ReminderWindowController {
                     onOK()
                 }
             },
+            snooze5: { [weak self] in
+                self?.animateDismiss()
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                    self?.dismiss()
+                    onSnooze5()
+                }
+            },
             snooze10: { [weak self] in
                 self?.animateDismiss()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     self?.dismiss()
                     onSnooze10()
-                }
-            },
-            snooze20: { [weak self] in
-                self?.animateDismiss()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                    self?.dismiss()
-                    onSnooze20()
                 }
             },
             skip: { [weak self] in
