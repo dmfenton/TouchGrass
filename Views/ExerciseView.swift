@@ -10,7 +10,6 @@ import Combine
 
 struct ExerciseView: View {
     let exercise: Exercise
-    @State private var currentInstructionIndex = 0
     @State private var timeRemaining: Int
     @State private var isCountingDown = false
     @State private var timerSubscription: AnyCancellable?
@@ -59,21 +58,16 @@ struct ExerciseView: View {
                         HStack(alignment: .top, spacing: 12) {
                             Text("\(index + 1).")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(currentInstructionIndex == index ? .blue : .secondary)
+                                .foregroundColor(.secondary)
                                 .frame(width: 20, alignment: .trailing)
                             
                             Text(instruction)
                                 .font(.system(size: 14))
-                                .foregroundColor(currentInstructionIndex == index ? .primary : .secondary)
-                                .fontWeight(currentInstructionIndex == index ? .medium : .regular)
+                                .foregroundColor(.primary)
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(.vertical, 2)
                         .padding(.horizontal, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(currentInstructionIndex == index ? Color.blue.opacity(0.1) : Color.clear)
-                        )
                     }
                 }
             }
@@ -148,14 +142,12 @@ struct ExerciseView: View {
             .sink { _ in
                 if timeRemaining > 0 {
                     timeRemaining -= 1
-                    updateInstructionIndex()
                 } else {
                     stopTimer()
                     // Play completion sound
                     NSSound.beep()
                     // Reset for next use
                     timeRemaining = exercise.duration
-                    currentInstructionIndex = 0
                 }
             }
     }
@@ -164,13 +156,6 @@ struct ExerciseView: View {
         isCountingDown = false
         timerSubscription?.cancel()
         timerSubscription = nil
-    }
-    
-    private func updateInstructionIndex() {
-        // Update which instruction to highlight based on time
-        let timeElapsed = exercise.duration - timeRemaining
-        let timePerInstruction = exercise.duration / exercise.instructions.count
-        currentInstructionIndex = min(timeElapsed / timePerInstruction, exercise.instructions.count - 1)
     }
 }
 
