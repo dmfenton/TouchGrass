@@ -1,6 +1,8 @@
 import Foundation
 import Combine
 import UserNotifications
+import AppKit
+import ServiceManagement
 
 final class ReminderManager: ObservableObject {
     @Published var isPaused = false
@@ -10,15 +12,23 @@ final class ReminderManager: ObservableObject {
             scheduleNextTick() 
         } 
     }
-    @Published var fakeLoginToggle: Bool = false
+    @Published var startsAtLogin: Bool = false {
+        didSet {
+            if startsAtLogin != oldValue {
+                updateLoginItemStatus()
+            }
+        }
+    }
     @Published var timeUntilNextReminder: TimeInterval = 0
     @Published var currentStreak: Int = 0
     @Published var bestStreak: Int = 0
     @Published var adaptiveIntervalEnabled: Bool = true { didSet { saveSettings() } }
+    @Published var hasActiveReminder = false  // New: indicates a reminder is waiting
     
     private var timerCancellable: AnyCancellable?
     private var countdownCancellable: AnyCancellable?
     private let window = ReminderWindowController()
+    private let exerciseWindow = ExerciseWindowController()
     private var nextFireDate = Date().addingTimeInterval(45 * 60)
     
     // Tracking for adaptive timing
@@ -51,12 +61,25 @@ final class ReminderManager: ObservableObject {
     }
     
     func showReminder() { 
-        presentReminder()
+        openReminderWindow()
+    }
+    
+    func showExercises() {
+        exerciseWindow.showLastExercise()
+    }
+    
+    func showExerciseSet(_ exerciseSet: ExerciseSet) {
+        exerciseWindow.showExerciseWindow(with: exerciseSet)
+    }
+    
+    func isExerciseWindowVisible() -> Bool {
+        return exerciseWindow.isWindowVisible()
     }
 
     // MARK: - Init
     init() {
         loadSettings()
+        checkLoginItemStatus()
         scheduleAtFixedInterval()
         startCountdownTimer()
         requestNotificationPermissions()
@@ -207,6 +230,18 @@ final class ReminderManager: ObservableObject {
 
     // MARK: - Present
     private func presentReminder() {
+        // Just set the flag and play a sound - don't show window automatically
+        hasActiveReminder = true
+        NSSound.beep()  // Gentle audio notification
+        
+        // Send a system notification as backup
+        sendSystemNotification()
+    }
+    
+    func openReminderWindow() {
+        // This is called when user clicks from menu bar
+        hasActiveReminder = false  // Clear the flag
+        
         let message = Messages.composed()
         
         // Show window
@@ -238,6 +273,21 @@ final class ReminderManager: ObservableObject {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
     }
     
+    private func sendSystemNotification() {
+        let content = UNMutableNotificationContent()
+        content.title = "Time to check your posture!"
+        content.body = "Click PosturePal in the menu bar when you're ready."
+        content.sound = .default
+        
+        let request = UNNotificationRequest(
+            identifier: "posture-reminder",
+            content: content,
+            trigger: nil
+        )
+        
+        UNUserNotificationCenter.current().add(request) { _ in }
+    }
+    
     private func sendCompletionNotification(action: String) {
         let content = UNMutableNotificationContent()
         content.title = "Posture Check \(action)"
@@ -254,5 +304,44 @@ final class ReminderManager: ObservableObject {
         )
         
         UNUserNotificationCenter.current().add(request)
+    }
+    
+    // MARK: - Login Item Management
+    private func checkLoginItemStatus() {
+        if #available(macOS 13.0, *) {
+            // Use SMAppService for macOS 13+
+            let appService = SMAppService.mainApp
+            startsAtLogin = appService.status == .enabled
+        } else {
+            // For older macOS versions, use legacy SMLoginItemSetEnabled
+            // This requires a helper app, so we'll just disable it
+            startsAtLogin = false
+        }
+    }
+    
+    private func updateLoginItemStatus() {
+        if #available(macOS 13.0, *) {
+            let appService = SMAppService.mainApp
+            
+            do {
+                if startsAtLogin {
+                    if appService.status == .enabled {
+                        // Already enabled
+                        return
+                    }
+                    try appService.register()
+                } else {
+                    if appService.status != .enabled {
+                        // Already disabled
+                        return
+                    }
+                    try appService.unregister()
+                }
+            } catch {
+                print("Failed to update login item status: \(error)")
+                // Revert the toggle on failure
+                startsAtLogin = !startsAtLogin
+            }
+        }
     }
 }

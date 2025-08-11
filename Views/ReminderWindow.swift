@@ -8,58 +8,10 @@ struct ReminderView: View {
     let skip: () -> Void
     
     @State private var hoveredButton: String? = nil
-    @State private var showingExercises = false
-    @State private var selectedExerciseSet: ExerciseSet? = nil
+    private let exerciseWindow = ExerciseWindowController()
     
     var body: some View {
-        if showingExercises, let exerciseSet = selectedExerciseSet {
-            // Exercise view
-            VStack(spacing: 0) {
-                // Header
-                HStack {
-                    Button(action: {
-                        showingExercises = false
-                        selectedExerciseSet = nil
-                    }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 12, weight: .medium))
-                            Text("Back")
-                                .font(.system(size: 14, weight: .medium))
-                        }
-                        .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    
-                    Spacer()
-                    
-                    Text("Guided Exercise")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
-                    
-                    Spacer()
-                    
-                    Button(action: skip) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 16)
-                .background(Color(NSColor.windowBackgroundColor))
-                
-                Divider()
-                
-                ExerciseSetView(exerciseSet: exerciseSet)
-                    .background(Color(NSColor.controlBackgroundColor))
-            }
-            .frame(width: 450)
-            .background(Color(NSColor.windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 5)
-        } else {
-            // Main reminder view
+        // Main reminder view
             VStack(spacing: 0) {
                 // Header
                 HStack {
@@ -126,8 +78,8 @@ struct ReminderView: View {
                         HStack(spacing: 8) {
                             ForEach(ExerciseData.allExerciseSets.prefix(2)) { exerciseSet in
                                 Button(action: {
-                                    selectedExerciseSet = exerciseSet
-                                    showingExercises = true
+                                    exerciseWindow.showExerciseWindow(with: exerciseSet)
+                                    skip()  // Close reminder window when opening exercises
                                 }) {
                                     VStack(spacing: 4) {
                                         Text(exerciseSet.name)
@@ -230,6 +182,5 @@ struct ReminderView: View {
             .background(Color(NSColor.windowBackgroundColor))
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .shadow(color: .black.opacity(0.15), radius: 10, x: 0, y: 5)
-        }
     }
 }

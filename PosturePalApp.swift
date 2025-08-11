@@ -9,10 +9,16 @@ struct PosturePalApp: App {
             MenuView(manager: manager)
         } label: {
             HStack(spacing: 4) {
-                Image(systemName: manager.isPaused ? "figure.seated.side.air.distribution" : "figure.seated.side")
+                Image(systemName: manager.hasActiveReminder ? "figure.walk.motion" : 
+                                 manager.isPaused ? "figure.seated.side.air.distribution" : "figure.seated.side")
                     .symbolRenderingMode(.hierarchical)
+                    .foregroundColor(manager.hasActiveReminder ? .orange : .primary)
                 
-                if manager.currentStreak > 0 {
+                if manager.hasActiveReminder {
+                    Text("!")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundColor(.orange)
+                } else if manager.currentStreak > 0 {
                     Text("\(manager.currentStreak)")
                         .font(.system(size: 11, weight: .medium, design: .rounded))
                         .foregroundColor(.secondary)
@@ -43,6 +49,36 @@ struct MenuView: View {
     
     var body: some View {
         VStack(spacing: 0) {
+            // Active reminder notification
+            if manager.hasActiveReminder {
+                Button(action: { manager.showReminder() }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "figure.walk.motion")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundColor(.white)
+                        Text("Posture Check Ready!")
+                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .foregroundColor(.white)
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(
+                        LinearGradient(
+                            colors: [Color.orange, Color.orange.opacity(0.8)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                Divider()
+            }
+            
             // Header
             VStack(spacing: 8) {
                 HStack {
@@ -52,7 +88,7 @@ struct MenuView: View {
                     Text("Posture Pal")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
-                .padding(.top, 12)
+                .padding(.top, manager.hasActiveReminder ? 8 : 12)
                 
                 // Streak Display
                 if manager.currentStreak > 0 || manager.bestStreak > 0 {
@@ -125,13 +161,15 @@ struct MenuView: View {
             
             // Quick Actions
             VStack(spacing: 1) {
-                MenuButton(
-                    icon: "bell.badge",
-                    title: "Check Posture Now",
-                    action: { manager.showReminder() },
-                    isHovered: hoveredItem == "now",
-                    onHover: { hoveredItem = $0 ? "now" : nil }
-                )
+                if !manager.hasActiveReminder {
+                    MenuButton(
+                        icon: "bell.badge",
+                        title: "Check Posture Now",
+                        action: { manager.showReminder() },
+                        isHovered: hoveredItem == "now",
+                        onHover: { hoveredItem = $0 ? "now" : nil }
+                    )
+                }
                 
                 if manager.isPaused {
                     MenuButton(
@@ -154,6 +192,52 @@ struct MenuView: View {
                 }
             }
             .padding(.vertical, 4)
+            
+            Divider()
+            
+            // Exercises Section
+            VStack(spacing: 4) {
+                Text("EXERCISES")
+                    .font(.system(size: 10, weight: .semibold, design: .rounded))
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
+                
+                MenuButton(
+                    icon: "figure.strengthtraining.traditional",
+                    title: manager.isExerciseWindowVisible() ? "Exercise Window Open" : "Open Exercises",
+                    action: { manager.showExercises() },
+                    isHovered: hoveredItem == "exercises",
+                    onHover: { hoveredItem = $0 ? "exercises" : nil },
+                    tintColor: manager.isExerciseWindowVisible() ? .green : .accentColor
+                )
+                
+                // Quick access to exercise sets
+                HStack(spacing: 4) {
+                    ForEach([
+                        ("30s", ExerciseData.quickReset),
+                        ("1m", ExerciseData.oneMinuteBreak),
+                        ("2m", ExerciseData.twoMinuteRoutine)
+                    ], id: \.0) { label, exerciseSet in
+                        Button(action: {
+                            manager.showExerciseSet(exerciseSet)
+                        }) {
+                            Text(label)
+                                .font(.system(size: 11, weight: .medium))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(NSColor.controlBackgroundColor))
+                                )
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 4)
+            }
             
             Divider()
             
@@ -206,7 +290,7 @@ struct MenuView: View {
                 .help("Automatically adjust reminder frequency based on your engagement")
                 
                 // Login Item Toggle
-                Toggle(isOn: $manager.fakeLoginToggle) {
+                Toggle(isOn: $manager.startsAtLogin) {
                     HStack(spacing: 6) {
                         Image(systemName: "power")
                             .font(.system(size: 12))
@@ -217,7 +301,7 @@ struct MenuView: View {
                 .toggleStyle(.checkbox)
                 .controlSize(.small)
                 .padding(.horizontal, 16)
-                .help("Add PosturePal to System Settings > Login Items manually")
+                .help("Automatically start PosturePal when you log in")
                 .padding(.bottom, 8)
             }
             

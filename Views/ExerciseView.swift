@@ -6,13 +6,14 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ExerciseView: View {
     let exercise: Exercise
     @State private var currentInstructionIndex = 0
     @State private var timeRemaining: Int
     @State private var isCountingDown = false
-    @State private var timer: Timer?
+    @State private var timerSubscription: AnyCancellable?
     
     init(exercise: Exercise) {
         self.exercise = exercise
@@ -20,93 +21,96 @@ struct ExerciseView: View {
     }
     
     var body: some View {
-        VStack(spacing: 16) {
-            // Exercise name and category
-            VStack(spacing: 4) {
+        VStack(spacing: 20) {
+            // Header with name and timer
+            VStack(spacing: 12) {
                 Text(exercise.name)
-                    .font(.title2)
+                    .font(.title)
                     .fontWeight(.semibold)
                 
-                HStack(spacing: 8) {
-                    Label(exercise.category.rawValue, systemImage: categoryIcon)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                // Timer display with category info
+                HStack(spacing: 24) {
+                    Text(timeString)
+                        .font(.system(size: 36, weight: .medium, design: .monospaced))
+                        .foregroundColor(isCountingDown ? .blue : .primary)
                     
-                    Text("•")
-                        .foregroundColor(.secondary)
-                    
-                    Label("\(exercise.duration)s", systemImage: "clock")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    VStack(alignment: .leading, spacing: 4) {
+                        Label(exercise.category.rawValue, systemImage: categoryIcon)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Label("\(exercise.duration)s", systemImage: "clock")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
             }
             
             Divider()
             
-            // Target area and benefits
-            VStack(alignment: .leading, spacing: 8) {
-                Label(exercise.targetArea, systemImage: "figure.stand")
-                    .font(.footnote)
+            // All instructions visible at once
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Instructions")
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+                
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
+                        HStack(alignment: .top, spacing: 12) {
+                            Text("\(index + 1).")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(currentInstructionIndex == index ? .blue : .secondary)
+                                .frame(width: 20, alignment: .trailing)
+                            
+                            Text(instruction)
+                                .font(.system(size: 14))
+                                .foregroundColor(currentInstructionIndex == index ? .primary : .secondary)
+                                .fontWeight(currentInstructionIndex == index ? .medium : .regular)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .padding(.vertical, 2)
+                        .padding(.horizontal, 8)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(currentInstructionIndex == index ? Color.blue.opacity(0.1) : Color.clear)
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal)
+            
+            Spacer()
+            
+            // Benefits section (compact)
+            VStack(spacing: 6) {
+                Text("Benefits")
+                    .font(.caption)
+                    .fontWeight(.medium)
                     .foregroundColor(.secondary)
                 
                 Text(exercise.benefits)
                     .font(.caption)
+                    .multilineTextAlignment(.center)
                     .foregroundColor(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal)
             
-            // Instructions
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Instructions:")
-                    .font(.footnote)
-                    .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 6) {
-                        ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
-                            HStack(alignment: .top, spacing: 8) {
-                                Text("\(index + 1).")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .frame(width: 20, alignment: .leading)
-                                
-                                Text(instruction)
-                                    .font(.caption)
-                                    .fixedSize(horizontal: false, vertical: true)
-                                    .foregroundColor(currentInstructionIndex == index ? .primary : .secondary)
-                            }
-                        }
-                    }
-                }
-                .frame(maxHeight: 150)
+            // Control buttons
+            Button(action: toggleTimer) {
+                Label(
+                    isCountingDown ? "Pause" : "Start Exercise",
+                    systemImage: isCountingDown ? "pause.fill" : "play.fill"
+                )
+                .frame(width: 140)
             }
-            .padding(.horizontal)
-            
-            // Timer and control
-            VStack(spacing: 12) {
-                // Timer display
-                Text(timeString)
-                    .font(.system(size: 28, weight: .medium, design: .monospaced))
-                    .foregroundColor(isCountingDown ? .blue : .primary)
-                
-                // Start/Stop button
-                Button(action: toggleTimer) {
-                    Label(
-                        isCountingDown ? "Pause" : "Start Exercise",
-                        systemImage: isCountingDown ? "pause.fill" : "play.fill"
-                    )
-                    .frame(width: 140)
-                }
-                .controlSize(.regular)
-            }
+            .controlSize(.large)
+            .buttonStyle(.borderedProminent)
         }
         .padding()
-        .frame(width: 350)
+        .frame(width: 500, height: 600)
         .onDisappear {
-            timer?.invalidate()
+            stopTimer()
         }
     }
     
@@ -131,24 +135,35 @@ struct ExerciseView: View {
     
     private func toggleTimer() {
         if isCountingDown {
-            timer?.invalidate()
-            timer = nil
-            isCountingDown = false
+            stopTimer()
         } else {
-            isCountingDown = true
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            startTimer()
+        }
+    }
+    
+    private func startTimer() {
+        isCountingDown = true
+        timerSubscription = Timer.publish(every: 1.0, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
                 if timeRemaining > 0 {
                     timeRemaining -= 1
                     updateInstructionIndex()
                 } else {
-                    timer?.invalidate()
-                    timer = nil
-                    isCountingDown = false
+                    stopTimer()
                     // Play completion sound
                     NSSound.beep()
+                    // Reset for next use
+                    timeRemaining = exercise.duration
+                    currentInstructionIndex = 0
                 }
             }
-        }
+    }
+    
+    private func stopTimer() {
+        isCountingDown = false
+        timerSubscription?.cancel()
+        timerSubscription = nil
     }
     
     private func updateInstructionIndex() {

@@ -14,6 +14,7 @@
 		B712345E1234567812345678 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B712345D1234567812345678 /* ReminderManager.swift */; };
 		B71234641234567812345681 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234601234567812345679 /* Exercise.swift */; };
 		B71234661234567812345682 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234621234567812345680 /* ExerciseView.swift */; };
+		B71234681234567812345683 /* ExerciseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234671234567812345683 /* ExerciseWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,6 +26,7 @@
 		B712345D1234567812345678 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/ReminderManager.swift"; sourceTree = "<group>"; };
 		B71234601234567812345679 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Exercise.swift"; sourceTree = "<group>"; };
 		B71234621234567812345680 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseView.swift"; sourceTree = "<group>"; };
+		B71234671234567812345683 /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseWindowController.swift"; sourceTree = "<group>"; };
 		B712345F1234567812345678 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -65,6 +67,7 @@
 				B71234591234567812345678 /* ReminderWindow.swift */,
 				B712345B1234567812345678 /* ReminderWindowController.swift */,
 				B71234621234567812345680 /* ExerciseView.swift */,
+				B71234671234567812345683 /* ExerciseWindowController.swift */,
 				B712345F1234567812345678 /* Info.plist */,
 			);
 			path = .;
@@ -145,6 +148,7 @@
 				B712345E1234567812345678 /* ReminderManager.swift in Sources */,
 				B71234641234567812345681 /* Exercise.swift in Sources */,
 				B71234661234567812345682 /* ExerciseView.swift in Sources */,
+				B71234681234567812345683 /* ExerciseWindowController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
