@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Touch Grass Release Script - GitHub Actions Version
-# This script updates version, commits, tags, and triggers GitHub Actions
+# Touch Grass Release Script - Local Build Version
+# This script builds, signs, and releases the app entirely locally
 
 set -e
 
@@ -48,14 +48,25 @@ fi
 print_status "Starting release process for version $VERSION"
 
 # 1. Check for uncommitted changes
-if [ -n "$(git status --porcelain | grep -v '^?? releases/')" ]; then
+if [ -n "$(git status --porcelain)" ]; then
     print_warning "You have uncommitted changes. Please commit or stash them first."
     echo "Uncommitted files:"
-    git status --short | grep -v '^?? releases/'
+    git status --short
     exit 1
 fi
 
-# 2. Update Info.plist with version
+# 2. Check for required tools
+if ! command -v create-dmg &> /dev/null; then
+    print_error "create-dmg is not installed. Install it with: brew install create-dmg"
+    exit 1
+fi
+
+if ! command -v gh &> /dev/null; then
+    print_error "GitHub CLI is not installed. Install it with: brew install gh"
+    exit 1
+fi
+
+# 3. Update Info.plist with version
 print_status "Updating version in Info.plist..."
 if [ -f "Info.plist" ]; then
     /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "Info.plist"
@@ -65,13 +76,71 @@ if [ -f "Info.plist" ]; then
     /usr/libexec/PlistBuddy -c "Set :CFBundleVersion $NEW_BUILD_NUMBER" "Info.plist"
     print_status "Updated to version $VERSION (build $NEW_BUILD_NUMBER)"
 else
-    print_warning "Could not find Info.plist to update version. Continuing..."
+    print_error "Could not find Info.plist"
+    exit 1
 fi
 
 # Update VERSION file
 echo "$VERSION" > VERSION
 
-# 3. Get release notes
+# 4. Build the app with code signing
+print_status "Building and signing the app..."
+if [ -f "Local.xcconfig" ]; then
+    # Build with local code signing configuration
+    xcodebuild -project TouchGrass.xcodeproj \
+               -scheme TouchGrass \
+               -configuration Release \
+               -xcconfig Local.xcconfig \
+               clean build \
+               SYMROOT=build \
+               -quiet
+    print_status "App built with code signing"
+else
+    print_warning "Local.xcconfig not found. Building without code signing."
+    print_warning "The app will not be properly signed for distribution."
+    xcodebuild -project TouchGrass.xcodeproj \
+               -scheme TouchGrass \
+               -configuration Release \
+               clean build \
+               SYMROOT=build \
+               -quiet
+fi
+
+# 5. Verify the app was built
+if [ ! -d "build/Release/Touch Grass.app" ]; then
+    print_error "Build failed. App not found at build/Release/Touch Grass.app"
+    exit 1
+fi
+
+# 6. Create DMG installer
+print_status "Creating DMG installer..."
+DMG_NAME="Touch-Grass-v${VERSION}.dmg"
+rm -f "$DMG_NAME"  # Remove old DMG if exists
+
+create-dmg \
+    --volname "Touch Grass v${VERSION}" \
+    --volicon "build/Release/Touch Grass.app/Contents/Resources/AppIcon.icns" \
+    --window-pos 200 120 \
+    --window-size 600 400 \
+    --icon-size 100 \
+    --icon "Touch Grass.app" 150 185 \
+    --app-drop-link 450 185 \
+    --hide-extension "Touch Grass.app" \
+    "$DMG_NAME" \
+    "build/Release/"
+
+if [ ! -f "$DMG_NAME" ]; then
+    print_error "Failed to create DMG"
+    exit 1
+fi
+
+print_status "DMG created: $DMG_NAME"
+
+# 7. Generate checksums
+print_status "Generating checksums..."
+shasum -a 256 "$DMG_NAME" > SHA256SUMS.txt
+
+# 8. Get release notes
 if [ $# -ge 2 ]; then
     RELEASE_MESSAGE="$2"
 else
@@ -91,36 +160,65 @@ else
     fi
 fi
 
-# 4. Commit version changes
+# 9. Commit version changes
 print_status "Committing version changes..."
 git add Info.plist VERSION
 git commit -m "Release version $VERSION" || {
     print_warning "No version changes to commit"
 }
 
-# 5. Create git tag with release notes
+# 10. Create git tag
 print_status "Creating git tag v$VERSION..."
 git tag -a "v$VERSION" -m "Release version $VERSION
 
 $RELEASE_MESSAGE"
 
-# 6. Push everything to GitHub
+# 11. Push changes and tag
 print_status "Pushing changes and tag to GitHub..."
 git push origin main
 git push origin "v$VERSION"
 
-# 7. Success!
+# 12. Create GitHub release with DMG
+print_status "Creating GitHub release..."
+
+RELEASE_BODY="## Installation
+
+1. Download \`Touch-Grass-v${VERSION}.dmg\`
+2. Open the DMG file
+3. Drag \`Touch Grass.app\` to the Applications folder
+4. Eject the DMG
+5. Open Touch Grass from your Applications folder (you may need to right-click and select \"Open\" the first time)
+
+## What's New
+
+$RELEASE_MESSAGE
+
+## Requirements
+- macOS 11.0 or later
+
+## Features
+- Customizable break reminders
+- Calendar awareness for meeting schedules
+- Water tracking
+- Exercise suggestions
+- Work hours configuration"
+
+# Create the release and upload the DMG
+gh release create "v$VERSION" \
+    --title "Touch Grass v$VERSION" \
+    --notes "$RELEASE_BODY" \
+    "$DMG_NAME" \
+    "SHA256SUMS.txt"
+
+# 13. Clean up
+print_status "Cleaning up build artifacts..."
+rm -rf build/
+
+# 14. Success!
 echo ""
-print_status "🎉 Release v$VERSION pushed successfully!"
+print_status "🎉 Release v$VERSION completed successfully!"
 echo ""
-echo "GitHub Actions will now:"
-echo "  1. Build the app"
-echo "  2. Create a DMG installer"
-echo "  3. Create a draft release"
-echo ""
-echo "Next steps:"
-echo "  1. Wait for GitHub Actions to complete"
-echo "  2. Go to https://github.com/dmfenton/TouchGrass/releases"
-echo "  3. Review and publish the draft release"
+echo "Release published at:"
+echo "  https://github.com/dmfenton/TouchGrass/releases/tag/v$VERSION"
 echo ""
 print_status "Done!"
