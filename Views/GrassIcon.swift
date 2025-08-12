@@ -20,11 +20,12 @@ struct GrassIcon: View {
         
         let strokeWidth: CGFloat = 1.2  // Thin outline
         
-        // 3 outlined blades with pointed tops at different heights
+        // 4 outlined blades with pointed tops at different heights
         let blades: [(x: CGFloat, width: CGFloat, height: CGFloat)] = [
-            (size * 0.25, size * 0.15, size * 0.5),   // Left - medium
-            (size * 0.5, size * 0.15, size * 0.7),    // Center - tall  
-            (size * 0.75, size * 0.15, size * 0.4),   // Right - short
+            (size * 0.2, size * 0.13, size * 0.45),   // Far left - medium-short
+            (size * 0.4, size * 0.13, size * 0.65),   // Left - tall
+            (size * 0.6, size * 0.13, size * 0.55),   // Right - medium
+            (size * 0.8, size * 0.13, size * 0.4),    // Far right - short
         ]
         
         let bottomY = size * 0.15
