@@ -4,10 +4,6 @@ import UserNotifications
 import AppKit
 import ServiceManagement
 
-public enum WorkDay: String, CaseIterable {
-    case sunday, monday, tuesday, wednesday, thursday, friday, saturday
-}
-
 final class ReminderManager: ObservableObject {
     @Published var isPaused = false
     @Published var calendarManager: CalendarManager?
@@ -36,19 +32,15 @@ final class ReminderManager: ObservableObject {
     private let exerciseWindow = ExerciseWindowController()
     private var nextFireDate = Date().addingTimeInterval(45 * 60)
     
-    // Work hours configuration
-    private var workStartHour = 9
-    private var workStartMinute = 0
-    private var workEndHour = 17
-    private var workEndMinute = 0
-    private var workDays: Set<WorkDay> = [.monday, .tuesday, .wednesday, .thursday, .friday]
+    // Work hours manager
+    private let workHoursManager = WorkHoursManager()
     
-    // Public getters for work hours
-    var currentWorkStartHour: Int { workStartHour }
-    var currentWorkStartMinute: Int { workStartMinute }
-    var currentWorkEndHour: Int { workEndHour }
-    var currentWorkEndMinute: Int { workEndMinute }
-    var currentWorkDays: Set<WorkDay> { workDays }
+    // Public getters for work hours (delegated to WorkHoursManager)
+    var currentWorkStartHour: Int { workHoursManager.currentWorkStartHour }
+    var currentWorkStartMinute: Int { workHoursManager.currentWorkStartMinute }
+    var currentWorkEndHour: Int { workHoursManager.currentWorkEndHour }
+    var currentWorkEndMinute: Int { workHoursManager.currentWorkEndMinute }
+    var currentWorkDays: Set<WorkDay> { workHoursManager.currentWorkDays }
     
     // Tracking for adaptive timing
     private var recentCompletions: [Date] = []
@@ -62,9 +54,6 @@ final class ReminderManager: ObservableObject {
     private let lastCheckDateKey = "TouchGrass.lastCheckDate"
     private let intervalKey = "TouchGrass.intervalMinutes"
     private let adaptiveKey = "TouchGrass.adaptiveEnabled"
-    private let workStartTimeKey = "TouchGrass.workStartTime"
-    private let workEndTimeKey = "TouchGrass.workEndTime"
-    private let workDaysKey = "TouchGrass.workDays"
 
     // MARK: - Public actions
     func pause() { 
@@ -99,76 +88,17 @@ final class ReminderManager: ObservableObject {
     }
     
     func setWorkHours(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int), days: Set<WorkDay>) {
-        workStartHour = start.hour
-        workStartMinute = start.minute
-        workEndHour = end.hour
-        workEndMinute = end.minute
-        workDays = days
-        saveWorkHours()
+        workHoursManager.setWorkHours(start: start, end: end, days: days)
         
         // Reschedule if needed
-        if !isWithinWorkHours() && !isPaused {
+        if !workHoursManager.isWithinWorkHours() && !isPaused {
             scheduleNextWorkHourReminder()
         }
     }
     
-    private func isWithinWorkHours() -> Bool {
-        let now = Date()
-        let calendar = Calendar.current
-        let currentHour = calendar.component(.hour, from: now)
-        let currentMinute = calendar.component(.minute, from: now)
-        let currentWeekday = calendar.component(.weekday, from: now)
-        
-        // Check if today is a work day
-        let todayWorkDay = workDayFromWeekday(currentWeekday)
-        guard let todayWorkDay = todayWorkDay, workDays.contains(todayWorkDay) else {
-            return false
-        }
-        
-        // Check if current time is within work hours
-        let currentMinutes = currentHour * 60 + currentMinute
-        let startMinutes = workStartHour * 60 + workStartMinute
-        let endMinutes = workEndHour * 60 + workEndMinute
-        
-        return currentMinutes >= startMinutes && currentMinutes <= endMinutes
-    }
-    
-    private func workDayFromWeekday(_ weekday: Int) -> WorkDay? {
-        // Calendar weekday: 1 = Sunday, 2 = Monday, etc.
-        switch weekday {
-        case 1: return .sunday
-        case 2: return .monday
-        case 3: return .tuesday
-        case 4: return .wednesday
-        case 5: return .thursday
-        case 6: return .friday
-        case 7: return .saturday
-        default: return nil
-        }
-    }
-    
     private func scheduleNextWorkHourReminder() {
-        // Find next time we're within work hours
-        let calendar = Calendar.current
-        _ = Date()
-        
-        // Check up to 7 days ahead
-        for dayOffset in 0..<7 {
-            guard let checkDate = calendar.date(byAdding: .day, value: dayOffset, to: Date()) else {
-                continue
-            }
-            let weekday = calendar.component(.weekday, from: checkDate)
-            
-            if let workDay = workDayFromWeekday(weekday), workDays.contains(workDay) {
-                var components = calendar.dateComponents([.year, .month, .day], from: checkDate)
-                components.hour = workStartHour
-                components.minute = workStartMinute
-                
-                if let workStartDate = calendar.date(from: components), workStartDate > Date() {
-                    schedule(at: workStartDate)
-                    return
-                }
-            }
+        if let nextWorkDate = workHoursManager.nextWorkHourDate() {
+            schedule(at: nextWorkDate)
         }
     }
 
@@ -195,8 +125,6 @@ final class ReminderManager: ObservableObject {
         intervalMinutes = defaults.double(forKey: intervalKey) > 0 ? defaults.double(forKey: intervalKey) : 45
         adaptiveIntervalEnabled = defaults.bool(forKey: adaptiveKey)
         
-        // Load work hours
-        loadWorkHours()
         
         // Check if streak should be reset (missed a day)
         if let lastCheck = defaults.object(forKey: lastCheckDateKey) as? Date {
@@ -206,49 +134,6 @@ final class ReminderManager: ObservableObject {
                 saveSettings()
             }
         }
-    }
-    
-    private func loadWorkHours() {
-        let defaults = UserDefaults.standard
-        
-        // Load work start time
-        if let startData = defaults.data(forKey: workStartTimeKey),
-           let startComponents = try? JSONDecoder().decode(DateComponents.self, from: startData) {
-            workStartHour = startComponents.hour ?? 9
-            workStartMinute = startComponents.minute ?? 0
-        }
-        
-        // Load work end time
-        if let endData = defaults.data(forKey: workEndTimeKey),
-           let endComponents = try? JSONDecoder().decode(DateComponents.self, from: endData) {
-            workEndHour = endComponents.hour ?? 17
-            workEndMinute = endComponents.minute ?? 0
-        }
-        
-        // Load work days
-        if let workDayStrings = defaults.array(forKey: workDaysKey) as? [String] {
-            workDays = Set(workDayStrings.compactMap { WorkDay(rawValue: $0) })
-        }
-    }
-    
-    private func saveWorkHours() {
-        let defaults = UserDefaults.standard
-        
-        // Save work start time
-        var startComponents = DateComponents()
-        startComponents.hour = workStartHour
-        startComponents.minute = workStartMinute
-        defaults.set(try? JSONEncoder().encode(startComponents), forKey: workStartTimeKey)
-        
-        // Save work end time
-        var endComponents = DateComponents()
-        endComponents.hour = workEndHour
-        endComponents.minute = workEndMinute
-        defaults.set(try? JSONEncoder().encode(endComponents), forKey: workEndTimeKey)
-        
-        // Save work days
-        let workDayStrings = workDays.map { $0.rawValue }
-        defaults.set(workDayStrings, forKey: workDaysKey)
     }
     
     private func saveSettings() {
@@ -379,7 +264,7 @@ final class ReminderManager: ObservableObject {
     // MARK: - Present
     private func presentReminder() {
         // Check if we're within work hours
-        guard isWithinWorkHours() else {
+        guard workHoursManager.isWithinWorkHours() else {
             // Schedule for next work hour
             scheduleNextWorkHourReminder()
             return

@@ -39,36 +39,7 @@ struct TouchGrassOnboarding: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            // Header with grass animation
-            VStack(spacing: 20) {
-                ZStack {
-                    // Grass blades background
-                    HStack(spacing: 8) {
-                        ForEach(0..<7, id: \.self) { index in
-                            GrassBlade(delay: Double(index) * 0.1)
-                        }
-                    }
-                    .frame(height: 60)
-                    
-                    // Sun/outdoor icon overlay
-                    Image(systemName: "sun.max.fill")
-                        .font(.system(size: 32))
-                        .foregroundColor(.yellow.opacity(0.8))
-                        .offset(x: -40, y: -15)
-                }
-                
-                VStack(spacing: 8) {
-                    Text("Touch Grass")
-                        .font(.system(size: 36, weight: .bold, design: .rounded))
-                        .foregroundColor(.green.opacity(0.9))
-                    
-                    Text("Your guide to surviving the workday")
-                        .font(.title3)
-                        .foregroundColor(.secondary)
-                }
-            }
-            .padding(.top, 30)
-            .padding(.bottom, 25)
+            OnboardingHeaderView()
             
             // Main message
             VStack(spacing: 16) {
@@ -161,131 +132,15 @@ struct TouchGrassOnboarding: View {
             
             // Optional customization (collapsed by default)
             if showCustomization {
-                VStack(spacing: 16) {
-                    Divider()
-                        .padding(.horizontal, 30)
-                    
-                    ScrollView {
-                        VStack(spacing: 20) {
-                            // Interval slider
-                            VStack(alignment: .leading, spacing: 8) {
-                                Label("Break Frequency", systemImage: "timer")
-                                    .font(.system(size: 13, weight: .semibold))
-                                
-                                HStack {
-                                    Text("15m")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    Slider(value: $reminderInterval, in: 15...90, step: 15)
-                                        .tint(.green)
-                                    Text("90m")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                
-                                Text("\(Int(reminderInterval)) minutes between breaks")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    .frame(maxWidth: .infinity)
-                                    .padding(.vertical, 4)
-                                    .background(Color.green.opacity(0.1))
-                                    .cornerRadius(4)
-                            }
-                            
-                            // Work hours
-                            VStack(alignment: .leading, spacing: 8) {
-                                Label("Work Hours", systemImage: "sun.and.horizon")
-                                    .font(.system(size: 13, weight: .semibold))
-                                
-                                HStack(spacing: 20) {
-                                    VStack(alignment: .leading) {
-                                        Text("Start")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        Picker("", selection: $workStartHour) {
-                                            ForEach(5..<13, id: \.self) { hour in
-                                                Text(formatHour(hour)).tag(hour)
-                                            }
-                                        }
-                                        .pickerStyle(.menu)
-                                        .frame(width: 100)
-                                    }
-                                    
-                                    VStack(alignment: .leading) {
-                                        Text("End")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        Picker("", selection: $workEndHour) {
-                                            ForEach(14..<22, id: \.self) { hour in
-                                                Text(formatHour(hour)).tag(hour)
-                                            }
-                                        }
-                                        .pickerStyle(.menu)
-                                        .frame(width: 100)
-                                    }
-                                }
-                            }
-                            
-                            // Calendar selection
-                            if calendarManager.hasCalendarAccess {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Label("Smart Calendar Sync", systemImage: "calendar.badge.clock")
-                                        .font(.system(size: 13, weight: .semibold))
-                                    
-                                    Text("Skip reminders during meetings")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                    
-                                    ScrollView {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            ForEach(
-                                                calendarManager.availableCalendars,
-                                                id: \.calendarIdentifier
-                                            ) { calendar in
-                                                TouchGrassCalendarRow(
-                                                    calendar: calendar,
-                                                    calendarManager: calendarManager
-                                                )
-                                            }
-                                        }
-                                    }
-                                    .frame(maxHeight: 80)
-                                    .padding(8)
-                                    .background(Color(NSColor.controlBackgroundColor))
-                                    .cornerRadius(6)
-                                }
-                            } else if !calendarPermissionRequested {
-                                Button(action: {
-                                    calendarPermissionRequested = true
-                                    calendarManager.requestCalendarAccess { _ in }
-                                }, label: {
-                                    Label("Connect Calendar", systemImage: "calendar.badge.plus")
-                                        .font(.system(size: 12))
-                                        .foregroundColor(.green)
-                                }
-                                .buttonStyle(.plain)
-                            }
-                            
-                            // Options
-                            VStack(alignment: .leading, spacing: 10) {
-                                Toggle(isOn: $enableSmartTiming) {
-                                    Label("Adaptive timing", systemImage: "wand.and.stars")
-                                        .font(.system(size: 12))
-                                }
-                                .toggleStyle(.checkbox)
-                                
-                                Toggle(isOn: $startAtLogin) {
-                                    Label("Launch at startup", systemImage: "power")
-                                        .font(.system(size: 12))
-                                }
-                                .toggleStyle(.checkbox)
-                            }
-                        }
-                        .padding(.horizontal, 40)
-                    }
-                    .frame(maxHeight: 200)
-                }
-                .transition(.opacity.combined(with: .move(edge: .top)))
+                OnboardingCustomizationView(
+                    reminderInterval: $reminderInterval,
+                    workStartHour: $workStartHour,
+                    workEndHour: $workEndHour,
+                    enableSmartTiming: $enableSmartTiming,
+                    startAtLogin: $startAtLogin,
+                    calendarManager: calendarManager,
+                    calendarPermissionRequested: $calendarPermissionRequested
+                )
             }
             
             // Customize button
@@ -294,7 +149,7 @@ struct TouchGrassOnboarding: View {
                     Label("Customize", systemImage: "slider.horizontal.3")
                         .font(.system(size: 12))
                         .foregroundColor(.green)
-                }
+                })
                 .buttonStyle(.plain)
                 .padding(.top, 8)
             }
@@ -394,66 +249,10 @@ struct TouchGrassOnboarding: View {
     
     private func formatHour(_ hour: Int) -> String {
         let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        
+        formatter.dateFormat = "ha"
         var components = DateComponents()
         components.hour = hour
-        components.minute = 0
-        
-        if let date = Calendar.current.date(from: components) {
-            return formatter.string(from: date)
-        }
-        
-        return String(format: "%02d:00", hour)
-    }
-}
-
-struct GrassBlade: View {
-    let delay: Double
-    @State private var isSwaying = false
-    
-    var body: some View {
-        RoundedRectangle(cornerRadius: 2)
-            .fill(
-                LinearGradient(
-                    colors: [Color.green.opacity(0.6), Color.green],
-                    startPoint: .bottom,
-                    endPoint: .top
-                )
-            )
-            .frame(width: 4, height: 40)
-            .rotationEffect(.degrees(isSwaying ? -3 : 3), anchor: .bottom)
-            .animation(
-                Animation.easeInOut(duration: 2.0)
-                    .repeatForever(autoreverses: true)
-                    .delay(delay),
-                value: isSwaying
-            )
-            .onAppear {
-                isSwaying = true
-            }
-    }
-}
-
-struct TouchGrassCalendarRow: View {
-    let calendar: EKCalendar
-    @ObservedObject var calendarManager: CalendarManager
-    
-    var body: some View {
-        Toggle(isOn: Binding(
-            get: { calendarManager.isCalendarSelected(calendar) },
-            set: { _ in calendarManager.toggleCalendar(calendar) }
-        )) {
-            HStack(spacing: 6) {
-                Circle()
-                    .fill(Color(cgColor: calendar.cgColor))
-                    .frame(width: 10, height: 10)
-                Text(calendar.title)
-                    .font(.system(size: 12))
-                    .lineLimit(1)
-            }
-        }
-        .toggleStyle(.checkbox)
-        .controlSize(.small)
+        let date = Calendar.current.date(from: components) ?? Date()
+        return formatter.string(from: date).lowercased()
     }
 }
