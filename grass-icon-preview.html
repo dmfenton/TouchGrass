@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grass Icon Preview - Essential Design</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            padding: 40px;
+            background: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            max-width: 900px;
+        }
+        h1 {
+            text-align: center;
+            color: #f0f0f0;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        .description {
+            text-align: center;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .icon-row {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+            gap: 80px;
+        }
+        .icon-group {
+            text-align: center;
+        }
+        .icon-group h3 {
+            margin-bottom: 10px;
+            color: #d0d0d0;
+            font-weight: 500;
+        }
+        .icon-sizes {
+            display: flex;
+            gap: 35px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+        .icon-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+        .size-label {
+            font-size: 11px;
+            color: #888;
+            font-weight: 500;
+        }
+        svg {
+            display: block;
+        }
+        .menu-bar-sim {
+            background: #1a1a1a;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+            border: 1px solid #333;
+        }
+        .menu-bar-sim h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #d0d0d0;
+            font-weight: 500;
+        }
+        .menu-items {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+        }
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #2a2a2a;
+            border-radius: 6px;
+            font-size: 13px;
+            border: 1px solid #444;
+        }
+        .menu-item.active {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+        .exclamation {
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .time {
+            font-family: 'SF Mono', monospace;
+            color: #a0a0a0;
+            font-weight: 500;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+        }
+        .green-text {
+            color: #22c55e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 Touch Grass - Essential Design</h1>
+        <p class="description">
+            Grass distilled to its essence: upright blades of varying heights,<br>
+            growing close together from a common ground - minimal yet instantly recognizable.
+        </p>
+        
+        <div class="icon-row">
+            <div class="icon-group">
+                <h3>Normal State</h3>
+                <p class="subtitle">Default menu bar appearance</p>
+                <div class="icon-sizes">
+                    <div class="icon-wrapper">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <!-- Essential upright grass - varied heights -->
+                            <polygon points="3.4,14.4 4.6,14.4 3.68,7.2" fill="#e0e0e0"/>
+                            <polygon points="5.48,14.4 6.68,14.4 5.92,2.4" fill="#e0e0e0"/>
+                            <polygon points="7.4,14.4 8.6,14.4 8,1.6" fill="#e0e0e0"/>
+                            <polygon points="9.32,14.4 10.52,14.4 10.08,4.8" fill="#e0e0e0"/>
+                            <polygon points="11.4,14.4 12.6,14.4 12.32,6.4" fill="#e0e0e0"/>
+                            <!-- Ground line -->
+                            <line x1="2" y1="14.4" x2="14" y2="14.4" stroke="#e0e0e0" stroke-width="0.5" opacity="0.3"/>
+                        </svg>
+                        <span class="size-label">16pt</span>
+                    </div>
+                    <div class="icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <!-- Essential upright grass - varied heights -->
+                            <polygon points="4.25,18 5.75,18 4.6,9" fill="#e0e0e0"/>
+                            <polygon points="6.85,18 8.35,18 7.4,3" fill="#e0e0e0"/>
+                            <polygon points="9.25,18 10.75,18 10,2" fill="#e0e0e0"/>
+                            <polygon points="11.65,18 13.15,18 12.6,6" fill="#e0e0e0"/>
+                            <polygon points="14.25,18 15.75,18 15.4,8" fill="#e0e0e0"/>
+                            <!-- Ground line -->
+                            <line x1="2.5" y1="18" x2="17.5" y2="18" stroke="#e0e0e0" stroke-width="0.6" opacity="0.3"/>
+                        </svg>
+                        <span class="size-label">20pt</span>
+                    </div>
+                    <div class="icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                            <!-- Essential upright grass - varied heights -->
+                            <polygon points="6.8,28.8 9.2,28.8 7.36,14.4" fill="#e0e0e0"/>
+                            <polygon points="10.96,28.8 13.36,28.8 11.84,4.8" fill="#e0e0e0"/>
+                            <polygon points="14.8,28.8 17.2,28.8 16,3.2" fill="#e0e0e0"/>
+                            <polygon points="18.64,28.8 21.04,28.8 20.16,9.6" fill="#e0e0e0"/>
+                            <polygon points="22.8,28.8 25.2,28.8 24.64,12.8" fill="#e0e0e0"/>
+                            <!-- Ground line -->
+                            <line x1="4" y1="28.8" x2="28" y2="28.8" stroke="#e0e0e0" stroke-width="1" opacity="0.3"/>
+                        </svg>
+                        <span class="size-label">32pt</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="icon-group">
+                <h3>Active State</h3>
+                <p class="subtitle green-text">Time to touch grass!</p>
+                <div class="icon-sizes">
+                    <div class="icon-wrapper">
+                        <svg width="16" height="16" viewBox="0 0 16 16">
+                            <!-- Essential upright grass - varied heights -->
+                            <polygon points="3.4,14.4 4.6,14.4 3.68,7.2" fill="#22c55e"/>
+                            <polygon points="5.48,14.4 6.68,14.4 5.92,2.4" fill="#22c55e"/>
+                            <polygon points="7.4,14.4 8.6,14.4 8,1.6" fill="#22c55e"/>
+                            <polygon points="9.32,14.4 10.52,14.4 10.08,4.8" fill="#22c55e"/>
+                            <polygon points="11.4,14.4 12.6,14.4 12.32,6.4" fill="#22c55e"/>
+                            <!-- Ground line -->
+                            <line x1="2" y1="14.4" x2="14" y2="14.4" stroke="#22c55e" stroke-width="0.5" opacity="0.3"/>
+                        </svg>
+                        <span class="size-label">16pt</span>
+                    </div>
+                    <div class="icon-wrapper">
+                        <svg width="20" height="20" viewBox="0 0 20 20">
+                            <!-- Essential upright grass - varied heights -->
+                            <polygon points="4.25,18 5.75,18 4.6,9" fill="#22c55e"/>
+                            <polygon points="6.85,18 8.35,18 7.4,3" fill="#22c55e"/>
+                            <polygon points="9.25,18 10.75,18 10,2" fill="#22c55e"/>
+                            <polygon points="11.65,18 13.15,18 12.6,6" fill="#22c55e"/>
+                            <polygon points="14.25,18 15.75,18 15.4,8" fill="#22c55e"/>
+                            <!-- Ground line -->
+                            <line x1="2.5" y1="18" x2="17.5" y2="18" stroke="#22c55e" stroke-width="0.6" opacity="0.3"/>
+                        </svg>
+                        <span class="size-label">20pt</span>
+                    </div>
+                    <div class="icon-wrapper">
+                        <svg width="32" height="32" viewBox="0 0 32 32">
+                            <!-- Essential upright grass - varied heights -->
+                            <polygon points="6.8,28.8 9.2,28.8 7.36,14.4" fill="#22c55e"/>
+                            <polygon points="10.96,28.8 13.36,28.8 11.84,4.8" fill="#22c55e"/>
+                            <polygon points="14.8,28.8 17.2,28.8 16,3.2" fill="#22c55e"/>
+                            <polygon points="18.64,28.8 21.04,28.8 20.16,9.6" fill="#22c55e"/>
+                            <polygon points="22.8,28.8 25.2,28.8 24.64,12.8" fill="#22c55e"/>
+                            <!-- Ground line -->
+                            <line x1="4" y1="28.8" x2="28" y2="28.8" stroke="#22c55e" stroke-width="1" opacity="0.3"/>
+                        </svg>
+                        <span class="size-label">32pt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="menu-bar-sim">
+            <h3>Menu Bar Appearance</h3>
+            <div class="menu-items">
+                <div class="menu-item">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <polygon points="3.4,14.4 4.6,14.4 3.68,7.2" fill="#e0e0e0"/>
+                        <polygon points="5.48,14.4 6.68,14.4 5.92,2.4" fill="#e0e0e0"/>
+                        <polygon points="7.4,14.4 8.6,14.4 8,1.6" fill="#e0e0e0"/>
+                        <polygon points="9.32,14.4 10.52,14.4 10.08,4.8" fill="#e0e0e0"/>
+                        <polygon points="11.4,14.4 12.6,14.4 12.32,6.4" fill="#e0e0e0"/>
+                        <line x1="2" y1="14.4" x2="14" y2="14.4" stroke="#e0e0e0" stroke-width="0.5" opacity="0.3"/>
+                    </svg>
+                    <span class="time">45:00</span>
+                </div>
+                <div class="menu-item active">
+                    <svg width="16" height="16" viewBox="0 0 16 16">
+                        <polygon points="3.4,14.4 4.6,14.4 3.68,7.2" fill="#22c55e"/>
+                        <polygon points="5.48,14.4 6.68,14.4 5.92,2.4" fill="#22c55e"/>
+                        <polygon points="7.4,14.4 8.6,14.4 8,1.6" fill="#22c55e"/>
+                        <polygon points="9.32,14.4 10.52,14.4 10.08,4.8" fill="#22c55e"/>
+                        <polygon points="11.4,14.4 12.6,14.4 12.32,6.4" fill="#22c55e"/>
+                        <line x1="2" y1="14.4" x2="14" y2="14.4" stroke="#22c55e" stroke-width="0.5" opacity="0.3"/>
+                    </svg>
+                    <span class="exclamation">!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
