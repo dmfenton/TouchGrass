@@ -19,6 +19,7 @@ struct MenuView: View {
     @State private var hoveredItem: String? = nil
     @State private var onboardingWindow: TouchGrassOnboardingController?
     @State private var isOnboardingShowing = false
+    @State private var showWorkHoursSettings = false
     
     var nextReminderText: String {
         let totalSeconds = Int(manager.timeUntilNextReminder)
@@ -323,6 +324,38 @@ struct MenuView: View {
                 }
                 .padding(.horizontal, 16)
                 
+                // Work Hours Settings
+                MenuButton(
+                    icon: "clock",
+                    title: "Work Hours",
+                    action: { showWorkHoursSettings.toggle() },
+                    isHovered: hoveredItem == "workhours",
+                    onHover: { hoveredItem = $0 ? "workhours" : nil }
+                )
+                
+                // Calendar Permissions (if not granted)
+                if manager.calendarManager == nil || !(manager.calendarManager?.hasCalendarAccess ?? false) {
+                    MenuButton(
+                        icon: "calendar.badge.plus",
+                        title: "Connect Calendar",
+                        action: { 
+                            if manager.calendarManager == nil {
+                                manager.calendarManager = CalendarManager()
+                            }
+                            manager.calendarManager?.requestCalendarAccess { granted in
+                                if granted {
+                                    // Refresh the UI
+                                    DispatchQueue.main.async {
+                                        manager.objectWillChange.send()
+                                    }
+                                }
+                            }
+                        },
+                        isHovered: hoveredItem == "calendar",
+                        onHover: { hoveredItem = $0 ? "calendar" : nil }
+                    )
+                }
+                
                 // Adaptive Timing Toggle
                 Toggle(isOn: $manager.adaptiveIntervalEnabled) {
                     HStack(spacing: 6) {
@@ -370,32 +403,17 @@ struct MenuView: View {
         .onAppear {
             checkForOnboarding()
         }
+        .sheet(isPresented: $showWorkHoursSettings) {
+            WorkHoursSettingsView(manager: manager)
+        }
     }
     
     private func checkForOnboarding() {
         if TouchGrassOnboardingController.shouldShowOnboarding() {
-            // Hide menu during onboarding
-            isOnboardingShowing = true
-            
-            // Close the menu popover immediately
-            NSApplication.shared.windows.forEach { window in
-                if window.className.contains("NSStatusBarWindow") {
-                    window.close()
-                }
-            }
-            
-            DispatchQueue.main.async {
+            // Show onboarding after a short delay to allow menu to close naturally
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                 onboardingWindow = TouchGrassOnboardingController(reminderManager: manager)
                 onboardingWindow?.showOnboarding()
-                
-                // Monitor for window closing
-                NotificationCenter.default.addObserver(
-                    forName: NSWindow.willCloseNotification,
-                    object: onboardingWindow?.window,
-                    queue: .main
-                ) { _ in
-                    isOnboardingShowing = false
-                }
             }
         }
     }
@@ -432,4 +450,5 @@ struct MenuButton: View {
         .onHover(perform: onHover)
     }
 }
+
 

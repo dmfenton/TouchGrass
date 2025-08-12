@@ -4,7 +4,7 @@ import UserNotifications
 import AppKit
 import ServiceManagement
 
-enum WorkDay: String, CaseIterable {
+public enum WorkDay: String, CaseIterable {
     case sunday, monday, tuesday, wednesday, thursday, friday, saturday
 }
 
@@ -42,6 +42,13 @@ final class ReminderManager: ObservableObject {
     private var workEndHour = 17
     private var workEndMinute = 0
     private var workDays: Set<WorkDay> = [.monday, .tuesday, .wednesday, .thursday, .friday]
+    
+    // Public getters for work hours
+    var currentWorkStartHour: Int { workStartHour }
+    var currentWorkStartMinute: Int { workStartMinute }
+    var currentWorkEndHour: Int { workEndHour }
+    var currentWorkEndMinute: Int { workEndMinute }
+    var currentWorkDays: Set<WorkDay> { workDays }
     
     // Tracking for adaptive timing
     private var recentCompletions: [Date] = []
