@@ -79,3 +79,45 @@ To test reminder functionality without waiting:
 1. Click "Check Posture Now" in menu bar
 2. Or temporarily set `intervalMinutes` to 1 in ReminderManager initialization
 3. Use Console.app to check for any runtime warnings
+
+## Release Process
+
+Touch Grass uses semantic versioning (MAJOR.MINOR.PATCH) and an automated release process.
+
+### Creating a Release
+
+The entire release process is automated through a single command:
+
+```bash
+# With release notes as argument
+./release.sh 0.3.0 "- Added awesome new feature
+- Fixed critical bug
+- Improved performance"
+
+# Or interactive (will prompt for release notes)
+./release.sh 0.3.0
+```
+
+The release script automatically:
+1. Updates version in Info.plist and VERSION file
+2. Builds the app with code signing (if configured)
+3. Creates a DMG installer
+4. Generates SHA256 checksums
+5. Creates release notes (with your input)
+6. Commits version changes
+7. Creates and pushes git tag
+8. Pushes to GitHub
+9. Creates GitHub release
+10. Uploads the DMG to the release
+
+### Requirements
+
+- `create-dmg` installed via Homebrew: `brew install create-dmg`
+- GitHub CLI authenticated: `gh auth login`
+- Write access to the repository
+
+### Version Guidelines
+
+- **PATCH** (0.0.X): Bug fixes, minor tweaks
+- **MINOR** (0.X.0): New features, backwards compatible
+- **MAJOR** (X.0.0): Breaking changes, major redesigns
