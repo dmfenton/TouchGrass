@@ -1,0 +1,67 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+    
+    - name: Build app
+      run: |
+        xcodebuild -project TouchGrass.xcodeproj \
+                   -scheme TouchGrass \
+                   -configuration Release \
+                   build \
+                   SYMROOT=build \
+                   CODE_SIGN_IDENTITY="" \
+                   CODE_SIGNING_REQUIRED=NO \
+                   -quiet
+    
+    - name: Create ZIP archive
+      run: |
+        cd build/Release
+        zip -r "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip" "Touch Grass.app"
+        mv "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip" ../..
+        cd ../..
+    
+    - name: Generate checksums
+      run: |
+        shasum -a 256 "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip" > SHA256SUMS.txt
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip
+          SHA256SUMS.txt
+        body: |
+          ## Installation
+          
+          1. Download `Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip`
+          2. Unzip the file
+          3. Move `Touch Grass.app` to your Applications folder
+          4. Open the app (you may need to right-click and select "Open" the first time)
+          
+          ## Requirements
+          - macOS 11.0 or later
+          
+          ## Features
+          - Customizable break reminders
+          - Calendar awareness for meeting schedules
+          - Water tracking
+          - Exercise suggestions
+          - Work hours configuration
+        draft: true
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
