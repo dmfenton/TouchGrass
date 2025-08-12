@@ -27,30 +27,36 @@ jobs:
                    CODE_SIGNING_REQUIRED=NO \
                    -quiet
     
-    - name: Create ZIP archive
+    - name: Create DMG
       run: |
-        cd build/Release
-        zip -r "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip" "Touch Grass.app"
-        mv "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip" ../..
-        cd ../..
+        DMG_TEMP="dmg-temp"
+        mkdir -p "$DMG_TEMP"
+        cp -R "build/Release/Touch Grass.app" "$DMG_TEMP/"
+        hdiutil create -volname "Touch Grass ${{ steps.get_version.outputs.VERSION }}" \
+                       -srcfolder "$DMG_TEMP" \
+                       -ov \
+                       -format UDZO \
+                       "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.dmg"
+        rm -rf "$DMG_TEMP"
     
     - name: Generate checksums
       run: |
-        shasum -a 256 "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip" > SHA256SUMS.txt
+        shasum -a 256 "Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.dmg" > SHA256SUMS.txt
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip
+          Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.dmg
           SHA256SUMS.txt
         body: |
           ## Installation
           
-          1. Download `Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.zip`
-          2. Unzip the file
-          3. Move `Touch Grass.app` to your Applications folder
-          4. Open the app (you may need to right-click and select "Open" the first time)
+          1. Download `Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.dmg`
+          2. Open the DMG file
+          3. Drag `Touch Grass.app` to the Applications folder
+          4. Eject the DMG
+          5. Open Touch Grass from your Applications folder (you may need to right-click and select "Open" the first time)
           
           ## Requirements
           - macOS 11.0 or later

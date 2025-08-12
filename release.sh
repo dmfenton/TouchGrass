@@ -132,17 +132,10 @@ create-dmg \
 # Clean up temp directory
 rm -rf "$DMG_TEMP"
 
-# Also create a ZIP as fallback
-print_status "Creating ZIP archive as fallback..."
-cd build/Release
-zip -r -q "../../$RELEASE_DIR/Touch-Grass-v$VERSION.zip" "Touch Grass.app"
-cd ../..
-
 # 6. Generate checksums
 print_status "Generating checksums..."
 cd "$RELEASE_DIR"
 shasum -a 256 "$DMG_NAME" > "SHA256SUMS.txt"
-shasum -a 256 "Touch-Grass-v$VERSION.zip" >> "SHA256SUMS.txt"
 cd ../..
 
 # 7. Create release notes template
@@ -155,18 +148,11 @@ cat > "$RELEASE_DIR/RELEASE_NOTES.md" << EOF
 
 ## Installation
 
-### Option 1: DMG Installer (Recommended)
 1. Download \`Touch-Grass-v$VERSION.dmg\`
 2. Open the DMG file
 3. Drag \`Touch Grass.app\` to the Applications folder
 4. Eject the DMG
 5. Open Touch Grass from your Applications folder
-
-### Option 2: ZIP Archive
-1. Download \`Touch-Grass-v$VERSION.zip\`
-2. Unzip the file
-3. Move \`Touch Grass.app\` to your Applications folder
-4. Open the app
 
 **Note:** You may need to right-click and select "Open" the first time to bypass Gatekeeper
 
@@ -189,8 +175,7 @@ echo ""
 print_status "Release preparation complete!"
 echo ""
 echo "📦 Release artifacts created in: $RELEASE_DIR/"
-echo "   - $DMG_NAME (DMG installer)"
-echo "   - Touch-Grass-v$VERSION.zip (ZIP archive)"
+echo "   - $DMG_NAME"
 echo "   - SHA256SUMS.txt"
 echo "   - RELEASE_NOTES.md"
 echo ""
@@ -201,7 +186,6 @@ echo "3. Create GitHub release:"
 echo "   gh release create v$VERSION \\"
 echo "     --title \"Touch Grass v$VERSION\" \\"
 echo "     --notes-file \"$RELEASE_DIR/RELEASE_NOTES.md\" \\"
-echo "     \"$RELEASE_DIR/$DMG_NAME\" \\"
-echo "     \"$RELEASE_DIR/Touch-Grass-v$VERSION.zip\""
+echo "     \"$RELEASE_DIR/$DMG_NAME\""
 echo ""
 echo "Or manually create release at: https://github.com/YOUR_USERNAME/touchgrass/releases/new"
