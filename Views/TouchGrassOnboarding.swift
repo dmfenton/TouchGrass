@@ -4,121 +4,56 @@ import EventKit
 
 struct TouchGrassOnboarding: View {
     @ObservedObject var reminderManager: ReminderManager
-    @StateObject private var calendarManager = CalendarManager()
     @Environment(\.dismiss) private var dismiss
     
-    @State private var showCustomization = true  // Show by default for better discoverability
-    @State private var workStartHour: Int
-    @State private var workEndHour: Int  
-    @State private var reminderInterval: Double
-    @State private var enableSmartTiming = true
-    @State private var startAtLogin = false
+    @State private var customizationWindow: CustomizationWindowController?
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
-    @State private var calendarPermissionRequested = false
-    
-    init(reminderManager: ReminderManager) {
-        self.reminderManager = reminderManager
-        
-        // Set intelligent defaults based on timezone
-        let timeZone = TimeZone.current
-        let hoursFromUTC = timeZone.secondsFromGMT() / 3600
-        
-        if hoursFromUTC >= 5 && hoursFromUTC <= 10 {
-            _workStartHour = State(initialValue: 8)
-            _workEndHour = State(initialValue: 17)
-        } else if hoursFromUTC >= -1 && hoursFromUTC <= 3 {
-            _workStartHour = State(initialValue: 9)
-            _workEndHour = State(initialValue: 18)
-        } else {
-            _workStartHour = State(initialValue: 9)
-            _workEndHour = State(initialValue: 17)
-        }
-        
-        _reminderInterval = State(initialValue: 45)
-    }
     
     var body: some View {
         VStack(spacing: 0) {
             OnboardingHeaderView()
             
             // Main message
-            VStack(spacing: 16) {
-                Text("Let's keep you human during work")
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.primary)
-                
-                Text("Sitting all day is rough. We'll remind you to move, stretch, and literally go touch some grass.")
-                    .font(.system(size: 14))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 40)
-            }
+            Text("Sitting all day is rough. We'll remind you to move, stretch, and literally go touch some grass.")
+                .font(.system(size: 14))
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 40)
+                .padding(.bottom, 20)
             
-            // Quick setup summary with nature theme
-            VStack(alignment: .leading, spacing: 14) {
-                HStack(spacing: 12) {
-                    Image(systemName: "figure.walk")
-                        .font(.system(size: 18))
-                        .foregroundColor(.green)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Stand up every **\(Int(reminderInterval)) minutes**")
-                            .font(.system(size: 13, weight: .medium))
-                        Text("Your body will thank you")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                }
+            // Features list with nature theme
+            VStack(alignment: .leading, spacing: 16) {
+                FeatureRow(
+                    icon: "figure.walk",
+                    title: "Regular movement breaks",
+                    subtitle: "Stand up every 45 minutes"
+                )
                 
-                HStack(spacing: 12) {
-                    Image(systemName: "clock.badge.checkmark")
-                        .font(.system(size: 18))
-                        .foregroundColor(.green)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Active **\(formatHour(workStartHour)) - \(formatHour(workEndHour))**")
-                            .font(.system(size: 13, weight: .medium))
-                        Text("Only during work hours")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                }
+                FeatureRow(
+                    icon: "clock.badge.checkmark",
+                    title: "Work hours aware",
+                    subtitle: "Active only 9am - 5pm weekdays"
+                )
                 
-                HStack(spacing: 12) {
-                    Image(systemName: "leaf.fill")
-                        .font(.system(size: 18))
-                        .foregroundColor(.green)
-                        .frame(width: 24)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Build healthy habits")
-                            .font(.system(size: 13, weight: .medium))
-                        Text("Track streaks, feel better")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    Spacer()
-                }
+                FeatureRow(
+                    icon: "leaf.fill",
+                    title: "Build healthy habits",
+                    subtitle: "Track your daily streak"
+                )
                 
-                if calendarManager.hasCalendarAccess && !calendarManager.selectedCalendarIdentifiers.isEmpty {
-                    HStack(spacing: 12) {
-                        Image(systemName: "calendar")
-                            .font(.system(size: 18))
-                            .foregroundColor(.green)
-                            .frame(width: 24)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Meeting-aware reminders")
-                                .font(.system(size: 13, weight: .medium))
-                            Text("Pauses during your calls")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                        }
-                        Spacer()
-                    }
-                }
+                FeatureRow(
+                    icon: "calendar",
+                    title: "Meeting smart",
+                    subtitle: "Pauses during your calls"
+                )
+                
+                FeatureRow(
+                    icon: "wand.and.stars",
+                    title: "Adaptive timing",
+                    subtitle: "Learns your work patterns"
+                )
             }
-            .padding(20)
+            .padding(24)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.green.opacity(0.06))
@@ -128,66 +63,39 @@ struct TouchGrassOnboarding: View {
                     )
             )
             .padding(.horizontal, 30)
-            .padding(.vertical, 20)
-            
-            // Optional customization (collapsed by default)
-            if showCustomization {
-                OnboardingCustomizationView(
-                    reminderInterval: $reminderInterval,
-                    workStartHour: $workStartHour,
-                    workEndHour: $workEndHour,
-                    enableSmartTiming: $enableSmartTiming,
-                    startAtLogin: $startAtLogin,
-                    calendarManager: calendarManager,
-                    calendarPermissionRequested: $calendarPermissionRequested
-                )
-            }
-            
-            // Customize button
-            if !showCustomization {
-                Button(action: { withAnimation(.spring(response: 0.3)) { showCustomization.toggle() } }, label: {
-                    Label("Customize", systemImage: "slider.horizontal.3")
-                        .font(.system(size: 12))
-                        .foregroundColor(.green)
-                })
-                .buttonStyle(.plain)
-                .padding(.top, 8)
-            }
             
             Spacer()
             
-            // Bottom section
+            // Bottom section with two clear CTAs
             VStack(spacing: 16) {
-                // Motivational message
                 Text("🌱 Ready to feel better at work?")
                     .font(.system(size: 14, weight: .medium))
                     .foregroundColor(.secondary)
                 
-                // Action buttons
-                HStack(spacing: 12) {
-                    if showCustomization {
-                        Button("Reset") {
-                            reminderInterval = 45
-                            workStartHour = 9
-                            workEndHour = 17
-                            enableSmartTiming = true
-                            startAtLogin = false
-                            withAnimation {
-                                showCustomization = false
-                            }
+                HStack(spacing: 16) {
+                    Button(action: openCustomization) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "slider.horizontal.3")
+                                .font(.system(size: 13))
+                            Text("Customize")
                         }
-                        .controlSize(.large)
+                        .frame(width: 120)
+                        .padding(.vertical, 10)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.green, lineWidth: 1.5)
+                        )
+                        .foregroundColor(.green)
                     }
+                    .buttonStyle(.plain)
                     
-                    Spacer()
-                    
-                    Button(action: completeOnboarding) {
+                    Button(action: quickStart) {
                         HStack(spacing: 6) {
                             Text("Let's Go")
                             Image(systemName: "arrow.right")
-                                .font(.system(size: 14, weight: .semibold))
+                                .font(.system(size: 13, weight: .semibold))
                         }
-                        .padding(.horizontal, 24)
+                        .frame(width: 140)
                         .padding(.vertical, 10)
                         .background(
                             LinearGradient(
@@ -205,7 +113,7 @@ struct TouchGrassOnboarding: View {
             }
             .padding(30)
         }
-        .frame(width: 520, height: showCustomization ? 780 : 580)
+        .frame(width: 520, height: 600)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             checkNotificationStatus()
@@ -220,39 +128,75 @@ struct TouchGrassOnboarding: View {
         }
     }
     
-    private func completeOnboarding() {
-        // Apply settings
-        reminderManager.intervalMinutes = reminderInterval
-        reminderManager.adaptiveIntervalEnabled = enableSmartTiming
-        reminderManager.startsAtLogin = startAtLogin
+    private func openCustomization() {
+        // Close the onboarding window first
+        dismiss()
         
-        // Set work hours
+        // Then open customization
+        customizationWindow = CustomizationWindowController(
+            reminderManager: reminderManager,
+            onComplete: {
+                // Mark onboarding as complete after customization
+                UserDefaults.standard.set(true, forKey: "TouchGrass.hasCompletedOnboarding")
+                
+                // Request notifications if needed (note: can't capture self as it's a struct)
+                UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+            }
+        )
+        customizationWindow?.showCustomization()
+    }
+    
+    private func quickStart() {
+        // Use default settings
+        reminderManager.intervalMinutes = 45
+        reminderManager.adaptiveIntervalEnabled = true
+        reminderManager.startsAtLogin = false
+        
+        // Set standard work hours
         reminderManager.setWorkHours(
-            start: (workStartHour, 0),
-            end: (workEndHour, 0),
+            start: (9, 0),
+            end: (17, 0),
             days: [.monday, .tuesday, .wednesday, .thursday, .friday]
         )
         
-        // Save calendar settings
-        reminderManager.calendarManager = calendarManager
-        
+        completeOnboarding()
+    }
+    
+    private func completeOnboarding() {
         // Mark onboarding complete
         UserDefaults.standard.set(true, forKey: "TouchGrass.hasCompletedOnboarding")
         
-        // Request notifications (non-blocking)
+        // Request notifications if needed
         if notificationStatus == .notDetermined {
             UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
         }
         
         dismiss()
     }
+}
+
+struct FeatureRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
     
-    private func formatHour(_ hour: Int) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "ha"
-        var components = DateComponents()
-        components.hour = hour
-        let date = Calendar.current.date(from: components) ?? Date()
-        return formatter.string(from: date).lowercased()
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: icon)
+                .font(.system(size: 20))
+                .foregroundColor(.green)
+                .frame(width: 28)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundColor(.primary)
+                Text(subtitle)
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
     }
 }

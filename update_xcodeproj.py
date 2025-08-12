@@ -22,6 +22,8 @@ files_to_add = [
     ('GrassIcon.swift', 'Views/GrassIcon.swift'),
     ('WorkHoursManager.swift', 'Managers/WorkHoursManager.swift'),
     ('CalendarManager.swift', 'Managers/CalendarManager.swift'),
+    ('CustomizationView.swift', 'Views/CustomizationView.swift'),
+    ('CustomizationWindowController.swift', 'Views/CustomizationWindowController.swift'),
 ]
 
 # Generate UUIDs for each file

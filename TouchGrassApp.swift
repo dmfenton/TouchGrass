@@ -3,6 +3,17 @@ import SwiftUI
 @main
 struct TouchGrassApp: App {
     @StateObject private var manager = ReminderManager()
+    private var onboardingWindow: TouchGrassOnboardingController?
+
+    init() {
+        // Check for onboarding after a short delay to let the app fully initialize
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if TouchGrassOnboardingController.shouldShowOnboarding() {
+                let window = TouchGrassOnboardingController(reminderManager: ReminderManager())
+                window.showOnboarding()
+            }
+        }
+    }
 
     var body: some Scene {
         MenuBarExtra {
@@ -17,9 +28,7 @@ struct TouchGrassApp: App {
 struct MenuView: View {
     @ObservedObject var manager: ReminderManager
     @State private var hoveredItem: String? = nil
-    @State private var onboardingWindow: TouchGrassOnboardingController?
-    @State private var isOnboardingShowing = false
-    @State private var showWorkHoursSettings = false
+    @State private var customizationWindow: CustomizationWindowController?
     
     var nextReminderText: String {
         let totalSeconds = Int(manager.timeUntilNextReminder)
@@ -290,101 +299,15 @@ struct MenuView: View {
             
             Divider()
             
-            // Settings
-            VStack(spacing: 8) {
-                Text("SETTINGS")
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                
-                // Interval Slider
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Image(systemName: "timer")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                        Text("Reminder Interval")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                        Spacer()
-                        Text("\(Int(manager.intervalMinutes)) min")
-                            .font(.system(size: 12, weight: .semibold, design: .monospaced))
-                            .foregroundColor(.primary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
-                            .background(
-                                RoundedRectangle(cornerRadius: 4)
-                                    .fill(Color(NSColor.controlBackgroundColor))
-                            )
-                    }
-                    
-                    Slider(value: $manager.intervalMinutes, in: 15...120, step: 5)
-                        .controlSize(.small)
-                }
-                .padding(.horizontal, 16)
-                
-                // Work Hours Settings
-                MenuButton(
-                    icon: "clock",
-                    title: "Work Hours",
-                    action: { showWorkHoursSettings.toggle() },
-                    isHovered: hoveredItem == "workhours",
-                    onHover: { hoveredItem = $0 ? "workhours" : nil }
-                )
-                
-                // Calendar Permissions (if not granted)
-                if manager.calendarManager == nil || !(manager.calendarManager?.hasCalendarAccess ?? false) {
-                    MenuButton(
-                        icon: "calendar.badge.plus",
-                        title: "Connect Calendar",
-                        action: { 
-                            if manager.calendarManager == nil {
-                                manager.calendarManager = CalendarManager()
-                            }
-                            manager.calendarManager?.requestCalendarAccess { granted in
-                                if granted {
-                                    // Refresh the UI
-                                    DispatchQueue.main.async {
-                                        manager.objectWillChange.send()
-                                    }
-                                }
-                            }
-                        },
-                        isHovered: hoveredItem == "calendar",
-                        onHover: { hoveredItem = $0 ? "calendar" : nil }
-                    )
-                }
-                
-                // Adaptive Timing Toggle
-                Toggle(isOn: $manager.adaptiveIntervalEnabled) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "wand.and.stars")
-                            .font(.system(size: 12))
-                        Text("Smart Timing")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                    }
-                }
-                .toggleStyle(.checkbox)
-                .controlSize(.small)
-                .padding(.horizontal, 16)
-                .help("Automatically adjust reminder frequency based on your engagement")
-                
-                // Login Item Toggle
-                Toggle(isOn: $manager.startsAtLogin) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "power")
-                            .font(.system(size: 12))
-                        Text("Start at Login")
-                            .font(.system(size: 12, weight: .medium, design: .rounded))
-                    }
-                }
-                .toggleStyle(.checkbox)
-                .controlSize(.small)
-                .padding(.horizontal, 16)
-                .help("Automatically start TouchGrass when you log in")
-                .padding(.bottom, 8)
-            }
+            // Settings button
+            MenuButton(
+                icon: "slider.horizontal.3",
+                title: "Settings",
+                action: { openSettings() },
+                isHovered: hoveredItem == "settings",
+                onHover: { hoveredItem = $0 ? "settings" : nil }
+            )
+            .padding(.vertical, 4)
             
             Divider()
             
@@ -400,22 +323,16 @@ struct MenuView: View {
             .padding(.vertical, 4)
         }
         .frame(width: 280)
-        .onAppear {
-            checkForOnboarding()
-        }
-        .sheet(isPresented: $showWorkHoursSettings) {
-            WorkHoursSettingsView(manager: manager)
-        }
     }
     
-    private func checkForOnboarding() {
-        if TouchGrassOnboardingController.shouldShowOnboarding() {
-            // Show onboarding after a short delay to allow menu to close naturally
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                onboardingWindow = TouchGrassOnboardingController(reminderManager: manager)
-                onboardingWindow?.showOnboarding()
+    private func openSettings() {
+        customizationWindow = CustomizationWindowController(
+            reminderManager: manager,
+            onComplete: {
+                // Settings saved
             }
-        }
+        )
+        customizationWindow?.showCustomization()
     }
 }
 

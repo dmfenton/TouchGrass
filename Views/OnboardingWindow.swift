@@ -139,17 +139,17 @@ struct WelcomeView: View {
                 .foregroundColor(.secondary)
             
             VStack(alignment: .leading, spacing: 16) {
-                FeatureRow(
+                OldFeatureRow(
                     icon: "bell.badge",
                     title: "Smart Reminders",
                     description: "Get gentle nudges to check your posture"
                 )
-                FeatureRow(
+                OldFeatureRow(
                     icon: "figure.strengthtraining.traditional",
                     title: "Quick Exercises",
                     description: "Simple stretches to keep you healthy"
                 )
-                FeatureRow(
+                OldFeatureRow(
                     icon: "flame.fill",
                     title: "Build Streaks",
                     description: "Track your progress and stay motivated"
@@ -161,7 +161,7 @@ struct WelcomeView: View {
     }
 }
 
-struct FeatureRow: View {
+struct OldFeatureRow: View {
     let icon: String
     let title: String
     let description: String

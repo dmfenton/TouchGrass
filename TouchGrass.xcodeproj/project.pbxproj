@@ -53,6 +53,16 @@
 		123ABCD4567890123456789A /* OnboardingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABCD1234567890123456ABCD /* OnboardingHeaderView.swift */; };
 		456EFGH7890123456789012B /* OnboardingCustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFGH1234567890123456EFGH /* OnboardingCustomizationView.swift */; };
 		789IJKL0123456789012345C /* WorkHoursSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = IJKL1234567890123456IJKL /* WorkHoursSettingsView.swift */; };
+		EF2E253F17194B0DBEC27653 /* SimpleOnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4239FA02D00C4A588C9D3F52 /* SimpleOnboardingWindow.swift */; };
+		4B791FC06C034237A2029801 /* SimpleOnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34CF7EFB14534DE8810A25C9 /* SimpleOnboardingWindowController.swift */; };
+		60C2AD30A303458D96FBC802 /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB4CB4B7AAA04202B5B278FD /* OnboardingManager.swift */; };
+		305F083E0AB64ADC9C97E521 /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6CBEF6EE64D4BDF8C09A90F /* OnboardingWindow.swift */; };
+		C7B117AD6DF84995B4E9A662 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C560640CB314DCA967F5DCD /* OnboardingWindowController.swift */; };
+		B7E285F603344A3293860F76 /* GrassIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5302C072A6A846F381AB8704 /* GrassIcon.swift */; };
+		EADE44FC2DB44B428BF5BCFE /* WorkHoursManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19CF37C94B8C48FB94CD7DED /* WorkHoursManager.swift */; };
+		9037EE43782044A29C48E220 /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD886930AFD3415A8F6838D3 /* CalendarManager.swift */; };
+		A05533CAF67A49B390EE30D3 /* CustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 957717637E8D46F0B37788F7 /* CustomizationView.swift */; };
+		FAEA9482E01940C893C79D20 /* CustomizationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532EED0C08484F01BE4834E7 /* CustomizationWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -104,6 +114,16 @@
 		ABCD1234567890123456ABCD /* OnboardingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingHeaderView.swift"; sourceTree = "<group>"; };
 		EFGH1234567890123456EFGH /* OnboardingCustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingCustomizationView.swift"; sourceTree = "<group>"; };
 		IJKL1234567890123456IJKL /* WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/WorkHoursSettingsView.swift"; sourceTree = "<group>"; };
+		4239FA02D00C4A588C9D3F52 /* SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindow.swift"; sourceTree = "<group>"; };
+		34CF7EFB14534DE8810A25C9 /* SimpleOnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindowController.swift"; sourceTree = "<group>"; };
+		BB4CB4B7AAA04202B5B278FD /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/OnboardingManager.swift"; sourceTree = "<group>"; };
+		D6CBEF6EE64D4BDF8C09A90F /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindow.swift"; sourceTree = "<group>"; };
+		6C560640CB314DCA967F5DCD /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindowController.swift"; sourceTree = "<group>"; };
+		5302C072A6A846F381AB8704 /* GrassIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/GrassIcon.swift"; sourceTree = "<group>"; };
+		19CF37C94B8C48FB94CD7DED /* WorkHoursManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/WorkHoursManager.swift"; sourceTree = "<group>"; };
+		DD886930AFD3415A8F6838D3 /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/CalendarManager.swift"; sourceTree = "<group>"; };
+		957717637E8D46F0B37788F7 /* CustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CustomizationView.swift"; sourceTree = "<group>"; };
+		532EED0C08484F01BE4834E7 /* CustomizationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CustomizationWindowController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +164,17 @@
 				B712345B1234567812345678 /* ReminderWindowController.swift */,
 				B71234621234567812345680 /* ExerciseView.swift */,
 				B71234671234567812345683 /* ExerciseWindowController.swift */,
+				4239FA02D00C4A588C9D3F52 /* SimpleOnboardingWindow.swift */,
+				34CF7EFB14534DE8810A25C9 /* SimpleOnboardingWindowController.swift */,
+				BB4CB4B7AAA04202B5B278FD /* OnboardingManager.swift */,
+				D6CBEF6EE64D4BDF8C09A90F /* OnboardingWindow.swift */,
+				6C560640CB314DCA967F5DCD /* OnboardingWindowController.swift */,
+				5302C072A6A846F381AB8704 /* GrassIcon.swift */,
+				19CF37C94B8C48FB94CD7DED /* WorkHoursManager.swift */,
+				DD886930AFD3415A8F6838D3 /* CalendarManager.swift */,
+				957717637E8D46F0B37788F7 /* CustomizationView.swift */,
+				532EED0C08484F01BE4834E7 /* CustomizationWindowController.swift */,
+
 				C82725042FE942D29C331A4D /* SimpleOnboardingWindow.swift */,
 				7745AEBDB90B49DC8059DA23 /* SimpleOnboardingWindowController.swift */,
 				5259F0A82AD745D9A16D8780 /* OnboardingManager.swift */,
@@ -271,6 +302,17 @@
 				B71234641234567812345681 /* Exercise.swift in Sources */,
 				B71234661234567812345682 /* ExerciseView.swift in Sources */,
 				B71234681234567812345683 /* ExerciseWindowController.swift in Sources */,
+				EF2E253F17194B0DBEC27653 /* SimpleOnboardingWindow.swift in Sources */,
+				4B791FC06C034237A2029801 /* SimpleOnboardingWindowController.swift in Sources */,
+				60C2AD30A303458D96FBC802 /* OnboardingManager.swift in Sources */,
+				305F083E0AB64ADC9C97E521 /* OnboardingWindow.swift in Sources */,
+				C7B117AD6DF84995B4E9A662 /* OnboardingWindowController.swift in Sources */,
+				B7E285F603344A3293860F76 /* GrassIcon.swift in Sources */,
+				EADE44FC2DB44B428BF5BCFE /* WorkHoursManager.swift in Sources */,
+				9037EE43782044A29C48E220 /* CalendarManager.swift in Sources */,
+				A05533CAF67A49B390EE30D3 /* CustomizationView.swift in Sources */,
+				FAEA9482E01940C893C79D20 /* CustomizationWindowController.swift in Sources */,
+
 				6A51F66F38A84F49AC0B1A7A /* SimpleOnboardingWindow.swift in Sources */,
 				CF23DA985AE9497EBC6A19E7 /* SimpleOnboardingWindowController.swift in Sources */,
 				396BD6BCC4D246EA83E5FFB7 /* OnboardingManager.swift in Sources */,

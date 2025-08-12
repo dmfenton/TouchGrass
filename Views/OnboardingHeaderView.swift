@@ -3,35 +3,40 @@ import EventKit
 
 struct OnboardingHeaderView: View {
     var body: some View {
-        VStack(spacing: 20) {
-            ZStack {
-                // Grass blades background
-                HStack(spacing: 8) {
-                    ForEach(0..<7, id: \.self) { index in
-                        GrassBlade(delay: Double(index) * 0.1)
+        VStack(spacing: 12) {
+            // Centered logo and title
+            HStack(spacing: 15) {
+                // Grass icon with sun
+                ZStack {
+                    // Grass blades background
+                    HStack(spacing: 5) {
+                        ForEach(0..<7, id: \.self) { index in
+                            GrassBlade(delay: Double(index) * 0.1)
+                        }
                     }
+                    .frame(height: 45)
+                    
+                    // Sun/outdoor icon overlay
+                    Image(systemName: "sun.max.fill")
+                        .font(.system(size: 24))
+                        .foregroundColor(.yellow.opacity(0.8))
+                        .offset(x: -30, y: -10)
                 }
-                .frame(height: 60)
+                .frame(width: 80)
                 
-                // Sun/outdoor icon overlay
-                Image(systemName: "sun.max.fill")
-                    .font(.system(size: 32))
-                    .foregroundColor(.yellow.opacity(0.8))
-                    .offset(x: -40, y: -15)
+                // Title
+                Text("Touch Grass")
+                    .font(.system(size: 32, weight: .bold, design: .rounded))
+                    .foregroundColor(.green.opacity(0.9))
             }
             
-            VStack(spacing: 8) {
-                Text("Touch Grass")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
-                    .foregroundColor(.green.opacity(0.9))
-                
-                Text("Your guide to surviving the workday")
-                    .font(.title3)
-                    .foregroundColor(.secondary)
-            }
+            // Subtitle
+            Text("Your guide to surviving the workday")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
         }
-        .padding(.top, 30)
-        .padding(.bottom, 25)
+        .padding(.top, 20)
+        .padding(.bottom, 15)
     }
 }
 
@@ -48,7 +53,7 @@ struct GrassBlade: View {
                     endPoint: .top
                 )
             )
-            .frame(width: 3, height: 40)
+            .frame(width: 3, height: 32)
             .cornerRadius(1.5)
             .rotationEffect(.degrees(isAnimating ? -5 : 5), anchor: .bottom)
             .animation(

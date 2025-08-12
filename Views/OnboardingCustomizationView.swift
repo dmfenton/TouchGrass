@@ -86,18 +86,52 @@ struct OnboardingCustomizationView: View {
                             .foregroundColor(.secondary)
                         
                         if calendarManager.hasCalendarAccess {
-                            ScrollView {
-                                VStack(alignment: .leading, spacing: 4) {
+                            // Calendar picker dropdown
+                            HStack {
+                                if calendarManager.selectedCalendarIdentifiers.isEmpty {
+                                    Text("Select calendars to monitor")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    Text("\(calendarManager.selectedCalendarIdentifiers.count) calendar(s) selected")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.primary)
+                                }
+                                
+                                Spacer()
+                                
+                                Menu {
                                     ForEach(calendarManager.availableCalendars, id: \.calendarIdentifier) { calendar in
-                                        TouchGrassCalendarRow(
-                                            calendar: calendar,
-                                            calendarManager: calendarManager
-                                        )
+                                        Button(action: {
+                                            calendarManager.toggleCalendar(calendar)
+                                        }) {
+                                            HStack {
+                                                if calendarManager.selectedCalendarIdentifiers.contains(calendar.calendarIdentifier) {
+                                                    Image(systemName: "checkmark")
+                                                }
+                                                Circle()
+                                                    .fill(Color(calendar.cgColor))
+                                                    .frame(width: 8, height: 8)
+                                                Text(calendar.title)
+                                            }
+                                        }
                                     }
+                                } label: {
+                                    HStack(spacing: 4) {
+                                        Text("Choose")
+                                            .font(.system(size: 12))
+                                        Image(systemName: "chevron.down")
+                                            .font(.system(size: 10))
+                                    }
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 4)
+                                    .background(Color.green.opacity(0.1))
+                                    .foregroundColor(.green)
+                                    .cornerRadius(6)
                                 }
                             }
-                            .frame(maxHeight: 80)
-                            .padding(8)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
                             .background(Color(NSColor.controlBackgroundColor))
                             .cornerRadius(6)
                         } else {
@@ -139,7 +173,7 @@ struct OnboardingCustomizationView: View {
                 }
                 .padding(.horizontal, 40)
             }
-            .frame(maxHeight: 200)
+            .frame(maxHeight: 220)
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
