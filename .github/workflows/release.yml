@@ -71,7 +71,6 @@ jobs:
           - Water tracking
           - Exercise suggestions
           - Work hours configuration
-        draft: true
         prerelease: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
