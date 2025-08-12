@@ -47,13 +47,18 @@ final class ReminderManager: ObservableObject {
     @Published var bestStreak: Int = 0
     @Published var adaptiveIntervalEnabled: Bool = true { didSet { saveSettings() } }
     @Published var hasActiveReminder = false  // New: indicates a reminder is waiting
+    @Published var isTouchGrassModeActive = false  // Track if touch grass mode is open
     
     // Water tracking
     @Published var waterTrackingEnabled: Bool = true { didSet { saveSettings() } }
     @Published var dailyWaterGoal: Int = 8 { didSet { saveSettings() } }
     @Published var currentWaterIntake: Int = 0 { didSet { saveSettings() } }
+    @Published var dailyWaterOz: Int = 0  // Track water in ounces for display
     @Published var waterUnit: WaterUnit = .glasses { didSet { saveSettings() } }
     @Published var waterStreak: Int = 0
+    
+    // Activity tracking
+    @Published var completedActivities: [String] = []
     
     private var timerCancellable: AnyCancellable?
     private var countdownCancellable: AnyCancellable?
@@ -141,6 +146,45 @@ final class ReminderManager: ObservableObject {
         saveSettings()
     }
     
+    func logWater(ounces: Int) {
+        dailyWaterOz += ounces
+        // Convert to current unit for storage
+        switch waterUnit {
+        case .glasses:
+            currentWaterIntake = dailyWaterOz / 8
+        case .ounces:
+            currentWaterIntake = dailyWaterOz
+        case .milliliters:
+            currentWaterIntake = Int(Double(dailyWaterOz) * 29.5735)
+        }
+        
+        // Check if daily goal is met
+        if currentWaterIntake >= dailyWaterGoal {
+            updateWaterStreak()
+        }
+        
+        saveSettings()
+    }
+    
+    // MARK: - Activity tracking
+    func completeActivity(_ activity: String) {
+        completedActivities.append(activity)
+        // Could save to UserDefaults if we want persistence
+    }
+    
+    func completeBreak() {
+        hasActiveReminder = false
+        isTouchGrassModeActive = false
+        updateStreak(completed: true)
+        scheduleNextTick()
+    }
+    
+    func snoozeReminder() {
+        hasActiveReminder = false
+        isTouchGrassModeActive = false
+        snooze(minutes: 5)
+    }
+    
     private func updateWaterStreak() {
         let defaults = UserDefaults.standard
         let calendar = Calendar.current
@@ -179,6 +223,7 @@ final class ReminderManager: ObservableObject {
             if !calendar.isDateInToday(lastWaterDate) {
                 // Reset water intake for new day
                 currentWaterIntake = 0
+                dailyWaterOz = 0
                 defaults.set(0, forKey: waterIntakeKey)
                 
                 // Check water streak - if goal wasn't met yesterday, reset streak
@@ -197,6 +242,13 @@ final class ReminderManager: ObservableObject {
     
     func setWorkHours(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int), days: Set<WorkDay>) {
         workHoursManager.setWorkHours(start: start, end: end, days: days)
+        
+        // Update calendar manager with new work hours
+        calendarManager?.workStartHour = start.hour
+        calendarManager?.workStartMinute = start.minute
+        calendarManager?.workEndHour = end.hour
+        calendarManager?.workEndMinute = end.minute
+        calendarManager?.updateCurrentAndNextEvents() // Refresh calendar data with new hours
         
         // Save the work hours
         saveSettings()
@@ -224,6 +276,12 @@ final class ReminderManager: ObservableObject {
         
         // Always initialize calendar manager to preserve settings
         self.calendarManager = CalendarManager()
+        
+        // Update calendar manager with work hours
+        self.calendarManager?.workStartHour = workHoursManager.currentWorkStartHour
+        self.calendarManager?.workStartMinute = workHoursManager.currentWorkStartMinute
+        self.calendarManager?.workEndHour = workHoursManager.currentWorkEndHour
+        self.calendarManager?.workEndMinute = workHoursManager.currentWorkEndMinute
     }
 
     // MARK: - Settings Persistence

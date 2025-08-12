@@ -16,6 +16,12 @@ final class CalendarManager: ObservableObject {
     private var eventUpdateTimer: Timer?
     private var cancellables = Set<AnyCancellable>()
     
+    // Work hours for filtering
+    var workStartHour: Int = 9
+    var workStartMinute: Int = 0
+    var workEndHour: Int = 17
+    var workEndMinute: Int = 0
+    
     // UserDefaults keys
     private let selectedCalendarsKey = "TouchGrass.selectedCalendars"
     
@@ -99,7 +105,22 @@ final class CalendarManager: ObservableObject {
         }
         
         let now = Date()
-        guard let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: now) else {
+        let calendar = Calendar.current
+        
+        // Calculate end of work day (not end of calendar day)
+        var endComponents = calendar.dateComponents([.year, .month, .day], from: now)
+        endComponents.hour = workEndHour
+        endComponents.minute = workEndMinute
+        guard let endOfWorkDay = calendar.date(from: endComponents) else {
+            return
+        }
+        
+        // If we're past work hours, no events to show
+        if now > endOfWorkDay {
+            currentEvent = nil
+            nextEvent = nil
+            isInMeeting = false
+            timeUntilNextEvent = nil
             return
         }
         
@@ -116,10 +137,10 @@ final class CalendarManager: ObservableObject {
             return
         }
         
-        // Create predicate for events - check wider time range
+        // Create predicate for events - only check until end of work day
         let predicate = eventStore.predicateForEvents(
             withStart: now.addingTimeInterval(-7200), // Check 2 hours back for ongoing events
-            end: endOfDay,
+            end: endOfWorkDay,
             calendars: selectedCalendars
         )
         
@@ -127,6 +148,9 @@ final class CalendarManager: ObservableObject {
             .filter { event in
                 // Exclude all-day events
                 if event.isAllDay { return false }
+                
+                // Only include events within work hours
+                if !isWithinWorkHours(event) { return false }
                 
                 // Only include real meetings (not personal time blocks)
                 return isRealMeeting(event)
@@ -187,8 +211,18 @@ final class CalendarManager: ObservableObject {
         guard hasCalendarAccess else { return [] }
         
         let calendar = Calendar.current
-        let startOfDay = calendar.startOfDay(for: Date())
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        let now = Date()
+        
+        // Use work hours for start and end
+        var startComponents = calendar.dateComponents([.year, .month, .day], from: now)
+        startComponents.hour = workStartHour
+        startComponents.minute = workStartMinute
+        guard let startOfWorkDay = calendar.date(from: startComponents) else { return [] }
+        
+        var endComponents = calendar.dateComponents([.year, .month, .day], from: now)
+        endComponents.hour = workEndHour
+        endComponents.minute = workEndMinute
+        guard let endOfWorkDay = calendar.date(from: endComponents) else { return [] }
         
         let selectedCals = availableCalendars.filter { 
             selectedCalendarIdentifiers.contains($0.calendarIdentifier) 
@@ -197,8 +231,8 @@ final class CalendarManager: ObservableObject {
         guard !selectedCals.isEmpty else { return [] }
         
         let predicate = eventStore.predicateForEvents(
-            withStart: startOfDay,
-            end: endOfDay,
+            withStart: startOfWorkDay,
+            end: endOfWorkDay,
             calendars: selectedCals
         )
         
@@ -206,6 +240,9 @@ final class CalendarManager: ObservableObject {
             .filter { event in
                 // Exclude all-day events
                 if event.isAllDay { return false }
+                
+                // Only include events within work hours
+                if !isWithinWorkHours(event) { return false }
                 
                 // Only include real meetings
                 return isRealMeeting(event)
@@ -327,6 +364,21 @@ final class CalendarManager: ObservableObject {
         } else {
             return .light
         }
+    }
+    
+    // Check if event is within work hours
+    private func isWithinWorkHours(_ event: EKEvent) -> Bool {
+        guard let startDate = event.startDate else { return false }
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.hour, .minute], from: startDate)
+        guard let hour = components.hour, let minute = components.minute else { return false }
+        
+        let eventMinutes = hour * 60 + minute
+        let workStartMinutes = workStartHour * 60 + workStartMinute
+        let workEndMinutes = workEndHour * 60 + workEndMinute
+        
+        return eventMinutes >= workStartMinutes && eventMinutes < workEndMinutes
     }
     
     // Helper to determine if an event is a real meeting vs personal time
