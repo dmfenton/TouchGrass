@@ -1,9 +1,9 @@
-# PosturePal
+# Touch Grass
 
-A native macOS menu bar app that helps you maintain good posture with gentle, periodic reminders.
+A native macOS menu bar app that helps you maintain good posture with gentle, periodic reminders to touch grass.
 
-<img width="286" alt="PosturePal Menu" src="https://github.com/user-attachments/assets/placeholder-menu.png">
-<img width="380" alt="PosturePal Reminder" src="https://github.com/user-attachments/assets/placeholder-reminder.png">
+<img width="286" alt="Touch Grass Menu" src="https://github.com/user-attachments/assets/placeholder-menu.png">
+<img width="380" alt="Touch Grass Reminder" src="https://github.com/user-attachments/assets/placeholder-reminder.png">
 
 ## Features
 
@@ -32,7 +32,7 @@ cd posture
 
 2. Open in Xcode:
 ```bash
-open PosturePal.xcodeproj
+open TouchGrass.xcodeproj
 ```
 
 3. Build and run (⌘R)
@@ -40,8 +40,8 @@ open PosturePal.xcodeproj
 ### Option 2: Command Line Build
 
 ```bash
-xcodebuild -project PosturePal.xcodeproj -scheme PosturePal -configuration Release build SYMROOT=build
-open build/Release/PosturePal.app
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build
+open build/Release/Touch\ Grass.app
 ```
 
 ### Option 3: Download Release

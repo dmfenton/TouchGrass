@@ -42,7 +42,7 @@ class ExerciseWindowController: NSObject {
             defer: false
         )
         
-        panel.title = "PosturePal Exercises"
+        panel.title = "Touch Grass Exercises"
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.isMovableByWindowBackground = true
@@ -72,11 +72,21 @@ struct ExerciseWindowView: View {
     let onClose: () -> Void
     @State private var selectedExercise: Exercise?
     
+    init(exerciseSet: ExerciseSet, onClose: @escaping () -> Void) {
+        self.exerciseSet = exerciseSet
+        self.onClose = onClose
+        // If it's a single exercise set, show it directly
+        if exerciseSet.exercises.count == 1 {
+            self._selectedExercise = State(initialValue: exerciseSet.exercises.first)
+        }
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text("Guided Exercises")
+                Text(selectedExercise != nil && exerciseSet.exercises.count == 1 ? 
+                     exerciseSet.name : "Guided Exercises")
                     .font(.title2)
                     .fontWeight(.semibold)
                 
@@ -97,24 +107,27 @@ struct ExerciseWindowView: View {
             if let exercise = selectedExercise {
                 // Show individual exercise with full controls
                 VStack(spacing: 0) {
-                    HStack {
-                        Button(action: {
-                            selectedExercise = nil
-                        }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "chevron.left")
-                                Text("Back to exercises")
+                    // Only show back button if there are multiple exercises to choose from
+                    if exerciseSet.exercises.count > 1 {
+                        HStack {
+                            Button(action: {
+                                selectedExercise = nil
+                            }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "chevron.left")
+                                    Text("Back to exercises")
+                                }
+                                .foregroundColor(.secondary)
                             }
-                            .foregroundColor(.secondary)
+                            .buttonStyle(PlainButtonStyle())
+                            .padding()
+                            
+                            Spacer()
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .padding()
-                        
-                        Spacer()
                     }
                     
                     ExerciseView(exercise: exercise)
-                        .padding(.top, -20) // Adjust spacing since ExerciseView has its own padding
+                        .padding(.top, exerciseSet.exercises.count == 1 ? 0 : -20) // Adjust spacing
                 }
             } else {
                 // Show exercise list

@@ -20,7 +20,7 @@ killall PosturePal 2>/dev/null || true && open build/Release/PosturePal.app
 
 ## Architecture Overview
 
-PosturePal is a SwiftUI-based macOS menu bar application with a clear separation of concerns:
+Touch Grass is a SwiftUI-based macOS menu bar application with a clear separation of concerns:
 
 ### Core Flow
 1. **PosturePalApp.swift** - Entry point, creates MenuBarExtra with ReminderManager instance

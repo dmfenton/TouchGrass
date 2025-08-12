@@ -85,7 +85,7 @@ struct MenuView: View {
                     Image(systemName: "figure.walk")
                         .font(.system(size: 18, weight: .medium))
                         .foregroundColor(.accentColor)
-                    Text("Posture Pal")
+                    Text("Touch Grass")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
                 .padding(.top, manager.hasActiveReminder ? 8 : 12)
@@ -310,7 +310,7 @@ struct MenuView: View {
             // Footer
             MenuButton(
                 icon: "xmark.circle",
-                title: "Quit Posture Pal",
+                title: "Quit Touch Grass",
                 action: { NSApplication.shared.terminate(nil) },
                 isHovered: hoveredItem == "quit",
                 onHover: { hoveredItem = $0 ? "quit" : nil },

@@ -275,8 +275,8 @@ final class ReminderManager: ObservableObject {
     
     private func sendSystemNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Time to check your posture!"
-        content.body = "Click PosturePal in the menu bar when you're ready."
+        content.title = "Time to touch grass!"
+        content.body = "Click Touch Grass in the menu bar when you're ready."
         content.sound = .default
         
         let request = UNNotificationRequest(
