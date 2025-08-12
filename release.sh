@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Touch Grass Release Script
-# This script creates a repeatable release process with semantic versioning
+# Touch Grass Release Script - GitHub Actions Version
+# This script updates version, commits, tags, and triggers GitHub Actions
 
 set -e
 
@@ -26,8 +26,8 @@ print_warning() {
 
 # Check if version argument is provided
 if [ $# -eq 0 ]; then
-    echo "Usage: ./release.sh <version>"
-    echo "Example: ./release.sh 1.0.0"
+    echo "Usage: ./release.sh <version> [release notes]"
+    echo "Example: ./release.sh 1.0.0 \"New features and bug fixes\""
     echo ""
     echo "Semantic Versioning:"
     echo "  MAJOR.MINOR.PATCH"
@@ -48,10 +48,10 @@ fi
 print_status "Starting release process for version $VERSION"
 
 # 1. Check for uncommitted changes
-if [ -n "$(git status --porcelain)" ]; then
+if [ -n "$(git status --porcelain | grep -v '^?? releases/')" ]; then
     print_warning "You have uncommitted changes. Please commit or stash them first."
     echo "Uncommitted files:"
-    git status --short
+    git status --short | grep -v '^?? releases/'
     exit 1
 fi
 
@@ -71,77 +71,7 @@ fi
 # Update VERSION file
 echo "$VERSION" > VERSION
 
-# 3. Build the app
-print_status "Building Touch Grass v$VERSION..."
-if [ -f "Local.xcconfig" ]; then
-    xcodebuild -project TouchGrass.xcodeproj \
-               -scheme TouchGrass \
-               -configuration Release \
-               -xcconfig Local.xcconfig \
-               build \
-               SYMROOT=build \
-               -quiet
-else
-    print_warning "No Local.xcconfig found. Building without code signing..."
-    xcodebuild -project TouchGrass.xcodeproj \
-               -scheme TouchGrass \
-               -configuration Release \
-               build \
-               SYMROOT=build \
-               CODE_SIGN_IDENTITY="" \
-               CODE_SIGNING_REQUIRED=NO \
-               -quiet
-fi
-
-# 4. Create release directory
-RELEASE_DIR="releases/v$VERSION"
-mkdir -p "$RELEASE_DIR"
-
-# 5. Create DMG installer
-print_status "Creating DMG installer..."
-
-# Create a temporary directory for DMG contents
-DMG_TEMP="$RELEASE_DIR/dmg-temp"
-mkdir -p "$DMG_TEMP"
-
-# Copy the app to temp directory
-cp -R "build/Release/Touch Grass.app" "$DMG_TEMP/"
-
-# Create DMG with create-dmg tool
-DMG_NAME="Touch-Grass-v$VERSION.dmg"
-create-dmg \
-  --volname "Touch Grass $VERSION" \
-  --volicon "build/Release/Touch Grass.app/Contents/Resources/AppIcon.icns" \
-  --window-pos 200 120 \
-  --window-size 600 400 \
-  --icon-size 100 \
-  --icon "Touch Grass.app" 150 160 \
-  --hide-extension "Touch Grass.app" \
-  --app-drop-link 450 160 \
-  --no-internet-enable \
-  "$RELEASE_DIR/$DMG_NAME" \
-  "$DMG_TEMP" 2>/dev/null || {
-    print_warning "create-dmg failed, falling back to simple DMG creation..."
-    hdiutil create -volname "Touch Grass $VERSION" \
-                   -srcfolder "$DMG_TEMP" \
-                   -ov \
-                   -format UDZO \
-                   "$RELEASE_DIR/$DMG_NAME"
-}
-
-# Clean up temp directory
-rm -rf "$DMG_TEMP"
-
-# 6. Generate checksums
-print_status "Generating checksums..."
-cd "$RELEASE_DIR"
-shasum -a 256 "$DMG_NAME" > "SHA256SUMS.txt"
-cd ../..
-
-# 7. Create release notes
-print_status "Creating release notes..."
-
-# Check if release notes were provided as second argument
+# 3. Get release notes
 if [ $# -ge 2 ]; then
     RELEASE_MESSAGE="$2"
 else
@@ -161,67 +91,36 @@ else
     fi
 fi
 
-cat > "$RELEASE_DIR/RELEASE_NOTES.md" << EOF
-# Touch Grass v$VERSION
-
-## What's Changed
-$RELEASE_MESSAGE
-
-## Installation
-
-1. Download \`Touch-Grass-v$VERSION.dmg\`
-2. Open the DMG file
-3. Drag \`Touch Grass.app\` to the Applications folder
-4. Eject the DMG
-5. Open Touch Grass from your Applications folder
-
-**Note:** You may need to right-click and select "Open" the first time to bypass Gatekeeper
-
-## Notes
-- macOS 11.0 or later required
-- The app will request calendar permissions if you want meeting awareness features
-
-## Checksums
-\`\`\`
-$(cat "$RELEASE_DIR/SHA256SUMS.txt")
-\`\`\`
-EOF
-
-# 8. Commit version changes
+# 4. Commit version changes
 print_status "Committing version changes..."
 git add Info.plist VERSION
 git commit -m "Release version $VERSION" || {
     print_warning "No version changes to commit"
 }
 
-# 9. Create git tag
+# 5. Create git tag with release notes
 print_status "Creating git tag v$VERSION..."
-git tag -a "v$VERSION" -m "Release version $VERSION"
+git tag -a "v$VERSION" -m "Release version $VERSION
 
-# 10. Push everything to GitHub
+$RELEASE_MESSAGE"
+
+# 6. Push everything to GitHub
 print_status "Pushing changes and tag to GitHub..."
 git push origin main
 git push origin "v$VERSION"
 
-# 11. Create GitHub release
-print_status "Creating GitHub release..."
-gh release create "v$VERSION" \
-  --title "Touch Grass v$VERSION" \
-  --notes-file "$RELEASE_DIR/RELEASE_NOTES.md" \
-  "$RELEASE_DIR/$DMG_NAME" || {
-    print_error "Failed to create GitHub release"
-    print_warning "You can manually create it at: https://github.com/dmfenton/TouchGrass/releases/new"
-    exit 1
-}
-
-# 12. Success!
+# 7. Success!
 echo ""
-print_status "🎉 Release v$VERSION published successfully!"
+print_status "🎉 Release v$VERSION pushed successfully!"
 echo ""
-echo "📦 Release artifacts:"
-echo "   - $DMG_NAME"
-echo "   - SHA256SUMS.txt"
+echo "GitHub Actions will now:"
+echo "  1. Build the app"
+echo "  2. Create a DMG installer"
+echo "  3. Create a draft release"
 echo ""
-echo "🔗 View release: https://github.com/dmfenton/TouchGrass/releases/tag/v$VERSION"
+echo "Next steps:"
+echo "  1. Wait for GitHub Actions to complete"
+echo "  2. Go to https://github.com/dmfenton/TouchGrass/releases"
+echo "  3. Review and publish the draft release"
 echo ""
 print_status "Done!"
