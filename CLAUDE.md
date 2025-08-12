@@ -2,21 +2,44 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Build Commands
+## Build Setup & Commands
+
+### Code Signing Configuration
+
+For proper code signing and persistent calendar permissions during development, create a `Local.xcconfig` file:
+
+```xcconfig
+// Local.xcconfig (this file is gitignored)
+DEVELOPMENT_TEAM = YOUR_TEAM_ID_HERE
+PRODUCT_BUNDLE_IDENTIFIER = com.yourname.touchgrass
+CODE_SIGN_STYLE = Automatic
+CODE_SIGN_IDENTITY = Apple Development
+```
+
+To find your Team ID:
+- Xcode → Settings → Accounts → Select your Apple ID → View Details
+- Or: developer.apple.com → Account → Membership → Team ID
+
+### Build Commands
 
 ```bash
-# Build for release
-xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build -quiet
+# Build with proper code signing (recommended - uses Local.xcconfig)
+./build.sh
 
-# Build and run the app
-xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build -quiet && open build/Release/TouchGrass.app
+# Manual build with signing
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release -xcconfig Local.xcconfig build SYMROOT=build -quiet
+
+# Build without signing (calendar permissions will reset each build)
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build -quiet
 
 # Clean build
 xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release clean build SYMROOT=build
 
 # Restart app after changes
-killall TouchGrass 2>/dev/null || true && open build/Release/TouchGrass.app
+killall "Touch Grass" 2>/dev/null || true && open "build/Release/Touch Grass.app"
 ```
+
+Note: With proper code signing via `Local.xcconfig`, calendar permissions will persist across rebuilds.
 
 ## Architecture Overview
 

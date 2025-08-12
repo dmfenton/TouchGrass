@@ -23,6 +23,11 @@ final class CalendarManager: ObservableObject {
         loadSelectedCalendars()
         checkCalendarAccess()
         startEventMonitoring()
+        print("[CalendarManager] Initialized with access: \(hasCalendarAccess), calendars: \(selectedCalendarIdentifiers.count)")
+        // Force initial update
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.updateCurrentAndNextEvents()
+        }
     }
     
     func requestCalendarAccess(completion: @escaping (Bool) -> Void) {
@@ -112,20 +117,32 @@ final class CalendarManager: ObservableObject {
             return
         }
         
-        // Create predicate for events
+        // Create predicate for events - check wider time range
         let predicate = eventStore.predicateForEvents(
-            withStart: now.addingTimeInterval(-3600), // Check 1 hour back for ongoing events
+            withStart: now.addingTimeInterval(-7200), // Check 2 hours back for ongoing events
             end: endOfDay,
             calendars: selectedCalendars
         )
         
-        let events = eventStore.events(matching: predicate)
+        let allEvents = eventStore.events(matching: predicate)
+        print("[CalendarManager] Raw events found: \(allEvents.count) (including all-day)")
+        
+        let events = allEvents
             .filter { !$0.isAllDay } // Exclude all-day events
-            .sorted { $0.startDate < $1.startDate }
+            .sorted { ($0.startDate ?? Date.distantPast) < ($1.startDate ?? Date.distantPast) }
+        
+        print("[CalendarManager] Found \(events.count) events for selected calendars")
+        print("[CalendarManager] Selected calendar IDs: \(selectedCalendarIdentifiers)")
         
         // Find current event (happening now)
         currentEvent = events.first { event in
-            event.startDate <= now && event.endDate > now
+            guard let startDate = event.startDate,
+                  let endDate = event.endDate else { return false }
+            let isCurrent = startDate <= now && endDate > now
+            if isCurrent {
+                print("[CalendarManager] Current meeting: \(event.title ?? "Unknown") until \(endDate)")
+            }
+            return isCurrent
         }
         
         isInMeeting = currentEvent != nil
@@ -133,7 +150,8 @@ final class CalendarManager: ObservableObject {
         // Find next event (after current time or after current event)
         let searchAfter = currentEvent?.endDate ?? now
         nextEvent = events.first { event in
-            event.startDate > searchAfter
+            guard let startDate = event.startDate else { return false }
+            return startDate > searchAfter
         }
         
         // Calculate time until next event
@@ -161,7 +179,8 @@ final class CalendarManager: ObservableObject {
         }
     }
     
-    func formatEventTime(_ date: Date) -> String {
+    func formatEventTime(_ date: Date?) -> String {
+        guard let date = date else { return "Unknown" }
         let formatter = DateFormatter()
         formatter.timeStyle = .short
         formatter.doesRelativeDateFormatting = true

@@ -276,6 +276,50 @@ struct MenuView: View {
                             .padding(.horizontal, 12)
                         }
                         
+                        // DEBUG: Show what we're seeing from calendar
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("DEBUG: Calendar Status")
+                                .font(.system(size: 10, weight: .bold))
+                                .foregroundColor(.orange)
+                            
+                            Text("Access: \(calManager.hasCalendarAccess ? "✅" : "❌") | Selected: \(calManager.selectedCalendarIdentifiers.count) calendars")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                            
+                            if let current = calManager.currentEvent {
+                                Text("Current: \(current.title ?? "Untitled") ends \(calManager.formatEventTime(current.endDate))")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.green)
+                            } else {
+                                Text("Current: No meeting detected")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.red)
+                            }
+                            
+                            if let next = calManager.nextEvent {
+                                Text("Next: \(next.title ?? "Untitled") at \(calManager.formatEventTime(next.startDate))")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.blue)
+                            } else {
+                                Text("Next: No upcoming events")
+                                    .font(.system(size: 9))
+                                    .foregroundColor(.gray)
+                            }
+                            
+                            // Show all events we can see
+                            let allEvents = calManager.getTodaysMeetings()
+                            Text("Total events today: \(allEvents.count)")
+                                .font(.system(size: 9))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.orange.opacity(0.1))
+                        )
+                        .padding(.horizontal, 12)
+                        
                         if let nextEvent = calManager.nextEvent,
                            let timeUntil = calManager.timeUntilNextEvent {
                             HStack(spacing: 8) {
