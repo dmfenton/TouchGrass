@@ -264,7 +264,7 @@ struct ExerciseSetView: View {
                 Button(action: {
                     showingExercise = true
                     currentExerciseIndex = 0
-                }) {
+                }, label: {
                     Label("Start Exercises", systemImage: "play.fill")
                         .frame(width: 140)
                 }

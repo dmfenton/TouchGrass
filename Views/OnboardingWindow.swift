@@ -139,9 +139,21 @@ struct WelcomeView: View {
                 .foregroundColor(.secondary)
             
             VStack(alignment: .leading, spacing: 16) {
-                FeatureRow(icon: "bell.badge", title: "Smart Reminders", description: "Get gentle nudges to check your posture")
-                FeatureRow(icon: "figure.strengthtraining.traditional", title: "Quick Exercises", description: "Simple stretches to keep you healthy")
-                FeatureRow(icon: "flame.fill", title: "Build Streaks", description: "Track your progress and stay motivated")
+                FeatureRow(
+                    icon: "bell.badge",
+                    title: "Smart Reminders",
+                    description: "Get gentle nudges to check your posture"
+                )
+                FeatureRow(
+                    icon: "figure.strengthtraining.traditional",
+                    title: "Quick Exercises",
+                    description: "Simple stretches to keep you healthy"
+                )
+                FeatureRow(
+                    icon: "flame.fill",
+                    title: "Build Streaks",
+                    description: "Track your progress and stay motivated"
+                )
             }
             .padding(.top, 20)
         }
@@ -239,14 +251,14 @@ struct WorkHoursView: View {
     }
     
     private var workHoursDescription: String {
-        let startTime = String(format: "%d:%02d %@", 
-                              manager.workStartHour > 12 ? manager.workStartHour - 12 : manager.workStartHour,
-                              manager.workStartMinute,
-                              manager.workStartHour >= 12 ? "PM" : "AM")
+        let startTime = String(format: "%d:%02d %@",
+                               manager.workStartHour > 12 ? manager.workStartHour - 12 : manager.workStartHour,
+                               manager.workStartMinute,
+                               manager.workStartHour >= 12 ? "PM" : "AM")
         let endTime = String(format: "%d:%02d %@",
-                            manager.workEndHour > 12 ? manager.workEndHour - 12 : manager.workEndHour,
-                            manager.workEndMinute,
-                            manager.workEndHour >= 12 ? "PM" : "AM")
+                             manager.workEndHour > 12 ? manager.workEndHour - 12 : manager.workEndHour,
+                             manager.workEndMinute,
+                             manager.workEndHour >= 12 ? "PM" : "AM")
         
         let daysList = OnboardingManager.WorkDay.allCases
             .filter { manager.workDays.contains($0) }
@@ -282,8 +294,8 @@ struct TimePicker: View {
     var body: some View {
         HStack(spacing: 4) {
             Picker("", selection: $hour) {
-                ForEach(0..<24, id: \.self) { h in
-                    Text(String(format: "%02d", h)).tag(h)
+                ForEach(0..<24, id: \.self) { hour in
+                    Text(String(format: "%02d", hour)).tag(hour)
                 }
             }
             .pickerStyle(.menu)
@@ -293,8 +305,8 @@ struct TimePicker: View {
                 .font(.headline)
             
             Picker("", selection: $minute) {
-                ForEach([0, 15, 30, 45], id: \.self) { m in
-                    Text(String(format: "%02d", m)).tag(m)
+                ForEach([0, 15, 30, 45], id: \.self) { minute in
+                    Text(String(format: "%02d", minute)).tag(minute)
                 }
             }
             .pickerStyle(.menu)

@@ -31,7 +31,7 @@ class ExerciseWindowController: NSObject {
     }
     
     func isWindowVisible() -> Bool {
-        return window?.isVisible ?? false
+        window?.isVisible ?? false
     }
     
     private func createWindow() {
@@ -112,7 +112,7 @@ struct ExerciseWindowView: View {
                         HStack {
                             Button(action: {
                                 selectedExercise = nil
-                            }) {
+                            }, label: {
                                 HStack(spacing: 4) {
                                     Image(systemName: "chevron.left")
                                     Text("Back to exercises")
@@ -148,7 +148,7 @@ struct ExerciseWindowView: View {
                                         // You could enhance this to show a set view
                                         selectedExercise = set.exercises.first
                                     }
-                                }) {
+                                }, label: {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(set.name)
@@ -192,7 +192,7 @@ struct ExerciseWindowView: View {
                             ForEach(ExerciseData.coreExercises) { exercise in
                                 Button(action: {
                                     selectedExercise = exercise
-                                }) {
+                                }, label: {
                                     HStack {
                                         VStack(alignment: .leading, spacing: 4) {
                                             Text(exercise.name)

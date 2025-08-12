@@ -25,7 +25,7 @@ final class CalendarManager: ObservableObject {
     }
     
     func requestCalendarAccess(completion: @escaping (Bool) -> Void) {
-        eventStore.requestAccess(to: .event) { [weak self] granted, error in
+        eventStore.requestAccess(to: .event) { [weak self] granted, _ in
             DispatchQueue.main.async {
                 self?.hasCalendarAccess = granted
                 if granted {
@@ -94,7 +94,9 @@ final class CalendarManager: ObservableObject {
         }
         
         let now = Date()
-        let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: now)!
+        guard let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: now) else {
+            return false
+        }
         
         // Get selected calendars
         let selectedCalendars = availableCalendars.filter { 

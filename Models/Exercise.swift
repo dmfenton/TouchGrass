@@ -33,7 +33,7 @@ struct ExerciseSet: Identifiable, Codable {
 }
 
 // Evidence-based exercises from 2024 research
-struct ExerciseData {
+enum ExerciseData {
     static let chinTuck = Exercise(
         id: "chin-tuck",
         name: "Chin Tucks",

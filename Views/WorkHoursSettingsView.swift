@@ -161,9 +161,13 @@ struct WorkHoursSettingsView: View {
             workDays.count == 2 && workDays.contains(.saturday) && workDays.contains(.sunday) ? "Weekends" :
             "\(workDays.count) days/week"
         
-        let timeText = String(format: "%02d:%02d - %02d:%02d", 
-                            workStartHour, workStartMinute,
-                            workEndHour, workEndMinute)
+        let timeText = String(
+            format: "%02d:%02d - %02d:%02d",
+            workStartHour,
+            workStartMinute,
+            workEndHour,
+            workEndMinute
+        )
         
         return "\(daysText), \(timeText)"
     }

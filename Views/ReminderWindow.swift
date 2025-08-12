@@ -7,7 +7,7 @@ struct ReminderView: View {
     let snooze10: () -> Void
     let skip: () -> Void
     
-    @State private var hoveredButton: String? = nil
+    @State private var hoveredButton: String?
     private let exerciseWindow = ExerciseWindowController()
     
     var body: some View {
@@ -80,12 +80,14 @@ struct ReminderView: View {
                                 Button(action: {
                                     exerciseWindow.showExerciseWindow(with: exerciseSet)
                                     skip()  // Close reminder window when opening exercises
-                                }) {
+                                }, label: {
                                     VStack(spacing: 4) {
                                         Text(exerciseSet.name)
                                             .font(.system(size: 12, weight: .medium))
                                             .foregroundColor(.primary)
-                                        Text("\(exerciseSet.duration / 60):\(String(format: "%02d", exerciseSet.duration % 60))")
+                                        let minutes = exerciseSet.duration / 60
+                                        let seconds = exerciseSet.duration % 60
+                                        Text("\(minutes):\(String(format: "%02d", seconds))")
                                             .font(.system(size: 11))
                                             .foregroundColor(.secondary)
                                     }
@@ -96,7 +98,11 @@ struct ReminderView: View {
                                             .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 6)
-                                                    .fill(hoveredButton == exerciseSet.id ? Color.secondary.opacity(0.08) : Color.clear)
+                                                    .fill(
+                                                        hoveredButton == exerciseSet.id
+                                                            ? Color.secondary.opacity(0.08)
+                                                            : Color.clear
+                                                    )
                                             )
                                     )
                                 }
@@ -143,7 +149,11 @@ struct ReminderView: View {
                                             .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 6)
-                                                    .fill(hoveredButton == "snooze5" ? Color.secondary.opacity(0.08) : Color.clear)
+                                                    .fill(
+                                                        hoveredButton == "snooze5"
+                                                            ? Color.secondary.opacity(0.08)
+                                                            : Color.clear
+                                                    )
                                             )
                                     )
                             }
@@ -163,7 +173,11 @@ struct ReminderView: View {
                                             .stroke(Color.secondary.opacity(0.3), lineWidth: 1)
                                             .background(
                                                 RoundedRectangle(cornerRadius: 6)
-                                                    .fill(hoveredButton == "snooze10" ? Color.secondary.opacity(0.08) : Color.clear)
+                                                    .fill(
+                                                        hoveredButton == "snooze10"
+                                                            ? Color.secondary.opacity(0.08)
+                                                            : Color.clear
+                                                    )
                                             )
                                     )
                             }

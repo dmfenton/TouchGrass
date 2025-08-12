@@ -5,11 +5,13 @@ final class ReminderWindowController {
     private var panel: NSPanel?
     private var visualEffectView: NSVisualEffectView?
 
-    func show(message: String,
-              onOK: @escaping () -> Void,
-              onSnooze5: @escaping () -> Void,
-              onSnooze10: @escaping () -> Void,
-              onSkip: @escaping () -> Void) {
+    func show(
+        message: String,
+        onOK: @escaping () -> Void,
+        onSnooze5: @escaping () -> Void,
+        onSnooze10: @escaping () -> Void,
+        onSkip: @escaping () -> Void
+    ) {
         dismiss()
 
         let content = ReminderView(

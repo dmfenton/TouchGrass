@@ -25,7 +25,7 @@ struct GrassIcon: View {
             (size * 0.2, size * 0.13, size * 0.45),   // Far left - medium-short
             (size * 0.4, size * 0.13, size * 0.65),   // Left - tall
             (size * 0.6, size * 0.13, size * 0.55),   // Right - medium
-            (size * 0.8, size * 0.13, size * 0.4),    // Far right - short
+            (size * 0.8, size * 0.13, size * 0.4)     // Far right - short
         ]
         
         let bottomY = size * 0.15
@@ -36,15 +36,15 @@ struct GrassIcon: View {
             
             // Create outlined rectangle with pointed top
             // Start at bottom left
-            path.move(to: NSPoint(x: blade.x - blade.width/2, y: bottomY))
+            path.move(to: NSPoint(x: blade.x - blade.width / 2, y: bottomY))
             // Go up the left side (to about 70% of height)
-            path.line(to: NSPoint(x: blade.x - blade.width/2, y: bottomY + blade.height * 0.7))
+            path.line(to: NSPoint(x: blade.x - blade.width / 2, y: bottomY + blade.height * 0.7))
             // Go to the pointed top
             path.line(to: NSPoint(x: blade.x, y: bottomY + blade.height))
             // Go down to the right side (at 70% height)
-            path.line(to: NSPoint(x: blade.x + blade.width/2, y: bottomY + blade.height * 0.7))
+            path.line(to: NSPoint(x: blade.x + blade.width / 2, y: bottomY + blade.height * 0.7))
             // Go down the right side to bottom
-            path.line(to: NSPoint(x: blade.x + blade.width/2, y: bottomY))
+            path.line(to: NSPoint(x: blade.x + blade.width / 2, y: bottomY))
             // Close back to start
             path.close()
             
@@ -97,9 +97,9 @@ struct GrassIconCanvas: View {
                 
                 // Create triangular blade shape
                 // Base left point
-                path.move(to: CGPoint(x: blade.baseX - bladeWidth/2, y: baseY))
+                path.move(to: CGPoint(x: blade.baseX - bladeWidth / 2, y: baseY))
                 // Base right point
-                path.addLine(to: CGPoint(x: blade.baseX + bladeWidth/2, y: baseY))
+                path.addLine(to: CGPoint(x: blade.baseX + bladeWidth / 2, y: baseY))
                 // Top point (sharp tip)
                 path.addLine(to: CGPoint(x: blade.tipX, y: baseY - blade.height))
                 // Close the path

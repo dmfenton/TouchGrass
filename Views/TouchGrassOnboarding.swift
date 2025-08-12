@@ -238,8 +238,14 @@ struct TouchGrassOnboarding: View {
                                     
                                     ScrollView {
                                         VStack(alignment: .leading, spacing: 4) {
-                                            ForEach(calendarManager.availableCalendars, id: \.calendarIdentifier) { calendar in
-                                                TouchGrassCalendarRow(calendar: calendar, calendarManager: calendarManager)
+                                            ForEach(
+                                                calendarManager.availableCalendars,
+                                                id: \.calendarIdentifier
+                                            ) { calendar in
+                                                TouchGrassCalendarRow(
+                                                    calendar: calendar,
+                                                    calendarManager: calendarManager
+                                                )
                                             }
                                         }
                                     }
@@ -252,7 +258,7 @@ struct TouchGrassOnboarding: View {
                                 Button(action: {
                                     calendarPermissionRequested = true
                                     calendarManager.requestCalendarAccess { _ in }
-                                }) {
+                                }, label: {
                                     Label("Connect Calendar", systemImage: "calendar.badge.plus")
                                         .font(.system(size: 12))
                                         .foregroundColor(.green)
@@ -284,7 +290,7 @@ struct TouchGrassOnboarding: View {
             
             // Customize button
             if !showCustomization {
-                Button(action: { withAnimation(.spring(response: 0.3)) { showCustomization.toggle() } }) {
+                Button(action: { withAnimation(.spring(response: 0.3)) { showCustomization.toggle() } }, label: {
                     Label("Customize", systemImage: "slider.horizontal.3")
                         .font(.system(size: 12))
                         .foregroundColor(.green)

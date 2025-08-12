@@ -199,7 +199,7 @@ struct SimpleOnboardingWindow: View {
             
             // Customize button
             if !showCustomization {
-                Button(action: { withAnimation { showCustomization.toggle() } }) {
+                Button(action: { withAnimation { showCustomization.toggle() } }, label: {
                     Text("Customize Settings")
                         .font(.caption)
                         .foregroundColor(.accentColor)

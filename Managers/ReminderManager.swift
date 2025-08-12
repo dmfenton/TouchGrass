@@ -95,7 +95,7 @@ final class ReminderManager: ObservableObject {
     }
     
     func isExerciseWindowVisible() -> Bool {
-        return exerciseWindow.isWindowVisible()
+        exerciseWindow.isWindowVisible()
     }
     
     func setWorkHours(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int), days: Set<WorkDay>) {
@@ -154,7 +154,9 @@ final class ReminderManager: ObservableObject {
         
         // Check up to 7 days ahead
         for dayOffset in 0..<7 {
-            let checkDate = calendar.date(byAdding: .day, value: dayOffset, to: Date())!
+            guard let checkDate = calendar.date(byAdding: .day, value: dayOffset, to: Date()) else {
+                continue
+            }
             let weekday = calendar.component(.weekday, from: checkDate)
             
             if let workDay = workDayFromWeekday(weekday), workDays.contains(workDay) {
@@ -505,7 +507,7 @@ final class ReminderManager: ObservableObject {
             } catch {
                 print("Failed to update login item status: \(error)")
                 // Revert the toggle on failure
-                startsAtLogin = !startsAtLogin
+                startsAtLogin.toggle()
             }
         }
     }
