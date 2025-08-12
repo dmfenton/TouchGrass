@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*'
 
+permissions:
+  contents: write
+
 jobs:
   build-and-release:
     runs-on: macos-latest
@@ -46,6 +49,7 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
+        draft: true
         files: |
           Touch-Grass-v${{ steps.get_version.outputs.VERSION }}.dmg
           SHA256SUMS.txt

@@ -138,13 +138,34 @@ cd "$RELEASE_DIR"
 shasum -a 256 "$DMG_NAME" > "SHA256SUMS.txt"
 cd ../..
 
-# 7. Create release notes template
-print_status "Creating release notes template..."
+# 7. Create release notes
+print_status "Creating release notes..."
+
+# Check if release notes were provided as second argument
+if [ $# -ge 2 ]; then
+    RELEASE_MESSAGE="$2"
+else
+    # Prompt for release notes
+    echo ""
+    echo "Enter release notes (what changed in this version):"
+    echo "Press Enter twice when done:"
+    RELEASE_MESSAGE=""
+    while IFS= read -r line; do
+        [ -z "$line" ] && break
+        RELEASE_MESSAGE="${RELEASE_MESSAGE}${line}
+"
+    done
+    
+    if [ -z "$RELEASE_MESSAGE" ]; then
+        RELEASE_MESSAGE="- Bug fixes and improvements"
+    fi
+fi
+
 cat > "$RELEASE_DIR/RELEASE_NOTES.md" << EOF
 # Touch Grass v$VERSION
 
 ## What's Changed
-- 
+$RELEASE_MESSAGE
 
 ## Installation
 
@@ -166,26 +187,41 @@ $(cat "$RELEASE_DIR/SHA256SUMS.txt")
 \`\`\`
 EOF
 
-# 8. Create git tag
+# 8. Commit version changes
+print_status "Committing version changes..."
+git add Info.plist VERSION
+git commit -m "Release version $VERSION" || {
+    print_warning "No version changes to commit"
+}
+
+# 9. Create git tag
 print_status "Creating git tag v$VERSION..."
 git tag -a "v$VERSION" -m "Release version $VERSION"
 
-# 9. Print next steps
+# 10. Push everything to GitHub
+print_status "Pushing changes and tag to GitHub..."
+git push origin main
+git push origin "v$VERSION"
+
+# 11. Create GitHub release
+print_status "Creating GitHub release..."
+gh release create "v$VERSION" \
+  --title "Touch Grass v$VERSION" \
+  --notes-file "$RELEASE_DIR/RELEASE_NOTES.md" \
+  "$RELEASE_DIR/$DMG_NAME" || {
+    print_error "Failed to create GitHub release"
+    print_warning "You can manually create it at: https://github.com/dmfenton/TouchGrass/releases/new"
+    exit 1
+}
+
+# 12. Success!
 echo ""
-print_status "Release preparation complete!"
+print_status "🎉 Release v$VERSION published successfully!"
 echo ""
-echo "📦 Release artifacts created in: $RELEASE_DIR/"
+echo "📦 Release artifacts:"
 echo "   - $DMG_NAME"
 echo "   - SHA256SUMS.txt"
-echo "   - RELEASE_NOTES.md"
 echo ""
-echo "Next steps:"
-echo "1. Edit $RELEASE_DIR/RELEASE_NOTES.md with actual release notes"
-echo "2. Push the tag: git push origin v$VERSION"
-echo "3. Create GitHub release:"
-echo "   gh release create v$VERSION \\"
-echo "     --title \"Touch Grass v$VERSION\" \\"
-echo "     --notes-file \"$RELEASE_DIR/RELEASE_NOTES.md\" \\"
-echo "     \"$RELEASE_DIR/$DMG_NAME\""
+echo "🔗 View release: https://github.com/dmfenton/TouchGrass/releases/tag/v$VERSION"
 echo ""
-echo "Or manually create release at: https://github.com/YOUR_USERNAME/touchgrass/releases/new"
+print_status "Done!"
