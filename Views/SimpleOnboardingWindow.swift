@@ -203,7 +203,7 @@ struct SimpleOnboardingWindow: View {
                     Text("Customize Settings")
                         .font(.caption)
                         .foregroundColor(.accentColor)
-                }
+                })
                 .buttonStyle(.plain)
                 .padding(.top, 12)
             }

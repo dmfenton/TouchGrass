@@ -118,7 +118,7 @@ struct ExerciseWindowView: View {
                                     Text("Back to exercises")
                                 }
                                 .foregroundColor(.secondary)
-                            }
+                            })
                             .buttonStyle(PlainButtonStyle())
                             .padding()
                             
@@ -174,7 +174,7 @@ struct ExerciseWindowView: View {
                                     .padding(.vertical, 8)
                                     .background(Color(NSColor.controlBackgroundColor))
                                     .cornerRadius(8)
-                                }
+                                })
                                 .buttonStyle(PlainButtonStyle())
                                 .padding(.horizontal)
                             }
@@ -218,7 +218,7 @@ struct ExerciseWindowView: View {
                                     .padding(.vertical, 8)
                                     .background(Color(NSColor.controlBackgroundColor))
                                     .cornerRadius(8)
-                                }
+                                })
                                 .buttonStyle(PlainButtonStyle())
                                 .padding(.horizontal)
                             }

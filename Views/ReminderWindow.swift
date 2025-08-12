@@ -105,7 +105,7 @@ struct ReminderView: View {
                                                     )
                                             )
                                     )
-                                }
+                                })
                                 .buttonStyle(PlainButtonStyle())
                                 .onHover { isHovered in
                                     hoveredButton = isHovered ? exerciseSet.id : nil

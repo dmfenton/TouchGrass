@@ -77,15 +77,15 @@ struct OnboardingCustomizationView: View {
                     }
                     
                     // Calendar selection
-                    if calendarManager.hasCalendarAccess {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Label("Smart Calendar Sync", systemImage: "calendar.badge.clock")
-                                .font(.system(size: 13, weight: .semibold))
-                            
-                            Text("Skip reminders during meetings")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Smart Calendar Sync", systemImage: "calendar.badge.clock")
+                            .font(.system(size: 13, weight: .semibold))
+                        
+                        Text("Skip reminders during meetings")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        if calendarManager.hasCalendarAccess {
                             ScrollView {
                                 VStack(alignment: .leading, spacing: 4) {
                                     ForEach(calendarManager.availableCalendars, id: \.calendarIdentifier) { calendar in
@@ -100,17 +100,26 @@ struct OnboardingCustomizationView: View {
                             .padding(8)
                             .background(Color(NSColor.controlBackgroundColor))
                             .cornerRadius(6)
-                        }
-                    } else if !calendarPermissionRequested {
-                        Button(action: {
-                            calendarPermissionRequested = true
-                            calendarManager.requestCalendarAccess { _ in }
-                        }, label: {
-                            Label("Connect Calendar", systemImage: "calendar.badge.plus")
-                                .font(.system(size: 12))
+                        } else {
+                            Button(action: {
+                                calendarPermissionRequested = true
+                                calendarManager.requestCalendarAccess { _ in
+                                    // Calendar list is automatically loaded on success
+                                }
+                            }, label: {
+                                HStack {
+                                    Image(systemName: "calendar.badge.plus")
+                                    Text("Connect Calendar")
+                                }
+                                .font(.system(size: 13))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(Color.green.opacity(0.1))
                                 .foregroundColor(.green)
-                        })
-                        .buttonStyle(.plain)
+                                .cornerRadius(6)
+                            })
+                            .buttonStyle(.plain)
+                        }
                     }
                     
                     // Options

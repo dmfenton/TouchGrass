@@ -267,7 +267,7 @@ struct ExerciseSetView: View {
                 }, label: {
                     Label("Start Exercises", systemImage: "play.fill")
                         .frame(width: 140)
-                }
+                })
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)
             }

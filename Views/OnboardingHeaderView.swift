@@ -1,4 +1,5 @@
 import SwiftUI
+import EventKit
 
 struct OnboardingHeaderView: View {
     var body: some View {
@@ -86,7 +87,7 @@ struct TouchGrassCalendarRow: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            calendarManager.toggleCalendar(calendar.calendarIdentifier)
+            calendarManager.toggleCalendar(calendar)
         }
     }
 }

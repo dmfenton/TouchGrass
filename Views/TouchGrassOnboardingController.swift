@@ -6,7 +6,7 @@ final class TouchGrassOnboardingController: NSWindowController {
     
     convenience init(reminderManager: ReminderManager) {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 580),
+            contentRect: NSRect(x: 0, y: 0, width: 520, height: 780),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false

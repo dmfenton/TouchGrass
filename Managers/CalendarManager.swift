@@ -95,7 +95,7 @@ final class CalendarManager: ObservableObject {
         
         let now = Date()
         guard let endOfDay = Calendar.current.date(byAdding: .day, value: 1, to: now) else {
-            return false
+            return
         }
         
         // Get selected calendars

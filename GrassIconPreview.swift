@@ -2,7 +2,7 @@ import SwiftUI
 import AppKit
 
 // Standalone preview app to show the grass icons
-@main
+// @main  // Commented out - main app is TouchGrassApp
 struct GrassIconPreviewApp: App {
     var body: some Scene {
         WindowGroup {

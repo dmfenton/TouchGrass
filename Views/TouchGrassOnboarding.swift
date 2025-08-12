@@ -7,7 +7,7 @@ struct TouchGrassOnboarding: View {
     @StateObject private var calendarManager = CalendarManager()
     @Environment(\.dismiss) private var dismiss
     
-    @State private var showCustomization = false
+    @State private var showCustomization = true  // Show by default for better discoverability
     @State private var workStartHour: Int
     @State private var workEndHour: Int  
     @State private var reminderInterval: Double
@@ -205,7 +205,7 @@ struct TouchGrassOnboarding: View {
             }
             .padding(30)
         }
-        .frame(width: 520, height: showCustomization ? 740 : 580)
+        .frame(width: 520, height: showCustomization ? 780 : 580)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             checkNotificationStatus()
