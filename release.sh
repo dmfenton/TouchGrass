@@ -97,8 +97,43 @@ fi
 RELEASE_DIR="releases/v$VERSION"
 mkdir -p "$RELEASE_DIR"
 
-# 5. Create ZIP archive
-print_status "Creating ZIP archive..."
+# 5. Create DMG installer
+print_status "Creating DMG installer..."
+
+# Create a temporary directory for DMG contents
+DMG_TEMP="$RELEASE_DIR/dmg-temp"
+mkdir -p "$DMG_TEMP"
+
+# Copy the app to temp directory
+cp -R "build/Release/Touch Grass.app" "$DMG_TEMP/"
+
+# Create DMG with create-dmg tool
+DMG_NAME="Touch-Grass-v$VERSION.dmg"
+create-dmg \
+  --volname "Touch Grass $VERSION" \
+  --volicon "build/Release/Touch Grass.app/Contents/Resources/AppIcon.icns" \
+  --window-pos 200 120 \
+  --window-size 600 400 \
+  --icon-size 100 \
+  --icon "Touch Grass.app" 150 160 \
+  --hide-extension "Touch Grass.app" \
+  --app-drop-link 450 160 \
+  --no-internet-enable \
+  "$RELEASE_DIR/$DMG_NAME" \
+  "$DMG_TEMP" 2>/dev/null || {
+    print_warning "create-dmg failed, falling back to simple DMG creation..."
+    hdiutil create -volname "Touch Grass $VERSION" \
+                   -srcfolder "$DMG_TEMP" \
+                   -ov \
+                   -format UDZO \
+                   "$RELEASE_DIR/$DMG_NAME"
+}
+
+# Clean up temp directory
+rm -rf "$DMG_TEMP"
+
+# Also create a ZIP as fallback
+print_status "Creating ZIP archive as fallback..."
 cd build/Release
 zip -r -q "../../$RELEASE_DIR/Touch-Grass-v$VERSION.zip" "Touch Grass.app"
 cd ../..
@@ -106,7 +141,8 @@ cd ../..
 # 6. Generate checksums
 print_status "Generating checksums..."
 cd "$RELEASE_DIR"
-shasum -a 256 "Touch-Grass-v$VERSION.zip" > "SHA256SUMS.txt"
+shasum -a 256 "$DMG_NAME" > "SHA256SUMS.txt"
+shasum -a 256 "Touch-Grass-v$VERSION.zip" >> "SHA256SUMS.txt"
 cd ../..
 
 # 7. Create release notes template
@@ -119,10 +155,20 @@ cat > "$RELEASE_DIR/RELEASE_NOTES.md" << EOF
 
 ## Installation
 
+### Option 1: DMG Installer (Recommended)
+1. Download \`Touch-Grass-v$VERSION.dmg\`
+2. Open the DMG file
+3. Drag \`Touch Grass.app\` to the Applications folder
+4. Eject the DMG
+5. Open Touch Grass from your Applications folder
+
+### Option 2: ZIP Archive
 1. Download \`Touch-Grass-v$VERSION.zip\`
 2. Unzip the file
 3. Move \`Touch Grass.app\` to your Applications folder
-4. Open the app (you may need to right-click and select "Open" the first time)
+4. Open the app
+
+**Note:** You may need to right-click and select "Open" the first time to bypass Gatekeeper
 
 ## Notes
 - macOS 11.0 or later required
@@ -143,7 +189,8 @@ echo ""
 print_status "Release preparation complete!"
 echo ""
 echo "📦 Release artifacts created in: $RELEASE_DIR/"
-echo "   - Touch-Grass-v$VERSION.zip"
+echo "   - $DMG_NAME (DMG installer)"
+echo "   - Touch-Grass-v$VERSION.zip (ZIP archive)"
 echo "   - SHA256SUMS.txt"
 echo "   - RELEASE_NOTES.md"
 echo ""
@@ -154,6 +201,7 @@ echo "3. Create GitHub release:"
 echo "   gh release create v$VERSION \\"
 echo "     --title \"Touch Grass v$VERSION\" \\"
 echo "     --notes-file \"$RELEASE_DIR/RELEASE_NOTES.md\" \\"
+echo "     \"$RELEASE_DIR/$DMG_NAME\" \\"
 echo "     \"$RELEASE_DIR/Touch-Grass-v$VERSION.zip\""
 echo ""
 echo "Or manually create release at: https://github.com/YOUR_USERNAME/touchgrass/releases/new"
