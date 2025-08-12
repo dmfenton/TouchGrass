@@ -7,6 +7,7 @@ final class ReminderWindowController {
 
     func show(
         message: String,
+        manager: ReminderManager,
         onOK: @escaping () -> Void,
         onSnooze5: @escaping () -> Void,
         onSnooze10: @escaping () -> Void,
@@ -16,6 +17,7 @@ final class ReminderWindowController {
 
         let content = ReminderView(
             message: message,
+            manager: manager,
             ok: { [weak self] in 
                 self?.animateDismiss()
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {

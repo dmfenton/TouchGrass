@@ -14,7 +14,7 @@ struct TouchGrassOnboarding: View {
             OnboardingHeaderView()
             
             // Main message
-            Text("Sitting all day is rough. We'll remind you to move, stretch, and literally go touch some grass.")
+            Text("Sitting all day is rough. We'll remind you to move, stretch, hydrate, and literally go touch some grass.")
                 .font(.system(size: 14))
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -33,6 +33,12 @@ struct TouchGrassOnboarding: View {
                     icon: "clock.badge.checkmark",
                     title: "Work hours aware",
                     subtitle: "Active only 9am - 5pm weekdays"
+                )
+                
+                FeatureRow(
+                    icon: "drop.fill",
+                    title: "Stay hydrated",
+                    subtitle: "Track water intake goals"
                 )
                 
                 FeatureRow(
@@ -151,6 +157,9 @@ struct TouchGrassOnboarding: View {
         reminderManager.intervalMinutes = 45
         reminderManager.adaptiveIntervalEnabled = true
         reminderManager.startsAtLogin = false
+        reminderManager.waterTrackingEnabled = true
+        reminderManager.dailyWaterGoal = 8
+        reminderManager.waterUnit = .glasses
         
         // Set standard work hours
         reminderManager.setWorkHours(

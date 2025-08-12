@@ -55,10 +55,8 @@ struct MenuView: View {
             if manager.hasActiveReminder {
                 Button(action: { manager.showReminder() }) {
                     HStack(spacing: 8) {
-                        Image(systemName: "figure.walk.motion")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(.white)
-                        Text("Posture Check Ready!")
+                        GrassIcon(isActive: true, size: 16)
+                        Text("Time to Touch Grass!")
                             .font(.system(size: 14, weight: .semibold, design: .rounded))
                             .foregroundColor(.white)
                         Spacer()
@@ -84,9 +82,7 @@ struct MenuView: View {
             // Header
             VStack(spacing: 8) {
                 HStack {
-                    Image(systemName: "figure.walk")
-                        .font(.system(size: 18, weight: .medium))
-                        .foregroundColor(.accentColor)
+                    GrassIcon(isActive: false, size: 18)
                     Text("Touch Grass")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
@@ -132,6 +128,71 @@ struct MenuView: View {
                         RoundedRectangle(cornerRadius: 8)
                             .fill(Color.orange.opacity(0.08))
                     )
+                }
+                
+                // Water Tracking Display
+                if manager.waterTrackingEnabled {
+                    HStack(spacing: 12) {
+                        Image(systemName: "drop.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(.blue)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack(spacing: 4) {
+                                Text("\(manager.currentWaterIntake)/\(manager.dailyWaterGoal)")
+                                    .font(.system(size: 13, weight: .semibold))
+                                Text(manager.waterUnit == .glasses ? "glasses" : manager.waterUnit.rawValue)
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            }
+                            
+                            // Progress bar
+                            GeometryReader { geometry in
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(Color.blue.opacity(0.2))
+                                    RoundedRectangle(cornerRadius: 2)
+                                        .fill(Color.blue)
+                                        .frame(width: geometry.size.width * 
+                                            min(1.0, Double(manager.currentWaterIntake) / Double(manager.dailyWaterGoal)))
+                                }
+                            }
+                            .frame(height: 4)
+                        }
+                        
+                        Spacer()
+                        
+                        HStack(spacing: 4) {
+                            Button(action: { manager.logWater(1) }) {
+                                Text("+1")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(Color.blue.opacity(0.15))
+                                    .foregroundColor(.blue)
+                                    .cornerRadius(4)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            
+                            Button(action: { manager.logWater(2) }) {
+                                Text("+2")
+                                    .font(.system(size: 11, weight: .medium))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 3)
+                                    .background(Color.blue.opacity(0.15))
+                                    .foregroundColor(.blue)
+                                    .cornerRadius(4)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: 8)
+                            .fill(Color.blue.opacity(0.05))
+                    )
+                    .padding(.horizontal, 12)
                 }
                 
                 // Calendar Events Display

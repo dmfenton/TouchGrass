@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ReminderView: View {
     let message: String
+    @ObservedObject var manager: ReminderManager
     let ok: () -> Void
     let snooze5: () -> Void
     let snooze10: () -> Void
@@ -18,7 +19,7 @@ struct ReminderView: View {
                     Image(systemName: "figure.walk")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundColor(.secondary)
-                    Text("Posture Check")
+                    Text(manager.waterTrackingEnabled ? "Posture & Hydration Check" : "Posture Check")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                     Spacer()
                     Button(action: skip) {
@@ -66,6 +67,95 @@ struct ReminderView: View {
                     }
                     .padding(.horizontal, 20)
                     .padding(.top, 16)
+                    
+                    // Water tracking section
+                    if manager.waterTrackingEnabled {
+                        VStack(spacing: 12) {
+                            Divider()
+                            
+                            HStack {
+                                Image(systemName: "drop.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.blue)
+                                Text("Hydration Check")
+                                    .font(.system(size: 14, weight: .medium))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Text("\(manager.currentWaterIntake)/\(manager.dailyWaterGoal) glasses")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.blue)
+                            }
+                            
+                            // Progress bar
+                            GeometryReader { geometry in
+                                ZStack(alignment: .leading) {
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.blue.opacity(0.2))
+                                    RoundedRectangle(cornerRadius: 3)
+                                        .fill(Color.blue)
+                                        .frame(width: geometry.size.width * 
+                                            min(1.0, Double(manager.currentWaterIntake) / Double(manager.dailyWaterGoal)))
+                                }
+                            }
+                            .frame(height: 6)
+                            
+                            // Quick water log buttons
+                            HStack(spacing: 8) {
+                                Button(action: { 
+                                    manager.logWater(1)
+                                }) {
+                                    Label("Log 1 glass", systemImage: "plus.circle")
+                                        .font(.system(size: 12))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 6)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 6)
+                                                        .fill(
+                                                            hoveredButton == "water1"
+                                                                ? Color.blue.opacity(0.08)
+                                                                : Color.clear
+                                                        )
+                                                )
+                                        )
+                                        .foregroundColor(.blue)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .onHover { isHovered in
+                                    hoveredButton = isHovered ? "water1" : nil
+                                }
+                                
+                                Button(action: { 
+                                    manager.logWater(2)
+                                }) {
+                                    Label("Log 2 glasses", systemImage: "plus.circle.fill")
+                                        .font(.system(size: 12))
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 6)
+                                        .background(
+                                            RoundedRectangle(cornerRadius: 6)
+                                                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+                                                .background(
+                                                    RoundedRectangle(cornerRadius: 6)
+                                                        .fill(
+                                                            hoveredButton == "water2"
+                                                                ? Color.blue.opacity(0.08)
+                                                                : Color.clear
+                                                        )
+                                                )
+                                        )
+                                        .foregroundColor(.blue)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .onHover { isHovered in
+                                    hoveredButton = isHovered ? "water2" : nil
+                                }
+                            }
+                        }
+                        .padding(.horizontal, 20)
+                    }
                     
                     // Exercise options
                     VStack(spacing: 8) {
@@ -122,7 +212,7 @@ struct ReminderView: View {
                             HStack {
                                 Image(systemName: "checkmark")
                                     .font(.system(size: 13, weight: .medium))
-                                Text("Done - Posture Checked")
+                                Text(manager.waterTrackingEnabled ? "Done - Posture & Water Logged" : "Done - Posture Checked")
                                     .font(.system(size: 14, weight: .medium, design: .rounded))
                             }
                             .foregroundColor(.white)

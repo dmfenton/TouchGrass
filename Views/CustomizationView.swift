@@ -12,6 +12,9 @@ struct CustomizationView: View {
     @State private var enableSmartTiming = true
     @State private var startAtLogin = false
     @State private var calendarPermissionRequested = false
+    @State private var waterTrackingEnabled = true
+    @State private var dailyWaterGoal = 8
+    @State private var waterUnit: WaterUnit = .glasses
     
     var body: some View {
         VStack(spacing: 0) {
@@ -177,6 +180,57 @@ struct CustomizationView: View {
                     }
                 }
                 
+                // Water Tracking Section
+                VStack(alignment: .leading, spacing: 10) {
+                    Label("Water Tracking", systemImage: "drop.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                    
+                    Toggle(isOn: $waterTrackingEnabled) {
+                        Text("Track water intake with reminders")
+                            .font(.system(size: 13))
+                    }
+                    .toggleStyle(.checkbox)
+                    
+                    if waterTrackingEnabled {
+                        VStack(spacing: 10) {
+                            HStack {
+                                Text("Daily Goal:")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                                Stepper(value: $dailyWaterGoal, in: 4...16) {
+                                    Text("\(dailyWaterGoal) glasses")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 2)
+                                        .background(Color.blue.opacity(0.1))
+                                        .cornerRadius(4)
+                                }
+                                Spacer()
+                            }
+                            
+                            HStack {
+                                Text("Units:")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                                Picker("", selection: $waterUnit) {
+                                    ForEach(WaterUnit.allCases, id: \.self) { unit in
+                                        Text(unit.displayName).tag(unit)
+                                    }
+                                }
+                                .pickerStyle(.segmented)
+                                .frame(width: 200)
+                                Spacer()
+                            }
+                        }
+                        .padding(.leading, 20)
+                        .transition(.opacity)
+                    }
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 12)
+                .background(Color.blue.opacity(0.03))
+                .cornerRadius(8)
+                
                 // Toggles
                 VStack(spacing: 12) {
                     Toggle(isOn: $enableSmartTiming) {
@@ -240,6 +294,9 @@ struct CustomizationView: View {
         startAtLogin = reminderManager.startsAtLogin
         workStartHour = reminderManager.currentWorkStartHour
         workEndHour = reminderManager.currentWorkEndHour
+        waterTrackingEnabled = reminderManager.waterTrackingEnabled
+        dailyWaterGoal = reminderManager.dailyWaterGoal
+        waterUnit = reminderManager.waterUnit
         
         if let existingCalManager = reminderManager.calendarManager {
             // Use existing calendar manager if available
@@ -252,6 +309,9 @@ struct CustomizationView: View {
         reminderManager.intervalMinutes = reminderInterval
         reminderManager.adaptiveIntervalEnabled = enableSmartTiming
         reminderManager.startsAtLogin = startAtLogin
+        reminderManager.waterTrackingEnabled = waterTrackingEnabled
+        reminderManager.dailyWaterGoal = dailyWaterGoal
+        reminderManager.waterUnit = waterUnit
         
         // Set work hours
         reminderManager.setWorkHours(

@@ -4,6 +4,28 @@ import UserNotifications
 import AppKit
 import ServiceManagement
 
+enum WaterUnit: String, CaseIterable {
+    case glasses = "glasses"
+    case ounces = "oz"
+    case milliliters = "ml"
+    
+    var displayName: String {
+        switch self {
+        case .glasses: return "Glasses"
+        case .ounces: return "Ounces"
+        case .milliliters: return "Milliliters"
+        }
+    }
+    
+    func toGlasses(_ amount: Int) -> Double {
+        switch self {
+        case .glasses: return Double(amount)
+        case .ounces: return Double(amount) / 8.0
+        case .milliliters: return Double(amount) / 237.0
+        }
+    }
+}
+
 final class ReminderManager: ObservableObject {
     @Published var isPaused = false
     @Published var calendarManager: CalendarManager?
@@ -25,6 +47,13 @@ final class ReminderManager: ObservableObject {
     @Published var bestStreak: Int = 0
     @Published var adaptiveIntervalEnabled: Bool = true { didSet { saveSettings() } }
     @Published var hasActiveReminder = false  // New: indicates a reminder is waiting
+    
+    // Water tracking
+    @Published var waterTrackingEnabled: Bool = true { didSet { saveSettings() } }
+    @Published var dailyWaterGoal: Int = 8 { didSet { saveSettings() } }
+    @Published var currentWaterIntake: Int = 0 { didSet { saveSettings() } }
+    @Published var waterUnit: WaterUnit = .glasses { didSet { saveSettings() } }
+    @Published var waterStreak: Int = 0
     
     private var timerCancellable: AnyCancellable?
     private var countdownCancellable: AnyCancellable?
@@ -54,6 +83,12 @@ final class ReminderManager: ObservableObject {
     private let lastCheckDateKey = "TouchGrass.lastCheckDate"
     private let intervalKey = "TouchGrass.intervalMinutes"
     private let adaptiveKey = "TouchGrass.adaptiveEnabled"
+    private let waterEnabledKey = "TouchGrass.waterEnabled"
+    private let waterGoalKey = "TouchGrass.waterGoal"
+    private let waterIntakeKey = "TouchGrass.waterIntake"
+    private let waterUnitKey = "TouchGrass.waterUnit"
+    private let waterStreakKey = "TouchGrass.waterStreak"
+    private let lastWaterDateKey = "TouchGrass.lastWaterDate"
 
     // MARK: - Public actions
     func pause() { 
@@ -87,6 +122,55 @@ final class ReminderManager: ObservableObject {
         exerciseWindow.isWindowVisible()
     }
     
+    // MARK: - Water tracking
+    func logWater(_ amount: Int = 1) {
+        currentWaterIntake += amount
+        
+        // Check if daily goal is met
+        if currentWaterIntake >= dailyWaterGoal {
+            // Update water streak
+            updateWaterStreak()
+        }
+        
+        saveSettings()
+    }
+    
+    private func updateWaterStreak() {
+        let defaults = UserDefaults.standard
+        let calendar = Calendar.current
+        let now = Date()
+        
+        if let lastWaterDate = defaults.object(forKey: lastWaterDateKey) as? Date {
+            if calendar.isDateInToday(lastWaterDate) {
+                // Already updated today
+                return
+            } else if calendar.isDateInYesterday(lastWaterDate) {
+                // Continue streak
+                waterStreak += 1
+            } else {
+                // Streak broken
+                waterStreak = 1
+            }
+        } else {
+            // First time
+            waterStreak = 1
+        }
+        
+        defaults.set(now, forKey: lastWaterDateKey)
+        defaults.set(waterStreak, forKey: waterStreakKey)
+    }
+    
+    private func resetDailyWaterIntake() {
+        let calendar = Calendar.current
+        
+        // Check if it's a new day
+        if let lastWaterDate = UserDefaults.standard.object(forKey: lastWaterDateKey) as? Date {
+            if !calendar.isDateInToday(lastWaterDate) {
+                currentWaterIntake = 0
+            }
+        }
+    }
+    
     func setWorkHours(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int), days: Set<WorkDay>) {
         workHoursManager.setWorkHours(start: start, end: end, days: days)
         
@@ -106,6 +190,7 @@ final class ReminderManager: ObservableObject {
     init() {
         loadSettings()
         checkLoginItemStatus()
+        resetDailyWaterIntake()
         scheduleAtFixedInterval()
         startCountdownTimer()
         requestNotificationPermissions()
@@ -125,6 +210,15 @@ final class ReminderManager: ObservableObject {
         intervalMinutes = defaults.double(forKey: intervalKey) > 0 ? defaults.double(forKey: intervalKey) : 45
         adaptiveIntervalEnabled = defaults.bool(forKey: adaptiveKey)
         
+        // Load water settings
+        waterTrackingEnabled = defaults.object(forKey: waterEnabledKey) as? Bool ?? true
+        dailyWaterGoal = defaults.object(forKey: waterGoalKey) as? Int ?? 8
+        currentWaterIntake = defaults.integer(forKey: waterIntakeKey)
+        if let unitString = defaults.string(forKey: waterUnitKey),
+           let unit = WaterUnit(rawValue: unitString) {
+            waterUnit = unit
+        }
+        waterStreak = defaults.integer(forKey: waterStreakKey)
         
         // Check if streak should be reset (missed a day)
         if let lastCheck = defaults.object(forKey: lastCheckDateKey) as? Date {
@@ -142,6 +236,13 @@ final class ReminderManager: ObservableObject {
         defaults.set(bestStreak, forKey: bestStreakKey)
         defaults.set(intervalMinutes, forKey: intervalKey)
         defaults.set(adaptiveIntervalEnabled, forKey: adaptiveKey)
+        
+        // Save water settings
+        defaults.set(waterTrackingEnabled, forKey: waterEnabledKey)
+        defaults.set(dailyWaterGoal, forKey: waterGoalKey)
+        defaults.set(currentWaterIntake, forKey: waterIntakeKey)
+        defaults.set(waterUnit.rawValue, forKey: waterUnitKey)
+        defaults.set(waterStreak, forKey: waterStreakKey)
     }
     
     private func updateStreak(completed: Bool) {
@@ -299,6 +400,7 @@ final class ReminderManager: ObservableObject {
         // Show window
         window.show(
             message: message,
+            manager: self,
             onOK: { [weak self] in 
                 self?.updateStreak(completed: true)
                 self?.scheduleNextTick()

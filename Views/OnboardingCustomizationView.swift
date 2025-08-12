@@ -9,6 +9,9 @@ struct OnboardingCustomizationView: View {
     @Binding var startAtLogin: Bool
     @ObservedObject var calendarManager: CalendarManager
     @Binding var calendarPermissionRequested: Bool
+    @Binding var waterTrackingEnabled: Bool
+    @Binding var dailyWaterGoal: Int
+    @Binding var waterUnit: WaterUnit
     
     var body: some View {
         VStack(spacing: 16) {
@@ -153,6 +156,35 @@ struct OnboardingCustomizationView: View {
                                 .cornerRadius(6)
                             })
                             .buttonStyle(.plain)
+                        }
+                    }
+                    
+                    // Water Tracking
+                    VStack(alignment: .leading, spacing: 8) {
+                        Label("Water Tracking", systemImage: "drop.fill")
+                            .font(.system(size: 13, weight: .semibold))
+                        
+                        Toggle(isOn: $waterTrackingEnabled) {
+                            Text("Track water intake with reminders")
+                                .font(.system(size: 12))
+                        }
+                        .toggleStyle(.checkbox)
+                        
+                        if waterTrackingEnabled {
+                            HStack {
+                                Text("Daily Goal:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Stepper(value: $dailyWaterGoal, in: 4...16) {
+                                    Text("\(dailyWaterGoal) glasses")
+                                        .font(.system(size: 11, weight: .medium))
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(Color.blue.opacity(0.1))
+                                        .cornerRadius(4)
+                                }
+                            }
+                            .padding(.leading, 20)
                         }
                     }
                     
