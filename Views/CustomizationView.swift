@@ -3,7 +3,6 @@ import EventKit
 
 struct CustomizationView: View {
     @ObservedObject var reminderManager: ReminderManager
-    @StateObject private var calendarManager = CalendarManager()
     let onComplete: () -> Void
     
     @State private var workStartHour: Int = 9
@@ -15,6 +14,10 @@ struct CustomizationView: View {
     @State private var waterTrackingEnabled = true
     @State private var dailyWaterGoal = 8
     @State private var waterUnit: WaterUnit = .glasses
+    
+    private var calendarManager: CalendarManager? {
+        reminderManager.calendarManager
+    }
     
     var body: some View {
         VStack(spacing: 0) {
@@ -112,14 +115,14 @@ struct CustomizationView: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
-                    if calendarManager.hasCalendarAccess {
+                    if calendarManager?.hasCalendarAccess == true {
                         HStack {
-                            if calendarManager.selectedCalendarIdentifiers.isEmpty {
+                            if calendarManager?.selectedCalendarIdentifiers.isEmpty ?? true {
                                 Text("Select calendars to monitor")
                                     .font(.system(size: 12))
                                     .foregroundColor(.secondary)
                             } else {
-                                Text("\(calendarManager.selectedCalendarIdentifiers.count) calendar(s) selected")
+                                Text("\(calendarManager?.selectedCalendarIdentifiers.count ?? 0) calendar(s) selected")
                                     .font(.system(size: 12))
                                     .foregroundColor(.primary)
                             }
@@ -127,12 +130,12 @@ struct CustomizationView: View {
                             Spacer()
                             
                             Menu {
-                                ForEach(calendarManager.availableCalendars, id: \.calendarIdentifier) { calendar in
+                                ForEach(calendarManager?.availableCalendars ?? [], id: \.calendarIdentifier) { calendar in
                                     Button(action: {
-                                        calendarManager.toggleCalendar(calendar)
+                                        calendarManager?.toggleCalendar(calendar)
                                     }) {
                                         HStack {
-                                            if calendarManager.selectedCalendarIdentifiers.contains(calendar.calendarIdentifier) {
+                                            if calendarManager?.selectedCalendarIdentifiers.contains(calendar.calendarIdentifier) == true {
                                                 Image(systemName: "checkmark")
                                             }
                                             Circle()
@@ -163,7 +166,10 @@ struct CustomizationView: View {
                     } else {
                         Button(action: {
                             calendarPermissionRequested = true
-                            calendarManager.requestCalendarAccess { _ in }
+                            if reminderManager.calendarManager == nil {
+                                reminderManager.calendarManager = CalendarManager()
+                            }
+                            reminderManager.calendarManager?.requestCalendarAccess { _ in }
                         }) {
                             HStack {
                                 Image(systemName: "calendar.badge.plus")
@@ -281,7 +287,7 @@ struct CustomizationView: View {
             }
             .padding(20)
         }
-        .frame(width: 480, height: 580)
+        .frame(width: 480, height: 640)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             loadCurrentSettings()
@@ -297,11 +303,6 @@ struct CustomizationView: View {
         waterTrackingEnabled = reminderManager.waterTrackingEnabled
         dailyWaterGoal = reminderManager.dailyWaterGoal
         waterUnit = reminderManager.waterUnit
-        
-        if let existingCalManager = reminderManager.calendarManager {
-            // Use existing calendar manager if available
-            calendarManager.selectedCalendarIdentifiers = existingCalManager.selectedCalendarIdentifiers
-        }
     }
     
     private func saveAndClose() {
@@ -321,8 +322,10 @@ struct CustomizationView: View {
         )
         
         // Save calendar settings
-        reminderManager.calendarManager = calendarManager
+        reminderManager.calendarManager?.saveSelectedCalendars()
         
+        // Close window
+        NSApp.keyWindow?.close()
         onComplete()
     }
     

@@ -195,9 +195,21 @@ struct MenuView: View {
                     .padding(.horizontal, 12)
                 }
                 
-                // Calendar Events Display
+                // Calendar Events Display with Smart Insights
                 if let calManager = manager.calendarManager {
                     VStack(spacing: 8) {
+                        // Meeting Load Indicator
+                        let meetingLoad = calManager.getMeetingLoad()
+                        HStack(spacing: 8) {
+                            Circle()
+                                .fill(meetingLoad.color)
+                                .frame(width: 8, height: 8)
+                            Text(meetingLoad.suggestion)
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.horizontal, 12)
+                        
                         if let currentEvent = calManager.currentEvent {
                             HStack(spacing: 8) {
                                 Circle()
@@ -222,6 +234,46 @@ struct MenuView: View {
                                 RoundedRectangle(cornerRadius: 6)
                                     .fill(Color.red.opacity(0.1))
                             )
+                        }
+                        
+                        // Show next free slot for outdoor break
+                        if let freeSlot = calManager.nextFreeSlot(minimumDuration: 900) {
+                            let isNow = freeSlot.start.timeIntervalSinceNow < 60
+                            
+                            HStack(spacing: 8) {
+                                Image(systemName: "leaf.circle.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.green)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(isNow ? "Free now!" : "Free at \(calManager.formatEventTime(freeSlot.start))")
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(isNow ? .green : .primary)
+                                    Text(freeSlot.duration >= 1800 ? "Perfect for a real outdoor break 🌳" : "Quick fresh air opportunity")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.green.opacity(0.08))
+                            )
+                        }
+                        
+                        // Total meeting time remaining
+                        let totalMeetingTime = calManager.totalMeetingTimeToday()
+                        if totalMeetingTime > 0 {
+                            HStack(spacing: 8) {
+                                Image(systemName: "clock.arrow.circlepath")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                Text("\(Int(totalMeetingTime / 3600))h \(Int((totalMeetingTime.truncatingRemainder(dividingBy: 3600)) / 60))m in meetings today")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 12)
                         }
                         
                         if let nextEvent = calManager.nextEvent,

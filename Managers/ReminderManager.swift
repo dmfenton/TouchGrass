@@ -89,6 +89,9 @@ final class ReminderManager: ObservableObject {
     private let waterUnitKey = "TouchGrass.waterUnit"
     private let waterStreakKey = "TouchGrass.waterStreak"
     private let lastWaterDateKey = "TouchGrass.lastWaterDate"
+    private let workStartHourKey = "TouchGrass.workStartHour"
+    private let workEndHourKey = "TouchGrass.workEndHour"
+    private let startsAtLoginKey = "TouchGrass.startsAtLogin"
 
     // MARK: - Public actions
     func pause() { 
@@ -126,6 +129,9 @@ final class ReminderManager: ObservableObject {
     func logWater(_ amount: Int = 1) {
         currentWaterIntake += amount
         
+        // Save immediately to persist the change
+        UserDefaults.standard.set(currentWaterIntake, forKey: waterIntakeKey)
+        
         // Check if daily goal is met
         if currentWaterIntake >= dailyWaterGoal {
             // Update water streak
@@ -139,6 +145,9 @@ final class ReminderManager: ObservableObject {
         let defaults = UserDefaults.standard
         let calendar = Calendar.current
         let now = Date()
+        
+        // Save yesterday's intake before updating streak
+        defaults.set(currentWaterIntake, forKey: "TouchGrass.yesterdayWaterIntake")
         
         if let lastWaterDate = defaults.object(forKey: lastWaterDateKey) as? Date {
             if calendar.isDateInToday(lastWaterDate) {
@@ -158,21 +167,39 @@ final class ReminderManager: ObservableObject {
         
         defaults.set(now, forKey: lastWaterDateKey)
         defaults.set(waterStreak, forKey: waterStreakKey)
+        defaults.synchronize()
     }
     
     private func resetDailyWaterIntake() {
         let calendar = Calendar.current
+        let defaults = UserDefaults.standard
         
         // Check if it's a new day
-        if let lastWaterDate = UserDefaults.standard.object(forKey: lastWaterDateKey) as? Date {
+        if let lastWaterDate = defaults.object(forKey: lastWaterDateKey) as? Date {
             if !calendar.isDateInToday(lastWaterDate) {
+                // Reset water intake for new day
                 currentWaterIntake = 0
+                defaults.set(0, forKey: waterIntakeKey)
+                
+                // Check water streak - if goal wasn't met yesterday, reset streak
+                if let lastIntake = defaults.object(forKey: "TouchGrass.yesterdayWaterIntake") as? Int {
+                    if lastIntake < dailyWaterGoal && !calendar.isDateInYesterday(lastWaterDate) {
+                        waterStreak = 0
+                        defaults.set(0, forKey: waterStreakKey)
+                    }
+                }
             }
+        } else {
+            // First run - initialize date
+            defaults.set(Date(), forKey: lastWaterDateKey)
         }
     }
     
     func setWorkHours(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int), days: Set<WorkDay>) {
         workHoursManager.setWorkHours(start: start, end: end, days: days)
+        
+        // Save the work hours
+        saveSettings()
         
         // Reschedule if needed
         if !workHoursManager.isWithinWorkHours() && !isPaused {
@@ -195,11 +222,8 @@ final class ReminderManager: ObservableObject {
         startCountdownTimer()
         requestNotificationPermissions()
         
-        // Initialize calendar manager if we have access
-        let calManager = CalendarManager()
-        if calManager.hasCalendarAccess {
-            self.calendarManager = calManager
-        }
+        // Always initialize calendar manager to preserve settings
+        self.calendarManager = CalendarManager()
     }
 
     // MARK: - Settings Persistence
@@ -208,7 +232,7 @@ final class ReminderManager: ObservableObject {
         currentStreak = defaults.integer(forKey: streakKey)
         bestStreak = defaults.integer(forKey: bestStreakKey)
         intervalMinutes = defaults.double(forKey: intervalKey) > 0 ? defaults.double(forKey: intervalKey) : 45
-        adaptiveIntervalEnabled = defaults.bool(forKey: adaptiveKey)
+        adaptiveIntervalEnabled = defaults.object(forKey: adaptiveKey) as? Bool ?? true
         
         // Load water settings
         waterTrackingEnabled = defaults.object(forKey: waterEnabledKey) as? Bool ?? true
@@ -219,6 +243,20 @@ final class ReminderManager: ObservableObject {
             waterUnit = unit
         }
         waterStreak = defaults.integer(forKey: waterStreakKey)
+        
+        // Load work hours
+        let startHour = defaults.object(forKey: workStartHourKey) as? Int ?? 9
+        let endHour = defaults.object(forKey: workEndHourKey) as? Int ?? 17
+        workHoursManager.setWorkHours(
+            start: (startHour, 0),
+            end: (endHour, 0),
+            days: [.monday, .tuesday, .wednesday, .thursday, .friday]
+        )
+        
+        // Load login item preference
+        if let savedStartsAtLogin = defaults.object(forKey: startsAtLoginKey) as? Bool {
+            startsAtLogin = savedStartsAtLogin
+        }
         
         // Check if streak should be reset (missed a day)
         if let lastCheck = defaults.object(forKey: lastCheckDateKey) as? Date {
@@ -243,6 +281,16 @@ final class ReminderManager: ObservableObject {
         defaults.set(currentWaterIntake, forKey: waterIntakeKey)
         defaults.set(waterUnit.rawValue, forKey: waterUnitKey)
         defaults.set(waterStreak, forKey: waterStreakKey)
+        
+        // Save work hours
+        defaults.set(currentWorkStartHour, forKey: workStartHourKey)
+        defaults.set(currentWorkEndHour, forKey: workEndHourKey)
+        
+        // Save login item preference
+        defaults.set(startsAtLogin, forKey: startsAtLoginKey)
+        
+        // Force synchronization to disk
+        defaults.synchronize()
     }
     
     private func updateStreak(completed: Bool) {

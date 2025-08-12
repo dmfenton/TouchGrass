@@ -1,6 +1,7 @@
 import Foundation
 import EventKit
 import Combine
+import SwiftUI
 
 final class CalendarManager: ObservableObject {
     @Published var hasCalendarAccess = false
@@ -167,7 +168,158 @@ final class CalendarManager: ObservableObject {
         return formatter.string(from: date)
     }
     
+    // Get all meetings for today
+    func getTodaysMeetings() -> [EKEvent] {
+        guard hasCalendarAccess else { return [] }
+        
+        let calendar = Calendar.current
+        let startOfDay = calendar.startOfDay(for: Date())
+        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        
+        let selectedCals = availableCalendars.filter { 
+            selectedCalendarIdentifiers.contains($0.calendarIdentifier) 
+        }
+        
+        guard !selectedCals.isEmpty else { return [] }
+        
+        let predicate = eventStore.predicateForEvents(
+            withStart: startOfDay,
+            end: endOfDay,
+            calendars: selectedCals
+        )
+        
+        return eventStore.events(matching: predicate)
+            .filter { !$0.isAllDay }
+            .sorted { $0.startDate < $1.startDate }
+    }
+    
+    // Calculate total meeting time remaining today
+    func totalMeetingTimeToday() -> TimeInterval {
+        let now = Date()
+        let meetings = getTodaysMeetings()
+        
+        var totalTime: TimeInterval = 0
+        
+        for meeting in meetings {
+            guard let startDate = meeting.startDate,
+                  let endDate = meeting.endDate else { continue }
+            if endDate > now {
+                let meetingStart = max(startDate, now)
+                totalTime += endDate.timeIntervalSince(meetingStart)
+            }
+        }
+        
+        return totalTime
+    }
+    
+    // Find next free time slot of at least specified duration
+    func nextFreeSlot(minimumDuration: TimeInterval = 900) -> (start: Date, duration: TimeInterval)? {
+        let now = Date()
+        let meetings = getTodaysMeetings().filter { $0.endDate > now }
+        
+        if meetings.isEmpty {
+            // No more meetings today - free now!
+            return (now, 28800) // 8 hours until end of workday assumption
+        }
+        
+        // Check if we're free right now
+        if let firstMeeting = meetings.first,
+           let startDate = firstMeeting.startDate,
+           startDate.timeIntervalSince(now) >= minimumDuration {
+            return (now, startDate.timeIntervalSince(now))
+        }
+        
+        // Check gaps between meetings
+        if meetings.count > 1 {
+            for i in 0..<meetings.count - 1 {
+                guard let gapStart = meetings[i].endDate,
+                      let gapEnd = meetings[i + 1].startDate else { continue }
+                let gapDuration = gapEnd.timeIntervalSince(gapStart)
+                
+                if gapDuration >= minimumDuration {
+                    return (gapStart, gapDuration)
+                }
+            }
+        }
+        
+        // After last meeting
+        if let lastMeeting = meetings.last,
+           let endDate = lastMeeting.endDate {
+            return (endDate, 28800) // Until end of day
+        }
+        
+        return nil
+    }
+    
+    // Analyze meeting load for smart suggestions
+    func getMeetingLoad() -> MeetingLoad {
+        let meetings = getTodaysMeetings()
+        let now = Date()
+        
+        // Calculate meetings in next 2 hours
+        let twoHoursFromNow = now.addingTimeInterval(7200)
+        let upcomingMeetings = meetings.filter {
+            guard let startDate = $0.startDate else { return false }
+            return startDate >= now && startDate <= twoHoursFromNow
+        }
+        
+        // Check if currently in back-to-back meetings
+        var hasBackToBack = false
+        if meetings.count > 1 {
+            for i in 0..<meetings.count - 1 {
+                guard let endDate = meetings[i].endDate,
+                      let nextStartDate = meetings[i + 1].startDate else { continue }
+                if endDate >= now && 
+                   nextStartDate <= endDate.addingTimeInterval(300) {
+                    hasBackToBack = true
+                    break
+                }
+            }
+        }
+        
+        // Calculate total meeting hours today
+        let totalHours = totalMeetingTimeToday() / 3600
+        
+        if totalHours > 6 {
+            return .heavy
+        } else if totalHours > 4 || hasBackToBack {
+            return .moderate
+        } else if upcomingMeetings.count > 2 {
+            return .moderate
+        } else {
+            return .light
+        }
+    }
+    
     deinit {
         eventUpdateTimer?.invalidate()
+    }
+}
+
+enum MeetingLoad {
+    case light
+    case moderate
+    case heavy
+    
+    var suggestion: String {
+        switch self {
+        case .light:
+            return "Light meeting day - perfect for a walk!"
+        case .moderate:
+            return "Busy schedule - grab fresh air between meetings"
+        case .heavy:
+            return "Meeting heavy - prioritize micro-breaks"
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .light:
+            return .green
+        case .moderate:
+            return .orange
+        case .heavy:
+            return .red
+        }
     }
 }
