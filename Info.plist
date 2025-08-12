@@ -22,5 +22,9 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>LSUIElement</key>
 	<true/>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Touch Grass needs access to your calendar to automatically pause reminders during meetings and show upcoming events.</string>
+	<key>NSRemindersUsageDescription</key>
+	<string>Touch Grass needs access to reminders to help you maintain good posture.</string>
 </dict>
 </plist>

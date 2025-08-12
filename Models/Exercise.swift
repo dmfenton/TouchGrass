@@ -1,6 +1,6 @@
 //
 //  Exercise.swift
-//  PosturePal
+//  TouchGrass
 //
 //  Exercise model and data for evidence-based posture correction
 //

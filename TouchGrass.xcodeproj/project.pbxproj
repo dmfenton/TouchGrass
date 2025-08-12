@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B71234561234567812345678 /* PosturePalApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234551234567812345678 /* PosturePalApp.swift */; };
+		B71234561234567812345678 /* TouchGrassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234551234567812345678 /* TouchGrassApp.swift */; };
 		B71234581234567812345678 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234571234567812345678 /* Messages.swift */; };
 		B712345A1234567812345678 /* ReminderWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234591234567812345678 /* ReminderWindow.swift */; };
 		B712345C1234567812345678 /* ReminderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B712345B1234567812345678 /* ReminderWindowController.swift */; };
@@ -15,11 +15,30 @@
 		B71234641234567812345681 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234601234567812345679 /* Exercise.swift */; };
 		B71234661234567812345682 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234621234567812345680 /* ExerciseView.swift */; };
 		B71234681234567812345683 /* ExerciseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234671234567812345683 /* ExerciseWindowController.swift */; };
+		CC7B6E4EF8A94DD4AAD838DD /* SimpleOnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A22CDFBBC0394696979FD781 /* SimpleOnboardingWindow.swift */; };
+		814B6864D716486AA4DE6B94 /* SimpleOnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B224C55AEF4DC192AE2D48 /* SimpleOnboardingWindowController.swift */; };
+		A327CBD66D3E4ED4A95B47C4 /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DAE7C405D7147FCB551F697 /* OnboardingManager.swift */; };
+		57D0A0C03DBA4F629D0E2AC5 /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC10C401F584CD09A19564C /* OnboardingWindow.swift */; };
+		E55E96F0D3314A2D8F7D268D /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F27B913D0FF24FBD8026583C /* OnboardingWindowController.swift */; };
+		2F230683F08B40D095AFABAD /* SimpleOnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB90468EA35743B3A7998EFB /* SimpleOnboardingWindow.swift */; };
+		11C21DF8DF5B4ED993905992 /* SimpleOnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8A5A9A19B39420A83CAADB8 /* SimpleOnboardingWindowController.swift */; };
+		82E5DF7AD64E4DF8BA21EB07 /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DB7BE0178A4CCC8AB9D913 /* OnboardingManager.swift */; };
+		3AAE744625344A32AD499ECC /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A09C4B5FEA3D47BF9A28692E /* OnboardingWindow.swift */; };
+		C022A537C2454B808F372909 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85FCE8848714C65BB4CD68A /* OnboardingWindowController.swift */; };
+		CD1A712700894C73BF27CE07 /* SimpleOnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAD0AAC298FC4A30A5E0F0CD /* SimpleOnboardingWindow.swift */; };
+		376E762D4699421D80DD83ED /* SimpleOnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0D7687E3B984B2C998014F0 /* SimpleOnboardingWindowController.swift */; };
+		714386C1B4ED4390B503CDDE /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CBEF45FA91FF4074993A9E07 /* OnboardingManager.swift */; };
+		F115C7D3C69741618CF707EF /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67DB9E861734487B8D64F842 /* OnboardingWindow.swift */; };
+		F9E257115AEA44F1B771413E /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA96CB4E0FAC46FA827A8C92 /* OnboardingWindowController.swift */; };
+		3E681FB1FFB14D76B22D9A04 /* GrassIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BA8316C67FD4EC79EB43701 /* GrassIcon.swift */; };
+		04BC7CF9F32E43918D489AC8 /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 588BED2B819F48D5A350290D /* CalendarManager.swift */; };
+		872B5A98673241CBA4AD9F18 /* TouchGrassOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BFF8225EDCC4236A978052C /* TouchGrassOnboarding.swift */; };
+		7797F8EB1364492FBE173C7A /* TouchGrassOnboardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0C459712E124DFF9B88A7DA /* TouchGrassOnboardingController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B71234501234567812345678 /* Touch Grass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Touch Grass.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B71234551234567812345678 /* PosturePalApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PosturePalApp.swift; sourceTree = "<group>"; };
+		B71234551234567812345678 /* TouchGrassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassApp.swift; sourceTree = "<group>"; };
 		B71234571234567812345678 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Messages.swift"; sourceTree = "<group>"; };
 		B71234591234567812345678 /* ReminderWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ReminderWindow.swift"; sourceTree = "<group>"; };
 		B712345B1234567812345678 /* ReminderWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ReminderWindowController.swift"; sourceTree = "<group>"; };
@@ -28,6 +47,25 @@
 		B71234621234567812345680 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseView.swift"; sourceTree = "<group>"; };
 		B71234671234567812345683 /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseWindowController.swift"; sourceTree = "<group>"; };
 		B712345F1234567812345678 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A22CDFBBC0394696979FD781 /* SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindow.swift"; sourceTree = "<group>"; };
+		A8B224C55AEF4DC192AE2D48 /* SimpleOnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindowController.swift"; sourceTree = "<group>"; };
+		0DAE7C405D7147FCB551F697 /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/OnboardingManager.swift"; sourceTree = "<group>"; };
+		7BC10C401F584CD09A19564C /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindow.swift"; sourceTree = "<group>"; };
+		F27B913D0FF24FBD8026583C /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindowController.swift"; sourceTree = "<group>"; };
+		EB90468EA35743B3A7998EFB /* SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindow.swift"; sourceTree = "<group>"; };
+		A8A5A9A19B39420A83CAADB8 /* SimpleOnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindowController.swift"; sourceTree = "<group>"; };
+		50DB7BE0178A4CCC8AB9D913 /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/OnboardingManager.swift"; sourceTree = "<group>"; };
+		A09C4B5FEA3D47BF9A28692E /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindow.swift"; sourceTree = "<group>"; };
+		F85FCE8848714C65BB4CD68A /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindowController.swift"; sourceTree = "<group>"; };
+		BAD0AAC298FC4A30A5E0F0CD /* SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindow.swift"; sourceTree = "<group>"; };
+		C0D7687E3B984B2C998014F0 /* SimpleOnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindowController.swift"; sourceTree = "<group>"; };
+		CBEF45FA91FF4074993A9E07 /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/OnboardingManager.swift"; sourceTree = "<group>"; };
+		67DB9E861734487B8D64F842 /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindow.swift"; sourceTree = "<group>"; };
+		DA96CB4E0FAC46FA827A8C92 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindowController.swift"; sourceTree = "<group>"; };
+		8BA8316C67FD4EC79EB43701 /* GrassIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/GrassIcon.swift"; sourceTree = "<group>"; };
+		588BED2B819F48D5A350290D /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/CalendarManager.swift"; sourceTree = "<group>"; };
+		3BFF8225EDCC4236A978052C /* TouchGrassOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassOnboarding.swift"; sourceTree = "<group>"; };
+		D0C459712E124DFF9B88A7DA /* TouchGrassOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassOnboardingController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,7 +82,7 @@
 		B71234471234567812345678 = {
 			isa = PBXGroup;
 			children = (
-				B71234521234567812345678 /* PosturePal */,
+				B71234521234567812345678 /* TouchGrass */,
 				B71234511234567812345678 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -57,10 +95,10 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B71234521234567812345678 /* PosturePal */ = {
+		B71234521234567812345678 /* TouchGrass */ = {
 			isa = PBXGroup;
 			children = (
-				B71234551234567812345678 /* PosturePalApp.swift */,
+				B71234551234567812345678 /* TouchGrassApp.swift */,
 				B712345D1234567812345678 /* ReminderManager.swift */,
 				B71234571234567812345678 /* Messages.swift */,
 				B71234601234567812345679 /* Exercise.swift */,
@@ -68,6 +106,31 @@
 				B712345B1234567812345678 /* ReminderWindowController.swift */,
 				B71234621234567812345680 /* ExerciseView.swift */,
 				B71234671234567812345683 /* ExerciseWindowController.swift */,
+				BAD0AAC298FC4A30A5E0F0CD /* SimpleOnboardingWindow.swift */,
+				C0D7687E3B984B2C998014F0 /* SimpleOnboardingWindowController.swift */,
+				CBEF45FA91FF4074993A9E07 /* OnboardingManager.swift */,
+				67DB9E861734487B8D64F842 /* OnboardingWindow.swift */,
+				DA96CB4E0FAC46FA827A8C92 /* OnboardingWindowController.swift */,
+				8BA8316C67FD4EC79EB43701 /* GrassIcon.swift */,
+				588BED2B819F48D5A350290D /* CalendarManager.swift */,
+				D0C459712E124DFF9B88A7DA /* TouchGrassOnboardingController.swift */,
+
+				3BFF8225EDCC4236A978052C /* TouchGrassOnboarding.swift */,
+
+
+
+				EB90468EA35743B3A7998EFB /* SimpleOnboardingWindow.swift */,
+				A8A5A9A19B39420A83CAADB8 /* SimpleOnboardingWindowController.swift */,
+				50DB7BE0178A4CCC8AB9D913 /* OnboardingManager.swift */,
+				A09C4B5FEA3D47BF9A28692E /* OnboardingWindow.swift */,
+				F85FCE8848714C65BB4CD68A /* OnboardingWindowController.swift */,
+
+				A22CDFBBC0394696979FD781 /* SimpleOnboardingWindow.swift */,
+				A8B224C55AEF4DC192AE2D48 /* SimpleOnboardingWindowController.swift */,
+				0DAE7C405D7147FCB551F697 /* OnboardingManager.swift */,
+				7BC10C401F584CD09A19564C /* OnboardingWindow.swift */,
+				F27B913D0FF24FBD8026583C /* OnboardingWindowController.swift */,
+
 				B712345F1234567812345678 /* Info.plist */,
 			);
 			path = .;
@@ -76,9 +139,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B712344F1234567812345678 /* PosturePal */ = {
+		B712344F1234567812345678 /* TouchGrass */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B71234631234567812345678 /* Build configuration list for PBXNativeTarget "PosturePal" */;
+			buildConfigurationList = B71234631234567812345678 /* Build configuration list for PBXNativeTarget "TouchGrass" */;
 			buildPhases = (
 				B712344C1234567812345678 /* Sources */,
 				B712344D1234567812345678 /* Frameworks */,
@@ -88,8 +151,8 @@
 			);
 			dependencies = (
 			);
-			name = PosturePal;
-			productName = PosturePal;
+			name = TouchGrass;
+			productName = TouchGrass;
 			productReference = B71234501234567812345678 /* Touch Grass.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -108,7 +171,7 @@
 					};
 				};
 			};
-			buildConfigurationList = B712344B1234567812345678 /* Build configuration list for PBXProject "PosturePal" */;
+			buildConfigurationList = B712344B1234567812345678 /* Build configuration list for PBXProject "TouchGrass" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -121,7 +184,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B712344F1234567812345678 /* PosturePal */,
+				B712344F1234567812345678 /* TouchGrass */,
 			);
 		};
 /* End PBXProject section */
@@ -141,7 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B71234561234567812345678 /* PosturePalApp.swift in Sources */,
+				B71234561234567812345678 /* TouchGrassApp.swift in Sources */,
 				B71234581234567812345678 /* Messages.swift in Sources */,
 				B712345A1234567812345678 /* ReminderWindow.swift in Sources */,
 				B712345C1234567812345678 /* ReminderWindowController.swift in Sources */,
@@ -149,6 +212,31 @@
 				B71234641234567812345681 /* Exercise.swift in Sources */,
 				B71234661234567812345682 /* ExerciseView.swift in Sources */,
 				B71234681234567812345683 /* ExerciseWindowController.swift in Sources */,
+				CD1A712700894C73BF27CE07 /* SimpleOnboardingWindow.swift in Sources */,
+				376E762D4699421D80DD83ED /* SimpleOnboardingWindowController.swift in Sources */,
+				714386C1B4ED4390B503CDDE /* OnboardingManager.swift in Sources */,
+				F115C7D3C69741618CF707EF /* OnboardingWindow.swift in Sources */,
+				F9E257115AEA44F1B771413E /* OnboardingWindowController.swift in Sources */,
+				3E681FB1FFB14D76B22D9A04 /* GrassIcon.swift in Sources */,
+				04BC7CF9F32E43918D489AC8 /* CalendarManager.swift in Sources */,
+				7797F8EB1364492FBE173C7A /* TouchGrassOnboardingController.swift in Sources */,
+
+				872B5A98673241CBA4AD9F18 /* TouchGrassOnboarding.swift in Sources */,
+
+
+
+				2F230683F08B40D095AFABAD /* SimpleOnboardingWindow.swift in Sources */,
+				11C21DF8DF5B4ED993905992 /* SimpleOnboardingWindowController.swift in Sources */,
+				82E5DF7AD64E4DF8BA21EB07 /* OnboardingManager.swift in Sources */,
+				3AAE744625344A32AD499ECC /* OnboardingWindow.swift in Sources */,
+				C022A537C2454B808F372909 /* OnboardingWindowController.swift in Sources */,
+
+				CC7B6E4EF8A94DD4AAD838DD /* SimpleOnboardingWindow.swift in Sources */,
+				814B6864D716486AA4DE6B94 /* SimpleOnboardingWindowController.swift in Sources */,
+				A327CBD66D3E4ED4A95B47C4 /* OnboardingManager.swift in Sources */,
+				57D0A0C03DBA4F629D0E2AC5 /* OnboardingWindow.swift in Sources */,
+				E55E96F0D3314A2D8F7D268D /* OnboardingWindowController.swift in Sources */,
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +409,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B712344B1234567812345678 /* Build configuration list for PBXProject "PosturePal" */ = {
+		B712344B1234567812345678 /* Build configuration list for PBXProject "TouchGrass" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B71234611234567812345678 /* Debug */,
@@ -330,7 +418,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B71234631234567812345678 /* Build configuration list for PBXNativeTarget "PosturePal" */ = {
+		B71234631234567812345678 /* Build configuration list for PBXNativeTarget "TouchGrass" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				B71234641234567812345678 /* Debug */,

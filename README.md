@@ -50,7 +50,7 @@ Download the latest `.app` from the [Releases](https://github.com/yourusername/p
 
 ## Usage
 
-1. **Launch** - PosturePal appears as a walking figure icon in your menu bar
+1. **Launch** - TouchGrass appears as a walking figure icon in your menu bar
 2. **Check Timer** - Click the icon to see countdown to next reminder
 3. **Adjust Interval** - Use the slider to set reminder frequency (15-120 minutes)
 4. **Respond to Reminders** - When reminded:
@@ -60,11 +60,11 @@ Download the latest `.app` from the [Releases](https://github.com/yourusername/p
 
 ## Start at Login
 
-To have PosturePal start automatically:
+To have TouchGrass start automatically:
 
 1. Open **System Settings** → **General** → **Login Items**
 2. Click **+** under "Open at Login"
-3. Navigate to and select `PosturePal.app`
+3. Navigate to and select `TouchGrass.app`
 
 ## Posture Reset Steps
 
@@ -92,7 +92,7 @@ Built with:
 ### Project Structure
 
 ```
-├── PosturePalApp.swift          # Main app and menu bar UI
+├── TouchGrassApp.swift          # Main app and menu bar UI
 ├── ReminderManager.swift        # Timer and scheduling logic
 ├── ReminderWindow.swift         # Reminder popup view
 ├── ReminderWindowController.swift # Window management
@@ -102,7 +102,7 @@ Built with:
 
 ## Privacy
 
-PosturePal is completely offline and private:
+TouchGrass is completely offline and private:
 - No network connections
 - No data collection
 - No analytics

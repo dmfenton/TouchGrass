@@ -6,16 +6,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```bash
 # Build for release
-xcodebuild -project PosturePal.xcodeproj -scheme PosturePal -configuration Release build SYMROOT=build -quiet
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build -quiet
 
 # Build and run the app
-xcodebuild -project PosturePal.xcodeproj -scheme PosturePal -configuration Release build SYMROOT=build -quiet && open build/Release/PosturePal.app
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build -quiet && open build/Release/TouchGrass.app
 
 # Clean build
-xcodebuild -project PosturePal.xcodeproj -scheme PosturePal -configuration Release clean build SYMROOT=build
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release clean build SYMROOT=build
 
 # Restart app after changes
-killall PosturePal 2>/dev/null || true && open build/Release/PosturePal.app
+killall TouchGrass 2>/dev/null || true && open build/Release/TouchGrass.app
 ```
 
 ## Architecture Overview
@@ -23,7 +23,7 @@ killall PosturePal 2>/dev/null || true && open build/Release/PosturePal.app
 Touch Grass is a SwiftUI-based macOS menu bar application with a clear separation of concerns:
 
 ### Core Flow
-1. **PosturePalApp.swift** - Entry point, creates MenuBarExtra with ReminderManager instance
+1. **TouchGrassApp.swift** - Entry point, creates MenuBarExtra with ReminderManager instance
 2. **ReminderManager.swift** - Central state management using Combine, handles:
    - Fixed-interval scheduling aligned to clock time (e.g., :00, :45)
    - Timer management with separate timers for scheduling and countdown display

@@ -1,29 +1,14 @@
 import SwiftUI
 
 @main
-struct PosturePalApp: App {
+struct TouchGrassApp: App {
     @StateObject private var manager = ReminderManager()
 
     var body: some Scene {
         MenuBarExtra {
             MenuView(manager: manager)
         } label: {
-            HStack(spacing: 4) {
-                Image(systemName: manager.hasActiveReminder ? "figure.walk.motion" : 
-                                 manager.isPaused ? "figure.seated.side.air.distribution" : "figure.seated.side")
-                    .symbolRenderingMode(.hierarchical)
-                    .foregroundColor(manager.hasActiveReminder ? .orange : .primary)
-                
-                if manager.hasActiveReminder {
-                    Text("!")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundColor(.orange)
-                } else if manager.currentStreak > 0 {
-                    Text("\(manager.currentStreak)")
-                        .font(.system(size: 11, weight: .medium, design: .rounded))
-                        .foregroundColor(.secondary)
-                }
-            }
+            GrassIcon(isActive: manager.hasActiveReminder, size: 20)
         }
         .menuBarExtraStyle(.window)
     }
@@ -32,6 +17,8 @@ struct PosturePalApp: App {
 struct MenuView: View {
     @ObservedObject var manager: ReminderManager
     @State private var hoveredItem: String? = nil
+    @State private var onboardingWindow: TouchGrassOnboardingController?
+    @State private var isOnboardingShowing = false
     
     var nextReminderText: String {
         let totalSeconds = Int(manager.timeUntilNextReminder)
@@ -48,6 +35,11 @@ struct MenuView: View {
     }
     
     var body: some View {
+        mainMenuContent
+    }
+    
+    @ViewBuilder
+    var mainMenuContent: some View {
         VStack(spacing: 0) {
             // Active reminder notification
             if manager.hasActiveReminder {
@@ -132,8 +124,64 @@ struct MenuView: View {
                     )
                 }
                 
+                // Calendar Events Display
+                if let calManager = manager.calendarManager {
+                    VStack(spacing: 8) {
+                        if let currentEvent = calManager.currentEvent {
+                            HStack(spacing: 8) {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 8, height: 8)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("In Meeting")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    Text(currentEvent.title ?? "Busy")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .lineLimit(1)
+                                    Text("Until \(calManager.formatEventTime(currentEvent.endDate))")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.red.opacity(0.1))
+                            )
+                        }
+                        
+                        if let nextEvent = calManager.nextEvent,
+                           let timeUntil = calManager.timeUntilNextEvent {
+                            HStack(spacing: 8) {
+                                Image(systemName: "calendar")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Next: \(nextEvent.title ?? "Event")")
+                                        .font(.system(size: 11, weight: .medium))
+                                        .lineLimit(1)
+                                    Text("in \(calManager.formatTimeUntilEvent(timeUntil))")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                }
+                
                 // Countdown Display
-                if !manager.isPaused {
+                if !manager.isPaused && !(manager.calendarManager?.isInMeeting ?? false) {
                     VStack(spacing: 4) {
                         Text("Next reminder in")
                             .font(.system(size: 11, weight: .regular, design: .rounded))
@@ -301,7 +349,7 @@ struct MenuView: View {
                 .toggleStyle(.checkbox)
                 .controlSize(.small)
                 .padding(.horizontal, 16)
-                .help("Automatically start PosturePal when you log in")
+                .help("Automatically start TouchGrass when you log in")
                 .padding(.bottom, 8)
             }
             
@@ -319,6 +367,37 @@ struct MenuView: View {
             .padding(.vertical, 4)
         }
         .frame(width: 280)
+        .onAppear {
+            checkForOnboarding()
+        }
+    }
+    
+    private func checkForOnboarding() {
+        if TouchGrassOnboardingController.shouldShowOnboarding() {
+            // Hide menu during onboarding
+            isOnboardingShowing = true
+            
+            // Close the menu popover immediately
+            NSApplication.shared.windows.forEach { window in
+                if window.className.contains("NSStatusBarWindow") {
+                    window.close()
+                }
+            }
+            
+            DispatchQueue.main.async {
+                onboardingWindow = TouchGrassOnboardingController(reminderManager: manager)
+                onboardingWindow?.showOnboarding()
+                
+                // Monitor for window closing
+                NotificationCenter.default.addObserver(
+                    forName: NSWindow.willCloseNotification,
+                    object: onboardingWindow?.window,
+                    queue: .main
+                ) { _ in
+                    isOnboardingShowing = false
+                }
+            }
+        }
     }
 }
 

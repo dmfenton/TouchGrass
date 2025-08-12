@@ -1,6 +1,6 @@
 //
 //  ExerciseView.swift
-//  PosturePal
+//  TouchGrass
 //
 //  View for displaying and performing posture exercises
 //
