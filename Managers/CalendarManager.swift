@@ -23,7 +23,6 @@ final class CalendarManager: ObservableObject {
         loadSelectedCalendars()
         checkCalendarAccess()
         startEventMonitoring()
-        print("[CalendarManager] Initialized with access: \(hasCalendarAccess), calendars: \(selectedCalendarIdentifiers.count)")
         // Force initial update
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.updateCurrentAndNextEvents()
@@ -124,25 +123,21 @@ final class CalendarManager: ObservableObject {
             calendars: selectedCalendars
         )
         
-        let allEvents = eventStore.events(matching: predicate)
-        print("[CalendarManager] Raw events found: \(allEvents.count) (including all-day)")
-        
-        let events = allEvents
-            .filter { !$0.isAllDay } // Exclude all-day events
+        let events = eventStore.events(matching: predicate)
+            .filter { event in
+                // Exclude all-day events
+                if event.isAllDay { return false }
+                
+                // Only include real meetings (not personal time blocks)
+                return isRealMeeting(event)
+            }
             .sorted { ($0.startDate ?? Date.distantPast) < ($1.startDate ?? Date.distantPast) }
-        
-        print("[CalendarManager] Found \(events.count) events for selected calendars")
-        print("[CalendarManager] Selected calendar IDs: \(selectedCalendarIdentifiers)")
         
         // Find current event (happening now)
         currentEvent = events.first { event in
             guard let startDate = event.startDate,
                   let endDate = event.endDate else { return false }
-            let isCurrent = startDate <= now && endDate > now
-            if isCurrent {
-                print("[CalendarManager] Current meeting: \(event.title ?? "Unknown") until \(endDate)")
-            }
-            return isCurrent
+            return startDate <= now && endDate > now
         }
         
         isInMeeting = currentEvent != nil
@@ -208,11 +203,17 @@ final class CalendarManager: ObservableObject {
         )
         
         return eventStore.events(matching: predicate)
-            .filter { !$0.isAllDay }
-            .sorted { $0.startDate < $1.startDate }
+            .filter { event in
+                // Exclude all-day events
+                if event.isAllDay { return false }
+                
+                // Only include real meetings
+                return isRealMeeting(event)
+            }
+            .sorted { ($0.startDate ?? Date.distantPast) < ($1.startDate ?? Date.distantPast) }
     }
     
-    // Calculate total meeting time remaining today
+    // Calculate total meeting time remaining today (from now onwards)
     func totalMeetingTimeToday() -> TimeInterval {
         let now = Date()
         let meetings = getTodaysMeetings()
@@ -226,6 +227,21 @@ final class CalendarManager: ObservableObject {
                 let meetingStart = max(startDate, now)
                 totalTime += endDate.timeIntervalSince(meetingStart)
             }
+        }
+        
+        return totalTime
+    }
+    
+    // Calculate total meeting time for the entire day (past and future)
+    func totalMeetingTimeEntireDay() -> TimeInterval {
+        let meetings = getTodaysMeetings()
+        
+        var totalTime: TimeInterval = 0
+        
+        for meeting in meetings {
+            guard let startDate = meeting.startDate,
+                  let endDate = meeting.endDate else { continue }
+            totalTime += endDate.timeIntervalSince(startDate)
         }
         
         return totalTime
@@ -296,18 +312,50 @@ final class CalendarManager: ObservableObject {
             }
         }
         
-        // Calculate total meeting hours today
-        let totalHours = totalMeetingTimeToday() / 3600
+        // Calculate total meeting hours for the ENTIRE day (past + future)
+        let totalHours = totalMeetingTimeEntireDay() / 3600
         
-        if totalHours > 6 {
+        // Also consider total number of meetings
+        let meetingCount = meetings.count
+        
+        if totalHours > 6 || meetingCount >= 8 {
             return .heavy
-        } else if totalHours > 4 || hasBackToBack {
+        } else if totalHours > 4 || meetingCount >= 5 || hasBackToBack {
             return .moderate
-        } else if upcomingMeetings.count > 2 {
+        } else if upcomingMeetings.count > 2 || meetingCount >= 3 {
             return .moderate
         } else {
             return .light
         }
+    }
+    
+    // Helper to determine if an event is a real meeting vs personal time
+    private func isRealMeeting(_ event: EKEvent) -> Bool {
+        // Skip all-day events
+        if event.isAllDay { return false }
+        
+        let title = event.title?.lowercased() ?? ""
+        let location = event.location?.lowercased() ?? ""
+        
+        // Special case: Focus Time or personal blocks - not real meetings
+        let personalBlocks = ["focus time", "focus", "lunch", "break", "personal", "block", "busy", "hold"]
+        let isPersonalBlock = personalBlocks.contains { title.contains($0) }
+        if isPersonalBlock { return false }
+        
+        // Check for other participants (more than just yourself)
+        // Note: Some calendar systems show yourself as an attendee, so > 1 means others are invited
+        let hasOtherParticipants = (event.attendees?.count ?? 0) > 1
+        
+        // Check for meeting URL in URL field or notes
+        let hasURL = event.url != nil || 
+                     (event.notes?.range(of: "https?://", options: .regularExpression) != nil)
+        
+        // Check for common meeting platforms in title or location
+        let hasMeetingPlatform = ["zoom", "meet", "teams", "webex", "call", "standup", "sync", "1:1", "one-on-one"]
+            .contains { title.contains($0) || location.contains($0) }
+        
+        // It's a real meeting if it has participants, a URL, or mentions a meeting platform
+        return hasOtherParticipants || hasURL || hasMeetingPlatform
     }
     
     deinit {

@@ -22,27 +22,27 @@ struct CustomizationView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Header
-            VStack(spacing: 8) {
+            HStack(spacing: 12) {
                 Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 32))
+                    .font(.system(size: 24))
                     .foregroundColor(.green)
                 
                 Text("Customize Your Experience")
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(.primary)
                 
-                Text("Set up Touch Grass to work best for you")
-                    .font(.system(size: 13))
-                    .foregroundColor(.secondary)
+                Spacer()
             }
-            .padding(.top, 25)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 20)
+            .padding(.top, 20)
+            .padding(.bottom, 15)
             
             Divider()
                 .padding(.horizontal, 20)
             
-            // Settings
-            VStack(spacing: 24) {
+            // Settings in ScrollView
+            ScrollView {
+                VStack(spacing: 24) {
                 // Interval slider
                 VStack(alignment: .leading, spacing: 10) {
                     Label("Break Frequency", systemImage: "timer")
@@ -108,28 +108,24 @@ struct CustomizationView: View {
                 
                 // Calendar
                 VStack(alignment: .leading, spacing: 10) {
-                    Label("Calendar Integration", systemImage: "calendar.badge.clock")
+                    Label("Calendar Awareness", systemImage: "calendar.badge.clock")
                         .font(.system(size: 14, weight: .semibold))
                     
-                    Text("Skip reminders during meetings")
+                    Text("See upcoming meetings to find best times")
                         .font(.caption)
                         .foregroundColor(.secondary)
                     
                     if calendarManager?.hasCalendarAccess == true {
-                        HStack {
-                            if calendarManager?.selectedCalendarIdentifiers.isEmpty ?? true {
-                                Text("Select calendars to monitor")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
-                            } else {
+                        VStack(alignment: .leading, spacing: 8) {
+                            // Show selected calendars count
+                            if !(calendarManager?.selectedCalendarIdentifiers.isEmpty ?? true) {
                                 Text("\(calendarManager?.selectedCalendarIdentifiers.count ?? 0) calendar(s) selected")
                                     .font(.system(size: 12))
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.secondary)
                             }
                             
-                            Spacer()
-                            
-                            Menu {
+                            // Simple button that opens multi-select menu
+                            Menu("Select Calendars") {
                                 ForEach(calendarManager?.availableCalendars ?? [], id: \.calendarIdentifier) { calendar in
                                     Button(action: {
                                         calendarManager?.toggleCalendar(calendar)
@@ -138,31 +134,13 @@ struct CustomizationView: View {
                                             if calendarManager?.selectedCalendarIdentifiers.contains(calendar.calendarIdentifier) == true {
                                                 Image(systemName: "checkmark")
                                             }
-                                            Circle()
-                                                .fill(Color(calendar.cgColor))
-                                                .frame(width: 8, height: 8)
                                             Text(calendar.title)
                                         }
                                     }
                                 }
-                            } label: {
-                                HStack(spacing: 4) {
-                                    Text("Choose")
-                                        .font(.system(size: 12))
-                                    Image(systemName: "chevron.down")
-                                        .font(.system(size: 10))
-                                }
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 4)
-                                .background(Color.green.opacity(0.1))
-                                .foregroundColor(.green)
-                                .cornerRadius(6)
                             }
+                            .menuStyle(.borderedButton)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(Color(NSColor.controlBackgroundColor))
-                        .cornerRadius(6)
                     } else {
                         Button(action: {
                             calendarPermissionRequested = true
@@ -251,11 +229,12 @@ struct CustomizationView: View {
                     }
                     .toggleStyle(.checkbox)
                 }
+                }
+                .padding(.horizontal, 40)
+                .padding(.vertical, 20)
             }
-            .padding(.horizontal, 40)
-            .padding(.vertical, 25)
             
-            Spacer()
+            Spacer(minLength: 10)
             
             Divider()
             
@@ -287,7 +266,7 @@ struct CustomizationView: View {
             }
             .padding(20)
         }
-        .frame(width: 480, height: 640)
+        .frame(width: 480, height: 720)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             loadCurrentSettings()

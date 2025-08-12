@@ -419,16 +419,9 @@ final class ReminderManager: ObservableObject {
             return
         }
         
-        // Check if we're in a meeting
+        // Update calendar info for awareness but don't pause
         if let calManager = calendarManager {
             calManager.updateCurrentAndNextEvents()
-            if calManager.isInMeeting {
-                // Reschedule for after the meeting
-                if let currentEvent = calManager.currentEvent {
-                    schedule(at: currentEvent.endDate.addingTimeInterval(60)) // 1 minute after meeting ends
-                    return
-                }
-            }
         }
         
         // Just set the flag and play a sound - don't show window automatically

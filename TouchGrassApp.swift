@@ -46,6 +46,10 @@ struct MenuView: View {
     
     var body: some View {
         mainMenuContent
+            .onAppear {
+                // Refresh calendar data whenever menu is opened
+                manager.calendarManager?.updateCurrentAndNextEvents()
+            }
     }
     
     @ViewBuilder
@@ -195,8 +199,10 @@ struct MenuView: View {
                     .padding(.horizontal, 12)
                 }
                 
-                // Calendar Events Display with Smart Insights
-                if let calManager = manager.calendarManager {
+                // Calendar Events Display with Smart Insights (only if connected)
+                if let calManager = manager.calendarManager,
+                   calManager.hasCalendarAccess,
+                   !calManager.selectedCalendarIdentifiers.isEmpty {
                     VStack(spacing: 8) {
                         // Meeting Load Indicator
                         let meetingLoad = calManager.getMeetingLoad()
@@ -236,30 +242,32 @@ struct MenuView: View {
                             )
                         }
                         
-                        // Show next free slot for outdoor break
-                        if let freeSlot = calManager.nextFreeSlot(minimumDuration: 900) {
-                            let isNow = freeSlot.start.timeIntervalSinceNow < 60
-                            
-                            HStack(spacing: 8) {
-                                Image(systemName: "leaf.circle.fill")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.green)
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(isNow ? "Free now!" : "Free at \(calManager.formatEventTime(freeSlot.start))")
-                                        .font(.system(size: 11, weight: .semibold))
-                                        .foregroundColor(isNow ? .green : .primary)
-                                    Text(freeSlot.duration >= 1800 ? "Perfect for a real outdoor break 🌳" : "Quick fresh air opportunity")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                        // Only show free slot if we have calendar data
+                        if calManager.getTodaysMeetings().count > 0 {
+                            if let freeSlot = calManager.nextFreeSlot(minimumDuration: 900) {
+                                let isNow = freeSlot.start.timeIntervalSinceNow < 60
+                                
+                                HStack(spacing: 8) {
+                                    Image(systemName: "leaf.circle.fill")
+                                        .font(.system(size: 14))
+                                        .foregroundColor(.green)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(isNow ? "Free now!" : "Free at \(calManager.formatEventTime(freeSlot.start))")
+                                            .font(.system(size: 11, weight: .semibold))
+                                            .foregroundColor(isNow ? .green : .primary)
+                                        Text(freeSlot.duration >= 1800 ? "Perfect for a real outdoor break 🌳" : "Quick fresh air opportunity")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    Spacer()
                                 }
-                                Spacer()
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.green.opacity(0.08))
+                                )
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color.green.opacity(0.08))
-                            )
                         }
                         
                         // Total meeting time remaining
@@ -275,50 +283,6 @@ struct MenuView: View {
                             }
                             .padding(.horizontal, 12)
                         }
-                        
-                        // DEBUG: Show what we're seeing from calendar
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("DEBUG: Calendar Status")
-                                .font(.system(size: 10, weight: .bold))
-                                .foregroundColor(.orange)
-                            
-                            Text("Access: \(calManager.hasCalendarAccess ? "✅" : "❌") | Selected: \(calManager.selectedCalendarIdentifiers.count) calendars")
-                                .font(.system(size: 9))
-                                .foregroundColor(.secondary)
-                            
-                            if let current = calManager.currentEvent {
-                                Text("Current: \(current.title ?? "Untitled") ends \(calManager.formatEventTime(current.endDate))")
-                                    .font(.system(size: 9))
-                                    .foregroundColor(.green)
-                            } else {
-                                Text("Current: No meeting detected")
-                                    .font(.system(size: 9))
-                                    .foregroundColor(.red)
-                            }
-                            
-                            if let next = calManager.nextEvent {
-                                Text("Next: \(next.title ?? "Untitled") at \(calManager.formatEventTime(next.startDate))")
-                                    .font(.system(size: 9))
-                                    .foregroundColor(.blue)
-                            } else {
-                                Text("Next: No upcoming events")
-                                    .font(.system(size: 9))
-                                    .foregroundColor(.gray)
-                            }
-                            
-                            // Show all events we can see
-                            let allEvents = calManager.getTodaysMeetings()
-                            Text("Total events today: \(allEvents.count)")
-                                .font(.system(size: 9))
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.orange.opacity(0.1))
-                        )
-                        .padding(.horizontal, 12)
                         
                         if let nextEvent = calManager.nextEvent,
                            let timeUntil = calManager.timeUntilNextEvent {
@@ -348,7 +312,7 @@ struct MenuView: View {
                 }
                 
                 // Countdown Display
-                if !manager.isPaused && !(manager.calendarManager?.isInMeeting ?? false) {
+                if !manager.isPaused {
                     VStack(spacing: 4) {
                         Text("Next reminder in")
                             .font(.system(size: 11, weight: .regular, design: .rounded))
