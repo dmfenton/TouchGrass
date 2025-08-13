@@ -48,6 +48,8 @@ final class ReminderManager: ObservableObject {
     @Published var adaptiveIntervalEnabled: Bool = true { didSet { saveSettings() } }
     @Published var hasActiveReminder = false  // New: indicates a reminder is waiting
     @Published var isTouchGrassModeActive = false  // Track if touch grass mode is open
+    @Published var smartSchedulingEnabled: Bool = true { didSet { saveSettings() } }
+    @Published var lastMeetingEndTime: Date? = nil
     
     // Water tracking
     @Published var waterTrackingEnabled: Bool = true { didSet { saveSettings() } }
@@ -62,9 +64,11 @@ final class ReminderManager: ObservableObject {
     
     private var timerCancellable: AnyCancellable?
     private var countdownCancellable: AnyCancellable?
+    private var meetingMonitorCancellable: AnyCancellable?
     private let window = ReminderWindowController()
     private let exerciseWindow = ExerciseWindowController()
     private var nextFireDate = Date().addingTimeInterval(45 * 60)
+    private var wasInMeeting = false
     
     // Work hours manager
     private let workHoursManager = WorkHoursManager()
@@ -97,6 +101,7 @@ final class ReminderManager: ObservableObject {
     private let workStartHourKey = "TouchGrass.workStartHour"
     private let workEndHourKey = "TouchGrass.workEndHour"
     private let startsAtLoginKey = "TouchGrass.startsAtLogin"
+    private let smartSchedulingKey = "TouchGrass.smartSchedulingEnabled"
 
     // MARK: - Public actions
     func pause() { 
@@ -221,6 +226,9 @@ final class ReminderManager: ObservableObject {
         // Check if it's a new day
         if let lastWaterDate = defaults.object(forKey: lastWaterDateKey) as? Date {
             if !calendar.isDateInToday(lastWaterDate) {
+                // Save yesterday's intake before resetting
+                defaults.set(currentWaterIntake, forKey: "TouchGrass.yesterdayWaterIntake")
+                
                 // Reset water intake for new day
                 currentWaterIntake = 0
                 dailyWaterOz = 0
@@ -233,10 +241,15 @@ final class ReminderManager: ObservableObject {
                         defaults.set(0, forKey: waterStreakKey)
                     }
                 }
+                
+                // Update the last water date to today
+                defaults.set(Date(), forKey: lastWaterDateKey)
             }
+            // else: Same day - keep existing water intake values (already loaded from loadSettings)
         } else {
-            // First run - initialize date
+            // First run - initialize date but keep any existing water data
             defaults.set(Date(), forKey: lastWaterDateKey)
+            // Don't reset water intake here - it was already loaded from loadSettings
         }
     }
     
@@ -282,6 +295,134 @@ final class ReminderManager: ObservableObject {
         self.calendarManager?.workStartMinute = workHoursManager.currentWorkStartMinute
         self.calendarManager?.workEndHour = workHoursManager.currentWorkEndHour
         self.calendarManager?.workEndMinute = workHoursManager.currentWorkEndMinute
+        
+        // Start monitoring meetings for smart scheduling
+        startMeetingMonitoring()
+    }
+    
+    // MARK: - Smart Meeting Monitoring
+    private func startMeetingMonitoring() {
+        guard smartSchedulingEnabled else { return }
+        
+        // Monitor calendar changes every 15 minutes (4 times per hour)
+        let publisher = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
+        meetingMonitorCancellable = publisher.sink { [weak self] _ in
+            self?.checkMeetingTransitions()
+        }
+    }
+    
+    private func checkMeetingTransitions() {
+        guard let calManager = calendarManager,
+              smartSchedulingEnabled,
+              !isPaused else { return }
+        
+        // Update calendar state
+        calManager.updateCurrentAndNextEvents()
+        
+        let isCurrentlyInMeeting = calManager.isInMeeting
+        let now = Date()
+        
+        // Detect meeting end transition
+        if wasInMeeting && !isCurrentlyInMeeting {
+            // Meeting just ended!
+            lastMeetingEndTime = now
+            
+            // Check if there's a meaningful gap before next meeting
+            if let nextEvent = calManager.nextEvent,
+               let nextStartTime = nextEvent.startDate {
+                let gapDuration = nextStartTime.timeIntervalSince(now)
+                
+                // Only trigger if there's at least 10 minutes free
+                if gapDuration >= 600 {
+                    triggerSmartReminder(reason: "Meeting ended - perfect time to touch grass!")
+                }
+                // Don't trigger for short gaps - let the regular timer handle those
+            } else {
+                // No upcoming meetings - definitely time to touch grass!
+                triggerSmartReminder(reason: "Meetings done - time to touch grass!")
+            }
+        }
+        
+        // Check for long meeting stretches ending (only if we're actually free now)
+        if !isCurrentlyInMeeting && lastMeetingEndTime == nil {
+            // Not in a meeting and haven't tracked an end time yet
+            // Check if we just emerged from a long stretch of meetings
+            let meetings = calManager.getTodaysMeetings()
+            if let lastEndedMeeting = meetings.last(where: { 
+                ($0.endDate ?? Date.distantPast) <= now && 
+                ($0.endDate ?? Date.distantPast) > now.addingTimeInterval(-900) 
+            }) {
+                // A meeting ended in the last 15 minutes
+                if let endDate = lastEndedMeeting.endDate {
+                    lastMeetingEndTime = endDate
+                    
+                    // Only trigger if we have significant free time ahead
+                    if let nextEvent = calManager.nextEvent,
+                       let nextStartTime = nextEvent.startDate {
+                        let gapDuration = nextStartTime.timeIntervalSince(now)
+                        if gapDuration >= 600 {
+                            // Count how many back-to-back meetings just ended
+                            var consecutiveMeetings = 1
+                            var checkTime = lastEndedMeeting.startDate ?? now
+                            
+                            for meeting in meetings.reversed() {
+                                guard let meetingEnd = meeting.endDate,
+                                      let meetingStart = meeting.startDate,
+                                      meeting != lastEndedMeeting else { continue }
+                                
+                                // Check if this meeting was back-to-back with the previous one
+                                if abs(meetingEnd.timeIntervalSince(checkTime)) < 300 {
+                                    consecutiveMeetings += 1
+                                    checkTime = meetingStart
+                                } else {
+                                    break
+                                }
+                            }
+                            
+                            if consecutiveMeetings >= 2 {
+                                triggerSmartReminder(reason: "Back-to-back meetings ended - time for a break!")
+                            }
+                        }
+                    } else {
+                        // No more meetings today - trigger reminder
+                        triggerSmartReminder(reason: "Meetings done for now - time to touch grass!")
+                    }
+                }
+            }
+        }
+        
+        // Update state for next check
+        wasInMeeting = isCurrentlyInMeeting
+    }
+    
+    private func triggerSmartReminder(reason: String) {
+        // Don't trigger if we already have an active reminder or just showed one
+        guard !hasActiveReminder else { return }
+        
+        // Check if enough time has passed since last reminder
+        let timeSinceLastReminder = Date().timeIntervalSince(nextFireDate.addingTimeInterval(-intervalMinutes * 60))
+        guard timeSinceLastReminder >= 900 else { return } // At least 15 minutes since last reminder
+        
+        // Set the active reminder flag and notify
+        hasActiveReminder = true
+        NSSound.beep()
+        
+        // Send a smart notification with the reason
+        let content = UNMutableNotificationContent()
+        content.title = "Time to touch grass!"
+        content.body = reason
+        content.sound = .default
+        
+        let request = UNNotificationRequest(
+            identifier: "smart-reminder-\(UUID().uuidString)",
+            content: content,
+            trigger: nil
+        )
+        
+        UNUserNotificationCenter.current().add(request) { _ in }
+        
+        // Reset the regular schedule
+        scheduleNextTick()
     }
 
     // MARK: - Settings Persistence
@@ -291,6 +432,7 @@ final class ReminderManager: ObservableObject {
         bestStreak = defaults.integer(forKey: bestStreakKey)
         intervalMinutes = defaults.double(forKey: intervalKey) > 0 ? defaults.double(forKey: intervalKey) : 45
         adaptiveIntervalEnabled = defaults.object(forKey: adaptiveKey) as? Bool ?? true
+        smartSchedulingEnabled = defaults.object(forKey: smartSchedulingKey) as? Bool ?? true
         
         // Load water settings
         waterTrackingEnabled = defaults.object(forKey: waterEnabledKey) as? Bool ?? true
@@ -301,6 +443,16 @@ final class ReminderManager: ObservableObject {
             waterUnit = unit
         }
         waterStreak = defaults.integer(forKey: waterStreakKey)
+        
+        // Sync dailyWaterOz based on loaded water intake and unit
+        switch waterUnit {
+        case .glasses:
+            dailyWaterOz = currentWaterIntake * 8
+        case .ounces:
+            dailyWaterOz = currentWaterIntake
+        case .milliliters:
+            dailyWaterOz = Int(Double(currentWaterIntake) / 29.5735)
+        }
         
         // Load work hours
         let startHour = defaults.object(forKey: workStartHourKey) as? Int ?? 9
@@ -332,6 +484,7 @@ final class ReminderManager: ObservableObject {
         defaults.set(bestStreak, forKey: bestStreakKey)
         defaults.set(intervalMinutes, forKey: intervalKey)
         defaults.set(adaptiveIntervalEnabled, forKey: adaptiveKey)
+        defaults.set(smartSchedulingEnabled, forKey: smartSchedulingKey)
         
         // Save water settings
         defaults.set(waterTrackingEnabled, forKey: waterEnabledKey)

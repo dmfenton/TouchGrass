@@ -4,6 +4,7 @@ import SwiftUI
 struct TouchGrassApp: App {
     @StateObject private var manager = ReminderManager()
     private var onboardingWindow: TouchGrassOnboardingController?
+    @State private var touchGrassController = TouchGrassModeController()
 
     init() {
         // Check for onboarding after a short delay to let the app fully initialize
@@ -17,11 +18,136 @@ struct TouchGrassApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            MenuView(manager: manager)
+            if manager.hasActiveReminder {
+                TouchGrassQuickView(manager: manager)
+            } else {
+                MenuView(manager: manager)
+            }
         } label: {
             GrassIcon(isActive: manager.hasActiveReminder, size: 20)
         }
         .menuBarExtraStyle(.window)
+    }
+}
+
+struct TouchGrassQuickView: View {
+    @ObservedObject var manager: ReminderManager
+    @State private var touchGrassController = TouchGrassModeController()
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            // Touch Grass Mode
+            VStack(spacing: 16) {
+                // Header with icon
+                HStack {
+                    GrassIcon(isActive: true, size: 24)
+                    Text("Time to Touch Grass!")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                }
+                .padding(.top, 16)
+                
+                // Message
+                Text(Messages.composed())
+                    .font(.system(size: 14))
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 20)
+                
+                // Action buttons
+                VStack(spacing: 8) {
+                    Button(action: {
+                        manager.completeBreak()
+                        NSApplication.shared.keyWindow?.close()
+                    }) {
+                        Label("I touched grass!", systemImage: "checkmark.circle.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.green)
+                            )
+                            .foregroundColor(.white)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    HStack(spacing: 8) {
+                        Button(action: {
+                            manager.snoozeReminder()
+                            NSApplication.shared.keyWindow?.close()
+                        }) {
+                            Text("5 min")
+                                .font(.system(size: 13, weight: .medium))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.orange.opacity(0.15))
+                                )
+                                .foregroundColor(.orange)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                        
+                        Button(action: {
+                            manager.snooze(minutes: 10)
+                            manager.hasActiveReminder = false
+                            NSApplication.shared.keyWindow?.close()
+                        }) {
+                            Text("10 min")
+                                .font(.system(size: 13, weight: .medium))
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.orange.opacity(0.15))
+                                )
+                                .foregroundColor(.orange)
+                        }
+                        .buttonStyle(PlainButtonStyle())
+                    }
+                    
+                    Button(action: {
+                        touchGrassController.show(manager: manager)
+                        NSApplication.shared.keyWindow?.close()
+                    }) {
+                        Label("Open Touch Grass Mode", systemImage: "leaf.circle")
+                            .font(.system(size: 13, weight: .medium))
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.green, lineWidth: 1)
+                            )
+                            .foregroundColor(.green)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
+            }
+            
+            Divider()
+            
+            // Quick access to regular menu
+            Button(action: {
+                manager.hasActiveReminder = false
+                // This will cause the menu to refresh and show the regular menu
+            }) {
+                HStack {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 11))
+                    Text("Back to Menu")
+                        .font(.system(size: 12))
+                    Spacer()
+                }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+            .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+        }
+        .frame(width: 280)
     }
 }
 
@@ -55,34 +181,6 @@ struct MenuView: View {
     @ViewBuilder
     var mainMenuContent: some View {
         VStack(spacing: 0) {
-            // Active reminder notification
-            if manager.hasActiveReminder {
-                Button(action: { manager.showReminder() }) {
-                    HStack(spacing: 8) {
-                        GrassIcon(isActive: true, size: 16)
-                        Text("Time to Touch Grass!")
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
-                            .foregroundColor(.white)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.white.opacity(0.8))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 10)
-                    .background(
-                        LinearGradient(
-                            colors: [Color.orange, Color.orange.opacity(0.8)],
-                            startPoint: .leading,
-                            endPoint: .trailing
-                        )
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-                
-                Divider()
-            }
-            
             // Header
             VStack(spacing: 8) {
                 HStack {
@@ -90,7 +188,7 @@ struct MenuView: View {
                     Text("Touch Grass")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                 }
-                .padding(.top, manager.hasActiveReminder ? 8 : 12)
+                .padding(.top, 12)
                 
                 // Streak Display
                 if manager.currentStreak > 0 || manager.bestStreak > 0 {
@@ -340,15 +438,18 @@ struct MenuView: View {
             
             // Quick Actions
             VStack(spacing: 1) {
-                if !manager.hasActiveReminder {
-                    MenuButton(
-                        icon: "bell.badge",
-                        title: "Check Posture Now",
-                        action: { manager.showReminder() },
-                        isHovered: hoveredItem == "now",
-                        onHover: { hoveredItem = $0 ? "now" : nil }
-                    )
-                }
+                MenuButton(
+                    icon: "leaf.circle",
+                    title: "Take a Break",
+                    action: { 
+                        let touchGrassController = TouchGrassModeController()
+                        touchGrassController.show(manager: manager)
+                        NSApplication.shared.keyWindow?.close()
+                    },
+                    isHovered: hoveredItem == "break",
+                    onHover: { hoveredItem = $0 ? "break" : nil },
+                    tintColor: .green
+                )
                 
                 if manager.isPaused {
                     MenuButton(

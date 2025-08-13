@@ -238,6 +238,8 @@
 				B71234561234567812345678 /* TouchGrassApp.swift in Sources */,
 				B71234581234567812345678 /* Messages.swift in Sources */,
 				B712345A1234567812345678 /* ReminderWindow.swift in Sources */,
+				30B479FBA504482A8F7BA75A /* TouchGrassMode.swift in Sources */,
+				9B600EA7FC6E4925ABA45DA0 /* TouchGrassModeController.swift in Sources */,
 				B712345C1234567812345678 /* ReminderWindowController.swift in Sources */,
 				B712345E1234567812345678 /* ReminderManager.swift in Sources */,
 				B71234641234567812345681 /* Exercise.swift in Sources */,
