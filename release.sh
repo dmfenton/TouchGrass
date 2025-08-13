@@ -119,7 +119,7 @@ rm -f "$DMG_NAME"  # Remove old DMG if exists
 
 create-dmg \
     --volname "Touch Grass v${VERSION}" \
-    --volicon "build/Release/Touch Grass.app/Contents/Resources/AppIcon.icns" \
+    --volicon "AppIcon.icns" \
     --window-pos 200 120 \
     --window-size 600 400 \
     --icon-size 100 \
