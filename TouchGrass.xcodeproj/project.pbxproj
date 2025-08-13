@@ -32,6 +32,7 @@
 		FAEA9482E01940C893C79D20 /* CustomizationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 532EED0C08484F01BE4834E7 /* CustomizationWindowController.swift */; };
 		30B479FBA504482A8F7BA75A /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BE8D81285A44548A10D308 /* TouchGrassMode.swift */; };
 		9B600EA7FC6E4925ABA45DA0 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4577B53971344178DBF81FC /* TouchGrassModeController.swift */; };
+		ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = ABCDEF1234567890ABCDEF12 /* AppIcon.icns */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -62,6 +63,7 @@
 		532EED0C08484F01BE4834E7 /* CustomizationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CustomizationWindowController.swift"; sourceTree = "<group>"; };
 		18BE8D81285A44548A10D308 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
 		D4577B53971344178DBF81FC /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
+		ABCDEF1234567890ABCDEF12 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,7 +224,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			);
+			
+				ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */,);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
@@ -418,10 +421,7 @@
 		};
 		B71234641234567812345678 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+			buildSettings = {				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;
@@ -443,10 +443,7 @@
 		};
 		B71234651234567812345678 /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+			buildSettings = {				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
 				ENABLE_PREVIEWS = YES;

@@ -112,17 +112,14 @@ if [ ! -d "build/Release/Touch Grass.app" ]; then
     exit 1
 fi
 
-# Copy icon to app bundle
-if [ -f "AppIcon.icns" ]; then
-    print_status "Adding app icon to bundle..."
-    mkdir -p "build/Release/Touch Grass.app/Contents/Resources/"
-    cp AppIcon.icns "build/Release/Touch Grass.app/Contents/Resources/"
-fi
-
 # 6. Create DMG installer
 print_status "Creating DMG installer..."
 DMG_NAME="Touch-Grass-v${VERSION}.dmg"
 rm -f "$DMG_NAME"  # Remove old DMG if exists
+
+# Create a temporary directory for DMG contents
+TEMP_DMG_DIR=$(mktemp -d)
+cp -R "build/Release/Touch Grass.app" "$TEMP_DMG_DIR/"
 
 create-dmg \
     --volname "Touch Grass v${VERSION}" \
@@ -134,7 +131,10 @@ create-dmg \
     --app-drop-link 450 185 \
     --hide-extension "Touch Grass.app" \
     "$DMG_NAME" \
-    "build/Release/"
+    "$TEMP_DMG_DIR"
+
+# Clean up temp directory
+rm -rf "$TEMP_DMG_DIR"
 
 if [ ! -f "$DMG_NAME" ]; then
     print_error "Failed to create DMG"
