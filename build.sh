@@ -24,6 +24,13 @@ xcodebuild -project TouchGrass.xcodeproj \
 if [ $? -eq 0 ]; then
     echo "✅ Build successful!"
     
+    # Copy icon to app bundle
+    if [ -f "AppIcon.icns" ]; then
+        echo "Adding app icon..."
+        mkdir -p "build/Release/Touch Grass.app/Contents/Resources/"
+        cp AppIcon.icns "build/Release/Touch Grass.app/Contents/Resources/"
+    fi
+    
     # Kill existing app if running
     killall "Touch Grass" 2>/dev/null || true
     
