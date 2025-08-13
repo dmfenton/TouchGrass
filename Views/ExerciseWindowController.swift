@@ -12,6 +12,7 @@ class ExerciseWindowController: NSObject {
             createWindow()
         }
         
+        // For quick reset and other specific sets, ensure we start directly
         updateWindowContent(exerciseSet)
         window?.makeKeyAndOrderFront(nil)
         window?.center()
@@ -66,27 +67,22 @@ class ExerciseWindowController: NSObject {
     }
 }
 
-// Wrapper view for exercise window
+// Wrapper view for exercise window - now always shows the exercise set directly
 struct ExerciseWindowView: View {
     let exerciseSet: ExerciseSet
     let onClose: () -> Void
-    @State private var selectedExercise: Exercise?
+    @State private var currentExerciseIndex: Int = 0
     
     init(exerciseSet: ExerciseSet, onClose: @escaping () -> Void) {
         self.exerciseSet = exerciseSet
         self.onClose = onClose
-        // If it's a single exercise set, show it directly
-        if exerciseSet.exercises.count == 1 {
-            self._selectedExercise = State(initialValue: exerciseSet.exercises.first)
-        }
     }
     
     var body: some View {
         VStack(spacing: 0) {
             // Header
             HStack {
-                Text(selectedExercise != nil && exerciseSet.exercises.count == 1 ? 
-                     exerciseSet.name : "Guided Exercises")
+                Text(exerciseSet.name)
                     .font(.title2)
                     .fontWeight(.semibold)
                 
@@ -104,144 +100,46 @@ struct ExerciseWindowView: View {
             
             Divider()
             
-            if let exercise = selectedExercise {
-                // Show individual exercise with full controls
-                VStack(spacing: 0) {
-                    // Only show back button if there are multiple exercises to choose from
-                    if exerciseSet.exercises.count > 1 {
-                        HStack {
+            // Always show the exercise set directly - no selection menu
+            VStack(spacing: 0) {
+                // Show progress if multiple exercises
+                if exerciseSet.exercises.count > 1 {
+                    HStack {
+                        Text("Exercise \(currentExerciseIndex + 1) of \(exerciseSet.exercises.count)")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        // Next button to move through exercises
+                        if currentExerciseIndex < exerciseSet.exercises.count - 1 {
                             Button(action: {
-                                selectedExercise = nil
-                            }, label: {
+                                currentExerciseIndex = min(currentExerciseIndex + 1, exerciseSet.exercises.count - 1)
+                            }) {
                                 HStack(spacing: 4) {
-                                    Image(systemName: "chevron.left")
-                                    Text("Back to exercises")
+                                    Text("Next")
+                                    Image(systemName: "chevron.right")
                                 }
-                                .foregroundColor(.secondary)
-                            })
+                                .foregroundColor(.blue)
+                            }
                             .buttonStyle(PlainButtonStyle())
-                            .padding()
-                            
-                            Spacer()
+                        } else {
+                            Button(action: onClose) {
+                                Text("Complete")
+                                    .foregroundColor(.green)
+                            }
+                            .buttonStyle(PlainButtonStyle())
                         }
                     }
-                    
-                    ExerciseView(exercise: exercise)
-                        .padding(.top, exerciseSet.exercises.count == 1 ? 0 : -20) // Adjust spacing
+                    .padding()
                 }
-            } else {
-                // Show exercise list
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // Quick exercise sets
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Exercise Sets")
-                                .font(.headline)
-                                .padding(.horizontal)
-                            
-                            ForEach(ExerciseData.allExerciseSets) { set in
-                                Button(action: {
-                                    if set.exercises.count == 1 {
-                                        selectedExercise = set.exercises.first
-                                    } else {
-                                        // For multi-exercise sets, show the first one
-                                        // You could enhance this to show a set view
-                                        selectedExercise = set.exercises.first
-                                    }
-                                }, label: {
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(set.name)
-                                                .font(.body)
-                                                .fontWeight(.medium)
-                                            Text(set.description)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Label("\(set.duration / 60):\(String(format: "%02d", set.duration % 60))", 
-                                              systemImage: "clock")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        
-                                        Image(systemName: "chevron.right")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    .padding(.horizontal)
-                                    .padding(.vertical, 8)
-                                    .background(Color(NSColor.controlBackgroundColor))
-                                    .cornerRadius(8)
-                                })
-                                .buttonStyle(PlainButtonStyle())
-                                .padding(.horizontal)
-                            }
-                        }
-                        
-                        Divider()
-                            .padding(.vertical)
-                        
-                        // Individual exercises
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Individual Exercises")
-                                .font(.headline)
-                                .padding(.horizontal)
-                            
-                            ForEach(ExerciseData.coreExercises) { exercise in
-                                Button(action: {
-                                    selectedExercise = exercise
-                                }, label: {
-                                    HStack {
-                                        VStack(alignment: .leading, spacing: 4) {
-                                            Text(exercise.name)
-                                                .font(.body)
-                                                .fontWeight(.medium)
-                                            Text(exercise.targetArea)
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        
-                                        Spacer()
-                                        
-                                        Label(exercise.category.rawValue, 
-                                              systemImage: categoryIcon(for: exercise.category))
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                        
-                                        Image(systemName: "chevron.right")
-                                            .font(.caption)
-                                            .foregroundColor(.secondary)
-                                    }
-                                    .padding(.horizontal)
-                                    .padding(.vertical, 8)
-                                    .background(Color(NSColor.controlBackgroundColor))
-                                    .cornerRadius(8)
-                                })
-                                .buttonStyle(PlainButtonStyle())
-                                .padding(.horizontal)
-                            }
-                        }
-                    }
-                    .padding(.vertical)
+                
+                // Show current exercise
+                if currentExerciseIndex < exerciseSet.exercises.count {
+                    ExerciseView(exercise: exerciseSet.exercises[currentExerciseIndex])
+                        .padding(.top, exerciseSet.exercises.count == 1 ? 0 : -20)
                 }
             }
-        }
-        .frame(width: 520, height: 700)
-        .background(Color(NSColor.windowBackgroundColor))
-    }
-    
-    private func categoryIcon(for category: Exercise.ExerciseCategory) -> String {
-        switch category {
-        case .stretch:
-            return "arrow.up.and.down.and.arrow.left.and.right"
-        case .strengthen:
-            return "dumbbell.fill"
-        case .mobilize:
-            return "arrow.trianglehead.2.clockwise.rotate.90"
-        case .quickReset:
-            return "arrow.clockwise"
         }
     }
 }

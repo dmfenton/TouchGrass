@@ -117,4 +117,10 @@ Icon
 .AppleDesktop
 Network Trash Folder
 Temporary Items
-.apdiskreleases/
+.apdisk
+
+# Release artifacts
+releases/
+*.dmg
+*.zip
+SHA256SUMS.txt
