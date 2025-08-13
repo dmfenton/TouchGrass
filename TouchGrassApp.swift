@@ -155,6 +155,7 @@ struct MenuView: View {
     @ObservedObject var manager: ReminderManager
     @State private var hoveredItem: String? = nil
     @State private var customizationWindow: CustomizationWindowController?
+    @State private var touchGrassController: TouchGrassModeController?
     
     var nextReminderText: String {
         let totalSeconds = Int(manager.timeUntilNextReminder)
@@ -442,8 +443,10 @@ struct MenuView: View {
                     icon: "leaf.circle",
                     title: "Take a Break",
                     action: { 
-                        let touchGrassController = TouchGrassModeController()
-                        touchGrassController.show(manager: manager)
+                        if touchGrassController == nil {
+                            touchGrassController = TouchGrassModeController()
+                        }
+                        touchGrassController?.show(manager: manager)
                         NSApplication.shared.keyWindow?.close()
                     },
                     isHovered: hoveredItem == "break",
