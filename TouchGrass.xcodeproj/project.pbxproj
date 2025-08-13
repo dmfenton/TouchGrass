@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		B71234561234567812345678 /* TouchGrassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234551234567812345678 /* TouchGrassApp.swift */; };
 		B71234581234567812345678 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234571234567812345678 /* Messages.swift */; };
-		B712345A1234567812345678 /* ReminderWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234591234567812345678 /* ReminderWindow.swift */; };
-		B712345C1234567812345678 /* ReminderWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B712345B1234567812345678 /* ReminderWindowController.swift */; };
 		B712345E1234567812345678 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B712345D1234567812345678 /* ReminderManager.swift */; };
 		B71234641234567812345681 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234601234567812345679 /* Exercise.swift */; };
 		B71234661234567812345682 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234621234567812345680 /* ExerciseView.swift */; };
@@ -39,8 +37,6 @@
 		B71234501234567812345678 /* Touch Grass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Touch Grass.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B71234551234567812345678 /* TouchGrassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassApp.swift; sourceTree = "<group>"; };
 		B71234571234567812345678 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Messages.swift"; sourceTree = "<group>"; };
-		B71234591234567812345678 /* ReminderWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ReminderWindow.swift"; sourceTree = "<group>"; };
-		B712345B1234567812345678 /* ReminderWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ReminderWindowController.swift"; sourceTree = "<group>"; };
 		B712345D1234567812345678 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/ReminderManager.swift"; sourceTree = "<group>"; };
 		B71234601234567812345679 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Exercise.swift"; sourceTree = "<group>"; };
 		B71234621234567812345680 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseView.swift"; sourceTree = "<group>"; };
@@ -100,8 +96,6 @@
 				B712345D1234567812345678 /* ReminderManager.swift */,
 				B71234571234567812345678 /* Messages.swift */,
 				B71234601234567812345679 /* Exercise.swift */,
-				B71234591234567812345678 /* ReminderWindow.swift */,
-				B712345B1234567812345678 /* ReminderWindowController.swift */,
 				B71234621234567812345680 /* ExerciseView.swift */,
 				B71234671234567812345683 /* ExerciseWindowController.swift */,
 				4239FA02D00C4A588C9D3F52 /* SimpleOnboardingWindow.swift */,
@@ -237,10 +231,8 @@
 			files = (
 				B71234561234567812345678 /* TouchGrassApp.swift in Sources */,
 				B71234581234567812345678 /* Messages.swift in Sources */,
-				B712345A1234567812345678 /* ReminderWindow.swift in Sources */,
 				30B479FBA504482A8F7BA75A /* TouchGrassMode.swift in Sources */,
 				9B600EA7FC6E4925ABA45DA0 /* TouchGrassModeController.swift in Sources */,
-				B712345C1234567812345678 /* ReminderWindowController.swift in Sources */,
 				B712345E1234567812345678 /* ReminderManager.swift in Sources */,
 				B71234641234567812345681 /* Exercise.swift in Sources */,
 				B71234661234567812345682 /* ExerciseView.swift in Sources */,

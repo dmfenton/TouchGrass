@@ -6,6 +6,10 @@ struct TouchGrassMode: View {
     @State private var showingCompletion = false
     @State private var completedActivity: String? = nil
     
+    private func closeMenuBar() {
+        NSApplication.shared.keyWindow?.close()
+    }
+    
     // Simplified to 4 main options with minimal colors
     let activities: [(icon: String, name: String, color: Color, isGuided: Bool)] = [
         ("leaf.circle", "Touch Grass", Color.primary, false),
@@ -53,6 +57,7 @@ struct TouchGrassMode: View {
         
         // Auto-close after showing completion
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            closeMenuBar()
             dismiss()
         }
     }
@@ -264,6 +269,7 @@ struct TouchGrassMode: View {
                 HStack(spacing: 12) {
                     Button(action: {
                         reminderManager.snoozeReminder()
+                        closeMenuBar()
                         dismiss()
                     }) {
                         HStack(spacing: 6) {
@@ -285,6 +291,9 @@ struct TouchGrassMode: View {
                     Spacer()
                     
                     Button(action: {
+                        reminderManager.hasActiveReminder = false
+                        reminderManager.scheduleNextTick()
+                        closeMenuBar()
                         dismiss()
                     }) {
                         Text("Skip for now")

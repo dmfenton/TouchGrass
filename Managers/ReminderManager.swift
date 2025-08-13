@@ -65,7 +65,6 @@ final class ReminderManager: ObservableObject {
     private var timerCancellable: AnyCancellable?
     private var countdownCancellable: AnyCancellable?
     private var meetingMonitorCancellable: AnyCancellable?
-    private let window = ReminderWindowController()
     private let exerciseWindow = ExerciseWindowController()
     private var nextFireDate = Date().addingTimeInterval(45 * 60)
     private var wasInMeeting = false
@@ -617,7 +616,7 @@ final class ReminderManager: ObservableObject {
         schedule(at: now.addingTimeInterval(secondsUntilNext))
     }
     
-    private func scheduleNextTick() {
+    func scheduleNextTick() {
         scheduleAtFixedInterval()
     }
 
