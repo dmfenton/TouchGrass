@@ -130,28 +130,60 @@ struct MenuView: View {
                             RoundedRectangle(cornerRadius: 8)
                                 .fill(Color.red.opacity(0.08))
                         )
-                    } else if let freeSlot = calManager.nextFreeSlot(minimumDuration: 600),
-                              freeSlot.start.timeIntervalSinceNow < 60 {
-                        // Free right now - highlight opportunity
-                        HStack(spacing: 8) {
-                            Image(systemName: "leaf.circle.fill")
-                                .font(.system(size: 14))
-                                .foregroundColor(.green)
-                            Text("Free now - perfect time to touch grass!")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.green)
+                    } else if !calManager.isInMeeting {
+                        // Not in meeting - show free time block
+                        if let _ = calManager.nextEvent,
+                           let timeUntil = calManager.timeUntilNextEvent {
+                            // Free time before next meeting
+                            HStack(spacing: 8) {
+                                Image(systemName: "leaf.circle.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.green)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Free for \(calManager.formatTimeUntilEvent(timeUntil))")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.green)
+                                    if timeUntil >= 1800 {
+                                        Text("Perfect for a walk outside!")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(.secondary)
+                                    } else if timeUntil >= 600 {
+                                        Text("Time for fresh air")
+                                            .font(.system(size: 10))
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                                Spacer()
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.green.opacity(0.1))
+                            )
+                        } else {
+                            // No meetings scheduled - free all day
+                            HStack(spacing: 8) {
+                                Image(systemName: "leaf.circle.fill")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.green)
+                                Text("No meetings today - enjoy the freedom!")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.green)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 8)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.green.opacity(0.1))
+                            )
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(Color.green.opacity(0.1))
-                        )
                     }
                     
-                    // Next event (always show if exists)
+                    // Next event (show if exists and not already shown in free block)
                     if let nextEvent = calManager.nextEvent,
-                       let timeUntil = calManager.timeUntilNextEvent {
+                       let timeUntil = calManager.timeUntilNextEvent,
+                       calManager.isInMeeting {
                         HStack(spacing: 8) {
                             Image(systemName: "calendar")
                                 .font(.system(size: 11))

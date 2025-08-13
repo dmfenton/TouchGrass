@@ -52,6 +52,21 @@ enum ExerciseData {
         targetArea: "Neck and upper cervical spine"
     )
     
+    static let chinTuckQuick = Exercise(
+        id: "chin-tuck-quick",
+        name: "Quick Chin Tucks",
+        duration: 15,
+        category: .strengthen,
+        instructions: [
+            "Draw your chin straight back",
+            "Hold for 3 seconds",
+            "Release to neutral",
+            "Repeat 3-5 times"
+        ],
+        benefits: "Quick posture reset for forward head position",
+        targetArea: "Neck and upper cervical spine"
+    )
+    
     static let scapularRetraction = Exercise(
         id: "scapular-retraction",
         name: "Scapular Retraction",
@@ -67,6 +82,21 @@ enum ExerciseData {
             "Repeat 10-15 times"
         ],
         benefits: "Strengthens mid-back muscles, improves upper back posture",
+        targetArea: "Rhomboids and middle trapezius"
+    )
+    
+    static let scapularRetractionQuick = Exercise(
+        id: "scapular-retraction-quick",
+        name: "Quick Shoulder Blade Squeeze",
+        duration: 15,
+        category: .strengthen,
+        instructions: [
+            "Squeeze shoulder blades together",
+            "Hold for 3 seconds",
+            "Release",
+            "Repeat 3-5 times"
+        ],
+        benefits: "Quick reset for rounded shoulders",
         targetArea: "Rhomboids and middle trapezius"
     )
     
@@ -214,10 +244,10 @@ enum ExerciseData {
     // Exercise Sets for different time constraints
     static let quickReset = ExerciseSet(
         id: "quick-reset",
-        name: "Posture Reset Sequence",
-        duration: 90,
-        exercises: [chinTuck, scapularRetraction],
-        description: "Essential exercises to reset your posture"
+        name: "30-Second Posture Reset",
+        duration: 30,
+        exercises: [chinTuckQuick, scapularRetractionQuick],
+        description: "Quick posture reset in 30 seconds"
     )
     
     static let quickMovement = ExerciseSet(
