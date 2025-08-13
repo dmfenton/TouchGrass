@@ -123,6 +123,11 @@ final class ReminderManager: ObservableObject {
         openReminderWindow()
     }
     
+    func showTouchGrassMode() {
+        let touchGrassController = TouchGrassModeController()
+        touchGrassController.show(manager: self)
+    }
+    
     func showExercises() {
         exerciseWindow.showLastExercise()
     }

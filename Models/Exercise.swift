@@ -161,6 +161,56 @@ enum ExerciseData {
         targetArea: "Thoracic spine"
     )
     
+    // Additional exercises for eyes and breathing
+    static let eyeExercise20_20_20 = Exercise(
+        id: "20-20-20",
+        name: "20-20-20 Rule",
+        duration: 30,
+        category: .quickReset,
+        instructions: [
+            "Look away from your screen",
+            "Focus on something 20 feet away",
+            "Hold your gaze for 20 seconds",
+            "Blink slowly several times",
+            "Return to your screen refreshed"
+        ],
+        benefits: "Reduces eye strain and fatigue",
+        targetArea: "Eyes and focus muscles"
+    )
+    
+    static let palming = Exercise(
+        id: "palming",
+        name: "Eye Palming",
+        duration: 30,
+        category: .quickReset,
+        instructions: [
+            "Rub your palms together to warm them",
+            "Cup your palms over closed eyes",
+            "Don't press on the eyeballs",
+            "Relax in the darkness for 30 seconds",
+            "Slowly remove hands and open eyes"
+        ],
+        benefits: "Relaxes eye muscles and reduces strain",
+        targetArea: "Eyes"
+    )
+    
+    static let deepBreathing = Exercise(
+        id: "deep-breathing",
+        name: "4-7-8 Breathing",
+        duration: 60,
+        category: .quickReset,
+        instructions: [
+            "Sit up straight with feet flat on floor",
+            "Exhale completely through your mouth",
+            "Close mouth, inhale through nose for 4 counts",
+            "Hold breath for 7 counts",
+            "Exhale through mouth for 8 counts",
+            "Repeat 3-4 times"
+        ],
+        benefits: "Reduces stress, improves oxygen flow, resets posture",
+        targetArea: "Respiratory system and nervous system"
+    )
+    
     // Exercise Sets for different time constraints
     static let quickReset = ExerciseSet(
         id: "quick-reset",
@@ -168,6 +218,22 @@ enum ExerciseData {
         duration: 30,
         exercises: [neckRolls],
         description: "Quick movement break for busy moments"
+    )
+    
+    static let eyeBreak = ExerciseSet(
+        id: "eye-break",
+        name: "Eye Relief Routine",
+        duration: 60,
+        exercises: [eyeExercise20_20_20, palming],
+        description: "Reduce eye strain from screen time"
+    )
+    
+    static let breathingExercise = ExerciseSet(
+        id: "breathing",
+        name: "Breathing & Relaxation",
+        duration: 60,
+        exercises: [deepBreathing],
+        description: "Reset your breathing and reduce stress"
     )
     
     static let oneMinuteBreak = ExerciseSet(
