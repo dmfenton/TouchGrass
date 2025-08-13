@@ -439,13 +439,13 @@ struct MenuView: View {
             // Quick Actions
             VStack(spacing: 1) {
                 MenuButton(
-                    icon: "leaf.circle",
-                    title: "Take a Break",
+                    icon: "leaf.circle.fill",
+                    title: "Touch Grass",
                     action: { 
                         manager.showTouchGrassMode()
                     },
-                    isHovered: hoveredItem == "break",
-                    onHover: { hoveredItem = $0 ? "break" : nil },
+                    isHovered: hoveredItem == "touch-grass",
+                    onHover: { hoveredItem = $0 ? "touch-grass" : nil },
                     tintColor: .green
                 )
                 
@@ -470,52 +470,6 @@ struct MenuView: View {
                 }
             }
             .padding(.vertical, 4)
-            
-            Divider()
-            
-            // Exercises Section
-            VStack(spacing: 4) {
-                Text("EXERCISES")
-                    .font(.system(size: 10, weight: .semibold, design: .rounded))
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                
-                MenuButton(
-                    icon: "figure.strengthtraining.traditional",
-                    title: manager.isExerciseWindowVisible() ? "Exercise Window Open" : "Open Exercises",
-                    action: { manager.showExercises() },
-                    isHovered: hoveredItem == "exercises",
-                    onHover: { hoveredItem = $0 ? "exercises" : nil },
-                    tintColor: manager.isExerciseWindowVisible() ? .green : .accentColor
-                )
-                
-                // Quick access to exercise sets
-                HStack(spacing: 4) {
-                    ForEach([
-                        ("30s", ExerciseData.quickReset),
-                        ("1m", ExerciseData.oneMinuteBreak),
-                        ("2m", ExerciseData.twoMinuteRoutine)
-                    ], id: \.0) { label, exerciseSet in
-                        Button(action: {
-                            manager.showExerciseSet(exerciseSet)
-                        }) {
-                            Text(label)
-                                .font(.system(size: 11, weight: .medium))
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 4)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(Color(NSColor.controlBackgroundColor))
-                                )
-                        }
-                        .buttonStyle(PlainButtonStyle())
-                    }
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 4)
-            }
             
             Divider()
             

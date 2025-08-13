@@ -22,6 +22,15 @@ final class CalendarManager: ObservableObject {
     var workEndHour: Int = 17
     var workEndMinute: Int = 0
     
+    // Use shared UserDefaults suite for persistence across builds
+    private let defaults: UserDefaults = {
+        if let suite = UserDefaults(suiteName: "com.touchgrass.shared") {
+            return suite
+        } else {
+            return UserDefaults.standard
+        }
+    }()
+    
     // UserDefaults keys
     private let selectedCalendarsKey = "TouchGrass.selectedCalendars"
     
@@ -65,13 +74,13 @@ final class CalendarManager: ObservableObject {
     }
     
     private func loadSelectedCalendars() {
-        if let saved = UserDefaults.standard.array(forKey: selectedCalendarsKey) as? [String] {
+        if let saved = defaults.array(forKey: selectedCalendarsKey) as? [String] {
             selectedCalendarIdentifiers = Set(saved)
         }
     }
     
     func saveSelectedCalendars() {
-        UserDefaults.standard.set(Array(selectedCalendarIdentifiers), forKey: selectedCalendarsKey)
+        defaults.set(Array(selectedCalendarIdentifiers), forKey: selectedCalendarsKey)
     }
     
     func toggleCalendar(_ calendar: EKCalendar) {

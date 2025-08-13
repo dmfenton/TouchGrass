@@ -86,6 +86,17 @@ final class ReminderManager: ObservableObject {
     private let maxInterval: Double = 45
     private let minInterval: Double = 30
     
+    // Use a shared UserDefaults suite that persists across bundle IDs
+    private let defaults: UserDefaults = {
+        // Use a consistent suite name that won't change with bundle ID
+        if let suite = UserDefaults(suiteName: "com.touchgrass.shared") {
+            return suite
+        } else {
+            // Fallback to standard if suite creation fails
+            return UserDefaults.standard
+        }
+    }()
+    
     // UserDefaults keys
     private let streakKey = "TouchGrass.currentStreak"
     private let bestStreakKey = "TouchGrass.bestStreak"
@@ -119,10 +130,6 @@ final class ReminderManager: ObservableObject {
         schedule(at: Date().addingTimeInterval(Double(minutes) * 60))
     }
     
-    func showReminder() { 
-        openReminderWindow()
-    }
-    
     func showTouchGrassMode() {
         let touchGrassController = TouchGrassModeController()
         touchGrassController.show(manager: self)
@@ -145,7 +152,7 @@ final class ReminderManager: ObservableObject {
         currentWaterIntake += amount
         
         // Save immediately to persist the change
-        UserDefaults.standard.set(currentWaterIntake, forKey: waterIntakeKey)
+        defaults.set(currentWaterIntake, forKey: waterIntakeKey)
         
         // Check if daily goal is met
         if currentWaterIntake >= dailyWaterGoal {
@@ -196,7 +203,6 @@ final class ReminderManager: ObservableObject {
     }
     
     private func updateWaterStreak() {
-        let defaults = UserDefaults.standard
         let calendar = Calendar.current
         let now = Date()
         
@@ -226,7 +232,6 @@ final class ReminderManager: ObservableObject {
     
     private func resetDailyWaterIntake() {
         let calendar = Calendar.current
-        let defaults = UserDefaults.standard
         
         // Check if it's a new day
         if let lastWaterDate = defaults.object(forKey: lastWaterDateKey) as? Date {
@@ -309,10 +314,28 @@ final class ReminderManager: ObservableObject {
     private func startMeetingMonitoring() {
         guard smartSchedulingEnabled else { return }
         
-        // Monitor calendar changes every 15 minutes (4 times per hour)
-        let publisher = Timer.publish(every: 900, on: .main, in: .common).autoconnect()
-        meetingMonitorCancellable = publisher.sink { [weak self] _ in
+        // Check immediately on startup
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) { [weak self] in
             self?.checkMeetingTransitions()
+        }
+        
+        // Calculate delay to offset checks by 10 seconds past the 5-minute marks
+        // This ensures meetings that end exactly on the hour/half-hour are detected
+        let now = Date()
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.minute, .second], from: now)
+        let currentSeconds = (components.minute ?? 0) % 5 * 60 + (components.second ?? 0)
+        let delayToNext5Min = currentSeconds > 10 ? (300 - currentSeconds + 10) : (10 - currentSeconds)
+        
+        // Start checking 10 seconds after each 5-minute mark
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(delayToNext5Min)) { [weak self] in
+            self?.checkMeetingTransitions()
+            
+            // Then continue every 5 minutes
+            let publisher = Timer.publish(every: 300, on: .main, in: .common).autoconnect()
+            self?.meetingMonitorCancellable = publisher.sink { _ in
+                self?.checkMeetingTransitions()
+            }
         }
     }
     
@@ -326,6 +349,9 @@ final class ReminderManager: ObservableObject {
         
         let isCurrentlyInMeeting = calManager.isInMeeting
         let now = Date()
+        
+        // Debug logging
+        print("[Touch Grass] Meeting check at \(now): In meeting: \(isCurrentlyInMeeting), Was in meeting: \(wasInMeeting)")
         
         // Detect meeting end transition
         if wasInMeeting && !isCurrentlyInMeeting {
@@ -348,16 +374,16 @@ final class ReminderManager: ObservableObject {
             }
         }
         
-        // Check for long meeting stretches ending (only if we're actually free now)
-        if !isCurrentlyInMeeting && lastMeetingEndTime == nil {
-            // Not in a meeting and haven't tracked an end time yet
-            // Check if we just emerged from a long stretch of meetings
+        // Also check for recently ended meetings we might have missed
+        if !isCurrentlyInMeeting && !wasInMeeting {
+            // Not currently in a meeting and wasn't tracking one
+            // Check if a meeting ended in the last 5 minutes
             let meetings = calManager.getTodaysMeetings()
             if let lastEndedMeeting = meetings.last(where: { 
                 ($0.endDate ?? Date.distantPast) <= now && 
-                ($0.endDate ?? Date.distantPast) > now.addingTimeInterval(-900) 
+                ($0.endDate ?? Date.distantPast) > now.addingTimeInterval(-300) 
             }) {
-                // A meeting ended in the last 15 minutes
+                // A meeting ended in the last 5 minutes
                 if let endDate = lastEndedMeeting.endDate {
                     lastMeetingEndTime = endDate
                     
@@ -432,7 +458,6 @@ final class ReminderManager: ObservableObject {
 
     // MARK: - Settings Persistence
     private func loadSettings() {
-        let defaults = UserDefaults.standard
         currentStreak = defaults.integer(forKey: streakKey)
         bestStreak = defaults.integer(forKey: bestStreakKey)
         intervalMinutes = defaults.double(forKey: intervalKey) > 0 ? defaults.double(forKey: intervalKey) : 45
@@ -484,7 +509,6 @@ final class ReminderManager: ObservableObject {
     }
     
     private func saveSettings() {
-        let defaults = UserDefaults.standard
         defaults.set(currentStreak, forKey: streakKey)
         defaults.set(bestStreak, forKey: bestStreakKey)
         defaults.set(intervalMinutes, forKey: intervalKey)
@@ -510,7 +534,6 @@ final class ReminderManager: ObservableObject {
     }
     
     private func updateStreak(completed: Bool) {
-        let defaults = UserDefaults.standard
         let calendar = Calendar.current
         let now = Date()
         
@@ -640,7 +663,7 @@ final class ReminderManager: ObservableObject {
             calManager.updateCurrentAndNextEvents()
         }
         
-        // Just set the flag and play a sound - don't show window automatically
+        // Just set the flag and play a sound - menu bar will show the touch grass view
         hasActiveReminder = true
         NSSound.beep()  // Gentle audio notification
         
@@ -649,34 +672,8 @@ final class ReminderManager: ObservableObject {
     }
     
     func openReminderWindow() {
-        // This is called when user clicks from menu bar
-        hasActiveReminder = false  // Clear the flag
-        
-        let message = Messages.composed()
-        
-        // Show window
-        window.show(
-            message: message,
-            manager: self,
-            onOK: { [weak self] in 
-                self?.updateStreak(completed: true)
-                self?.scheduleNextTick()
-                self?.sendCompletionNotification(action: "completed")
-            },
-            onSnooze5: { [weak self] in 
-                self?.snooze(minutes: 5)
-                self?.sendCompletionNotification(action: "snoozed for 5 minutes")
-            },
-            onSnooze10: { [weak self] in 
-                self?.snooze(minutes: 10)
-                self?.sendCompletionNotification(action: "snoozed for 10 minutes")
-            },
-            onSkip: { [weak self] in 
-                self?.updateStreak(completed: false)
-                self?.scheduleNextTick()
-                self?.sendCompletionNotification(action: "skipped")
-            }
-        )
+        // This method is no longer needed - keeping empty for compatibility
+        // The TouchGrassQuickView handles everything now
     }
     
     // MARK: - Notifications
@@ -687,7 +684,7 @@ final class ReminderManager: ObservableObject {
     private func sendSystemNotification() {
         let content = UNMutableNotificationContent()
         content.title = "Time to touch grass!"
-        content.body = "Click Touch Grass in the menu bar when you're ready."
+        content.body = "Click the Touch Grass icon in the menu bar to see your options."
         content.sound = .default
         
         let request = UNNotificationRequest(
