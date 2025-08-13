@@ -214,7 +214,15 @@ enum ExerciseData {
     // Exercise Sets for different time constraints
     static let quickReset = ExerciseSet(
         id: "quick-reset",
-        name: "30-Second Reset",
+        name: "Posture Reset Sequence",
+        duration: 90,
+        exercises: [chinTuck, scapularRetraction],
+        description: "Essential exercises to reset your posture"
+    )
+    
+    static let quickMovement = ExerciseSet(
+        id: "quick-movement",
+        name: "Quick Movement Break",
         duration: 30,
         exercises: [neckRolls],
         description: "Quick movement break for busy moments"
