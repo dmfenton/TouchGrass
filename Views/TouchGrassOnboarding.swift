@@ -8,6 +8,8 @@ struct TouchGrassOnboarding: View {
     
     @State private var customizationWindow: CustomizationWindowController?
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
+    @State private var hasRequestedCalendarAccess = false
+    @State private var selectedCalendars: Set<String> = []
     
     var body: some View {
         VStack(spacing: 0) {
@@ -70,6 +72,91 @@ struct TouchGrassOnboarding: View {
             )
             .padding(.horizontal, 30)
             
+            // Calendar Selection Section
+            if let calManager = reminderManager.calendarManager {
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Image(systemName: "calendar")
+                            .foregroundColor(.green)
+                        Text("Connect Your Calendar (Optional)")
+                            .font(.system(size: 13, weight: .semibold))
+                        Spacer()
+                    }
+                    
+                    if !calManager.hasCalendarAccess && !hasRequestedCalendarAccess {
+                        Button(action: requestCalendarAccess) {
+                            HStack {
+                                Image(systemName: "lock.shield")
+                                    .font(.system(size: 12))
+                                Text("Grant Calendar Access")
+                                    .font(.system(size: 12))
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.blue.opacity(0.1))
+                            )
+                            .foregroundColor(.blue)
+                        }
+                        .buttonStyle(.plain)
+                    } else if calManager.hasCalendarAccess {
+                        VStack(alignment: .leading, spacing: 8) {
+                            if calManager.availableCalendars.isEmpty {
+                                Text("No calendars found")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                            } else {
+                                Text("Select calendars to monitor:")
+                                    .font(.system(size: 11))
+                                    .foregroundColor(.secondary)
+                                
+                                ForEach(calManager.availableCalendars, id: \.calendarIdentifier) { calendar in
+                                    HStack {
+                                        Image(systemName: selectedCalendars.contains(calendar.calendarIdentifier) ? "checkmark.square.fill" : "square")
+                                            .font(.system(size: 14))
+                                            .foregroundColor(selectedCalendars.contains(calendar.calendarIdentifier) ? .green : .secondary)
+                                        
+                                        Circle()
+                                            .fill(Color(calendar.color ?? .gray))
+                                            .frame(width: 8, height: 8)
+                                        
+                                        Text(calendar.title)
+                                            .font(.system(size: 12))
+                                        
+                                        Spacer()
+                                    }
+                                    .contentShape(Rectangle())
+                                    .onTapGesture {
+                                        toggleCalendar(calendar)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(Color(NSColor.controlBackgroundColor))
+                        )
+                    }
+                    
+                    Text("Touch Grass will pause reminders during meetings")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+                .padding(16)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.green.opacity(0.03))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(Color.green.opacity(0.1), lineWidth: 1)
+                        )
+                )
+                .padding(.horizontal, 30)
+                .padding(.top, 16)
+            }
+            
             Spacer()
             
             // Bottom section with two clear CTAs
@@ -119,10 +206,13 @@ struct TouchGrassOnboarding: View {
             }
             .padding(30)
         }
-        .frame(width: 520, height: 600)
+        .frame(width: 520, height: 720)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             checkNotificationStatus()
+            if let calManager = reminderManager.calendarManager {
+                selectedCalendars = calManager.selectedCalendarIdentifiers
+            }
         }
     }
     
@@ -132,6 +222,27 @@ struct TouchGrassOnboarding: View {
                 notificationStatus = settings.authorizationStatus
             }
         }
+    }
+    
+    private func requestCalendarAccess() {
+        hasRequestedCalendarAccess = true
+        reminderManager.calendarManager?.requestCalendarAccess { granted in
+            if granted {
+                // Refresh the view
+            }
+        }
+    }
+    
+    private func toggleCalendar(_ calendar: EKCalendar) {
+        if selectedCalendars.contains(calendar.calendarIdentifier) {
+            selectedCalendars.remove(calendar.calendarIdentifier)
+        } else {
+            selectedCalendars.insert(calendar.calendarIdentifier)
+        }
+        
+        // Update the calendar manager
+        reminderManager.calendarManager?.selectedCalendarIdentifiers = selectedCalendars
+        reminderManager.calendarManager?.saveSelectedCalendars()
     }
     
     private func openCustomization() {
@@ -167,6 +278,12 @@ struct TouchGrassOnboarding: View {
             end: (17, 0),
             days: [.monday, .tuesday, .wednesday, .thursday, .friday]
         )
+        
+        // Save calendar selections
+        if let calManager = reminderManager.calendarManager {
+            calManager.selectedCalendarIdentifiers = selectedCalendars
+            calManager.saveSelectedCalendars()
+        }
         
         completeOnboarding()
     }
