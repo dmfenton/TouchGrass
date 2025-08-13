@@ -214,8 +214,7 @@ $RELEASE_MESSAGE
 gh release create "v$VERSION" \
     --title "Touch Grass v$VERSION" \
     --notes "$RELEASE_BODY" \
-    "$DMG_NAME" \
-    "SHA256SUMS.txt"
+    "$DMG_NAME"
 
 # 13. Clean up
 print_status "Cleaning up build artifacts..."
