@@ -46,39 +46,96 @@ Note: With proper code signing via `Local.xcconfig`, calendar permissions will p
 Touch Grass is a SwiftUI-based macOS menu bar application with a clear separation of concerns:
 
 ### Core Flow
-1. **TouchGrassApp.swift** - Entry point, creates MenuBarExtra with ReminderManager instance
+1. **TouchGrassApp.swift** - Entry point, creates MenuBarExtra with dynamic content:
+   - Shows TouchGrassMode when hasActiveReminder is true
+   - Shows MenuView for normal menu operations
+   - Handles onboarding flow on first launch
 2. **ReminderManager.swift** - Central state management using Combine, handles:
    - Fixed-interval scheduling aligned to clock time (e.g., :00, :45)
    - Timer management with separate timers for scheduling and countdown display
-   - Pause/resume/snooze logic
-   - Window presentation coordination
-3. **ReminderWindowController.swift** - NSPanel management for the reminder popup:
-   - Creates borderless floating window
-   - Handles window lifecycle and animations
-   - Centers window on screen for visibility
-4. **ReminderWindow.swift** - SwiftUI view for reminder content, minimal design with system colors
+   - Pause/resume/snooze logic with smart meeting detection
+   - Water tracking with daily goals and streak management
+   - Activity completion tracking and streak management
+3. **CalendarManager.swift** - Calendar integration for smart scheduling:
+   - Monitors current and upcoming events within work hours
+   - Detects meeting transitions for smart reminder triggering
+   - Provides meeting load analysis and suggestions
+4. **WorkHoursManager.swift** - Manages work schedule configuration:
+   - Configurable work start/end times and days
+   - Ensures reminders only occur during work hours
+5. **TouchGrassMode.swift** - Main reminder interface shown in menu bar:
+   - Activity selection (Touch Grass, Posture Reset, Exercises, Meditation)
+   - Calendar-aware suggestions based on available time
+   - Water logging integration
+   - Snooze and skip options
 
 ### Key Design Decisions
 
+**Smart Menu Bar Integration**: Uses MenuBarExtra with conditional content - when a reminder is active, the entire menu transforms into the TouchGrassMode interface, providing immediate access to break options without opening separate windows.
+
+**Calendar-Aware Scheduling**: Integrates with user calendars to:
+- Detect when meetings end and trigger timely reminders
+- Show meeting context in the menu and reminder interfaces
+- Adapt suggestions based on available time before next meeting
+- Provide meeting load analysis for better break planning
+
+**Evidence-Based Exercise Library**: Includes structured exercise sets with different durations:
+- 30-second quick resets (chin tucks, shoulder blade squeezes)
+- 1-2 minute focused routines (stretches, eye exercises)
+- 3-minute comprehensive routines combining multiple exercises
+- Breathing and meditation exercises for stress relief
+
+**Water Tracking Integration**: Built-in hydration tracking with:
+- Configurable daily goals and units (glasses, ounces, milliliters)
+- Quick logging buttons in both menu and reminder interfaces
+- Daily and streak tracking with persistence across app restarts
+
 **Fixed Interval Scheduling**: Reminders align to clock time rather than relative to app start. The `scheduleAtFixedInterval()` method calculates the next reminder based on minutes since the hour, ensuring predictable timing (e.g., if interval is 45 minutes, reminders happen at :00, :45).
 
-**Window Presentation**: Uses NSPanel with `.floating` level and `borderless` style mask for a clean, non-intrusive appearance. The window is created fresh for each reminder to avoid state issues.
+**Work Hours Awareness**: Only shows reminders during configured work hours and work days, with automatic scheduling to resume at the next work period.
 
-**State Management**: ReminderManager is the single source of truth, using @Published properties for UI updates. The countdown timer updates every second independently of the main scheduling timer.
+## Current Features
+
+### Core Functionality
+- **Break Reminders**: Configurable intervals (15-90 minutes) with fixed-time scheduling
+- **Touch Grass Mode**: Primary reminder interface with activity selection
+- **Exercise Routines**: Evidence-based posture exercises with guided instructions
+- **Water Tracking**: Daily hydration goals with multiple unit options
+- **Calendar Integration**: Smart scheduling based on meeting awareness
+- **Work Hours**: Configurable work schedule with automatic pause outside hours
+- **Onboarding**: First-run experience for setting up preferences
+
+### Menu Bar Interface
+- **Dynamic Content**: Menu transforms based on reminder state
+- **Live Countdown**: Shows time until next reminder in MM:SS format
+- **Meeting Context**: Displays current meeting status and next event
+- **Quick Actions**: Touch Grass Now, water logging, pause/resume
+- **Streak Display**: Shows current completion streak when active
+
+### Settings & Customization
+- **Break Frequency**: 15-90 minute intervals with fixed-time alignment
+- **Work Hours**: Configurable start/end times and work days
+- **Calendar Selection**: Choose which calendars to monitor
+- **Water Goals**: Customizable daily targets and units
+- **Smart Features**: Adaptive timing and meeting-aware scheduling
+- **Startup Options**: Launch at login configuration
 
 ## UI/UX Principles
 
-- Keep the design minimal and professional - avoid bright colors, gradients, or animations
-- Use system colors (NSColor.windowBackgroundColor, NSColor.controlBackgroundColor) for native appearance
-- Menu bar shows live countdown in MM:SS format as the primary element
-- Reminder window uses subtle borders and system fonts
+- **Minimal & Professional**: Clean design using system colors and native macOS styling
+- **Context-Aware**: Shows relevant information based on calendar events and time available
+- **Non-Intrusive**: Uses menu bar integration instead of popup windows
+- **Quick Actions**: Most common actions accessible within 1-2 clicks
+- **Visual Hierarchy**: Important information (countdown, active reminders) prominently displayed
+- **Consistent Styling**: Uses rounded rectangles, subtle backgrounds, and system fonts throughout
 
 ## Testing Reminders
 
 To test reminder functionality without waiting:
-1. Click "Check Posture Now" in menu bar
-2. Or temporarily set `intervalMinutes` to 1 in ReminderManager initialization
-3. Use Console.app to check for any runtime warnings
+1. Click "Touch Grass Now" in menu bar to trigger the reminder interface
+2. Temporarily set `intervalMinutes` to 1 in ReminderManager initialization for frequent testing
+3. Use Console.app to monitor smart scheduling and meeting detection logs
+4. Test calendar integration by creating test events within work hours
 
 ## Release Process
 
