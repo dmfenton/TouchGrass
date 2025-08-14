@@ -5,6 +5,7 @@ struct TouchGrassMode: View {
     @Environment(\.dismiss) var dismiss
     @State private var showingCompletion = false
     @State private var completedActivity: String? = nil
+    @State private var showExerciseMenu = false
     
     private func closeMenuBar() {
         NSApplication.shared.keyWindow?.close()
@@ -12,39 +13,32 @@ struct TouchGrassMode: View {
     
     // Simplified to 4 main options with minimal colors
     let activities: [(icon: String, name: String, color: Color, isGuided: Bool)] = [
-        ("leaf.circle", "Touch Grass", Color.primary, false),
-        ("arrow.up.and.person.rectangle.portrait", "30s Posture Reset", Color.primary, true),
+        ("clock", "1 Min Reset", Color.primary, true),
         ("figure.flexibility", "Exercises", Color.primary, true),
-        ("brain.head.profile", "Meditation", Color.primary, true)
+        ("brain.head.profile", "Meditation", Color.primary, true),
+        ("leaf.circle", "Touch Grass", Color.primary, false)
     ]
     
     func handleActivityTap(_ activity: String, isGuided: Bool) {
         if isGuided {
             // Open the appropriate exercise window
             switch activity {
-            case "30s Posture Reset":
-                // Quick 30-second posture reset (chin tucks + scapular retraction)
-                reminderManager.showExerciseSet(ExerciseData.quickReset)
+            case "1 Min Reset":
+                // Quick 1-minute posture reset
+                reminderManager.showExerciseSet(ExerciseData.oneMinuteBreak)
+                dismiss()
             case "Exercises":
-                // Rotate through different exercise sets for variety
-                let exerciseSets = [
-                    ExerciseData.twoMinuteRoutine,  // Stretches
-                    ExerciseData.eyeBreak,           // Eye exercises
-                    ExerciseData.fullRoutine,        // Full 3-minute routine
-                    ExerciseData.oneMinuteBreak      // Quick posture break
-                ]
-                let randomSet = exerciseSets.randomElement() ?? ExerciseData.twoMinuteRoutine
-                reminderManager.showExerciseSet(randomSet)
+                // Show exercise menu state
+                showExerciseMenu = true
             case "Meditation":
                 // Breathing and relaxation exercises
                 reminderManager.showExerciseSet(ExerciseData.breathingExercise)
+                dismiss()
             default:
                 break
             }
-            // Close this window since exercise window is open
-            dismiss()
         } else {
-            // Instant completion for "Touch Grass" (go outside)
+            // Touch Grass - go outside
             completeActivity(activity)
         }
     }
@@ -147,8 +141,132 @@ struct TouchGrassMode: View {
                         .foregroundColor(.secondary)
                 }
                 .frame(maxHeight: .infinity)
+            } else if showExerciseMenu {
+                // Exercise menu
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Button(action: { showExerciseMenu = false }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 14))
+                        }
+                        .buttonStyle(.plain)
+                        
+                        Text("Choose Exercise Routine")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                    }
+                    
+                    // Exercise options
+                    VStack(spacing: 8) {
+                        // Upper Body Routine
+                        Button(action: {
+                            reminderManager.showExerciseSet(ExerciseData.upperBodyRoutine)
+                            dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "figure.arms.open")
+                                    .frame(width: 30)
+                                VStack(alignment: .leading) {
+                                    Text("Upper Body & Posture")
+                                        .font(.system(size: 14, weight: .medium))
+                                    Text("3 min • Neck, shoulders, upper back")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        
+                        // Lower Body Routine
+                        Button(action: {
+                            reminderManager.showExerciseSet(ExerciseData.lowerBodyRoutine)
+                            dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "figure.walk")
+                                    .frame(width: 30)
+                                VStack(alignment: .leading) {
+                                    Text("Hips, Glutes & Knees")
+                                        .font(.system(size: 14, weight: .medium))
+                                    Text("5 min • Lower body tension relief")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        
+                        // Ankle & Foot Routine
+                        Button(action: {
+                            reminderManager.showExerciseSet(ExerciseData.ankleFootRoutine)
+                            dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "shoeprints.fill")
+                                    .frame(width: 30)
+                                VStack(alignment: .leading) {
+                                    Text("Ankle & Foot Mobility")
+                                        .font(.system(size: 14, weight: .medium))
+                                    Text("4.5 min • Ankle flexibility & foot health")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        
+                        // Eye Break
+                        Button(action: {
+                            reminderManager.showExerciseSet(ExerciseData.eyeBreak)
+                            dismiss()
+                        }) {
+                            HStack {
+                                Image(systemName: "eye")
+                                    .frame(width: 30)
+                                VStack(alignment: .leading) {
+                                    Text("Eye Relief")
+                                        .font(.system(size: 14, weight: .medium))
+                                    Text("1 min • Reduce eye strain")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(.secondary)
+                                }
+                                Spacer()
+                            }
+                            .padding(12)
+                            .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color(NSColor.controlBackgroundColor))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
             } else {
-                // Activities Section
+                // Main activities Section
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Text("What would you like to do?")

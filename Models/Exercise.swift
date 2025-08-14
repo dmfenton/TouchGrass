@@ -191,6 +191,168 @@ enum ExerciseData {
         targetArea: "Thoracic spine"
     )
     
+    // Hip, Glute & Knee exercises
+    static let lowBackFlex = Exercise(
+        id: "low-back-flex",
+        name: "Low Back Flex",
+        duration: 30,
+        category: .mobilize,
+        instructions: [
+            "Stand with feet shoulder-width apart, knees slightly bent",
+            "Place your hands on your thighs for support if needed",
+            "Round your lower back and gently tuck your pelvis under while squeezing your glutes lightly",
+            "Slowly return to a neutral position",
+            "Perform 8-10 slow reps"
+        ],
+        benefits: "Gently loosen your lower back and hips",
+        targetArea: "Lower back and hips"
+    )
+    
+    static let standingHipFlexor = Exercise(
+        id: "standing-hip-flexor",
+        name: "Standing Hip Flexor Stretch",
+        duration: 45,
+        category: .stretch,
+        instructions: [
+            "Stand with feet hip-width apart",
+            "Step your right foot back about 2-3 feet",
+            "Keep your torso upright and gently tuck your pelvis under your spine",
+            "Shift weight forward until you feel a stretch in the front of the right hip",
+            "Hold for 10-15 seconds, then switch legs"
+        ],
+        benefits: "Open up tight hips from sitting all day",
+        targetArea: "Hip flexors"
+    )
+    
+    static let squatHipExtensions = Exercise(
+        id: "squat-hip-extensions",
+        name: "Squat Hip Extensions",
+        duration: 45,
+        category: .mobilize,
+        instructions: [
+            "Stand with feet shoulder-width apart, toes slightly turned out",
+            "Drop into a comfortable squat - chest tall, knees over toes",
+            "Push your hips back and straighten your legs partway until you feel a stretch in your hamstrings",
+            "Return to the squat position, then stand tall by driving through your heels",
+            "Repeat for 8-10 reps: Squat → Hip Extension → Squat → Stand"
+        ],
+        benefits: "Open tight hips and stretch your hamstrings",
+        targetArea: "Hips and hamstrings"
+    )
+    
+    static let standingGroinStretch = Exercise(
+        id: "standing-groin",
+        name: "Standing Groin Stretch",
+        duration: 45,
+        category: .stretch,
+        instructions: [
+            "Stand with feet wide apart",
+            "Shift your weight to one side, bending that knee while keeping the other leg straight",
+            "Keep chest tall and hips back",
+            "Hold for 10-15 seconds per leg",
+            "Repeat 2-3 times per leg"
+        ],
+        benefits: "Stretch tight inner thighs for better hip mobility",
+        targetArea: "Inner thighs (adductors)"
+    )
+    
+    static let seatedGluteMedStretch = Exercise(
+        id: "seated-glute-med",
+        name: "Seated Glute Med Stretch",
+        duration: 45,
+        category: .stretch,
+        instructions: [
+            "Sit tall in a sturdy chair",
+            "Cross your right ankle over your left knee",
+            "Keep back straight and hinge forward from hips until you feel a stretch in the outer right hip",
+            "Hold for 10-15 seconds per side",
+            "Repeat 2-3 times per side - avoid rounding the back"
+        ],
+        benefits: "Relieve tension in the side of your hips",
+        targetArea: "Glutes and outer hips"
+    )
+    
+    // Ankle & Foot exercises
+    static let gastrocnemiusStretch = Exercise(
+        id: "gastrocnemius-stretch",
+        name: "Gastrocnemius Stretch (Straight Knee)",
+        duration: 45,
+        category: .stretch,
+        instructions: [
+            "Stand facing a wall, place both hands on it at shoulder height",
+            "Step one foot back about 2-3 feet",
+            "Keep the back leg straight and heel flat on the ground",
+            "Lean your body forward until you feel a stretch in the upper calf",
+            "Hold for 10-15 seconds per leg, repeat 2-3 times"
+        ],
+        benefits: "Loosen tight calves for easier walking and squatting",
+        targetArea: "Upper calf muscles"
+    )
+    
+    static let soleusStretch = Exercise(
+        id: "soleus-stretch",
+        name: "Soleus Stretch (Bent Knee)",
+        duration: 45,
+        category: .stretch,
+        instructions: [
+            "Stay in the same wall-facing position as the previous stretch",
+            "Step one foot back about 2 feet",
+            "Bend the back knee while keeping the heel pressed firmly to the floor",
+            "Lean in until you feel a stretch lower in the calf near the Achilles tendon",
+            "Hold for 10-15 seconds per leg, repeat 2-3 times"
+        ],
+        benefits: "Target deep calf muscles to boost ankle flexibility",
+        targetArea: "Lower calf and Achilles"
+    )
+    
+    static let toesUpInversionEversion = Exercise(
+        id: "toes-up-inversion-eversion",
+        name: "Toes-Up Inversion & Eversion",
+        duration: 40,
+        category: .mobilize,
+        instructions: [
+            "Sit or stand, heel on the ground",
+            "Lift the front of your foot so your toes are up",
+            "Inversion: Roll the lifted forefoot inward so the sole faces toward your other foot",
+            "Eversion: Roll the lifted forefoot outward so the sole faces away",
+            "Alternate slowly, 2 seconds each way, for 5-10 reps each direction"
+        ],
+        benefits: "Train ankle control for better balance and stability",
+        targetArea: "Ankle stabilizers"
+    )
+    
+    static let plantarDorsiflexion = Exercise(
+        id: "plantar-dorsiflexion",
+        name: "Plantar & Dorsiflexion",
+        duration: 40,
+        category: .mobilize,
+        instructions: [
+            "Sit tall or stand, feet hip-width apart",
+            "Keep your heel firmly on the ground",
+            "Dorsiflexion: Slowly lift your toes toward your shin as high as possible",
+            "Plantar flexion: Slowly press your toes down, pointing them forward",
+            "Move smoothly, 2 seconds up, 2 seconds down, for 5-10 reps"
+        ],
+        benefits: "Wake up your ankles and get the blood flowing",
+        targetArea: "Ankle flexors"
+    )
+    
+    static let ankleCircles = Exercise(
+        id: "ankle-circles",
+        name: "Ankle Circles",
+        duration: 60,
+        category: .mobilize,
+        instructions: [
+            "Sit or stand with one foot lifted slightly off the floor",
+            "Keep your knee and leg still - only your ankle moves",
+            "Draw a slow, controlled circle with your toes, as large as comfortable",
+            "Complete 5 circles clockwise, then 5 counterclockwise",
+            "Switch feet and repeat 2-3 times each leg"
+        ],
+        benefits: "Free up ankle motion in every direction",
+        targetArea: "Full ankle mobility"
+    )
+    
     // Additional exercises for eyes and breathing
     static let eyeExercise20_20_20 = Exercise(
         id: "20-20-20",
@@ -282,27 +444,35 @@ enum ExerciseData {
         description: "Essential exercise for forward head posture"
     )
     
-    static let twoMinuteRoutine = ExerciseSet(
-        id: "two-minute",
-        name: "2-Minute Routine",
-        duration: 120,
-        exercises: [doorwayStretch, scapularRetraction],
-        description: "Stretch and strengthen combination"
-    )
-    
-    static let fullRoutine = ExerciseSet(
-        id: "full-routine",
-        name: "3-Minute Full Routine",
+    static let upperBodyRoutine = ExerciseSet(
+        id: "upper-body",
+        name: "Upper Body & Posture",
         duration: 180,
         exercises: [doorwayStretch, chinTuck, scapularRetraction, upperTrapStretch],
-        description: "Complete evidence-based exercise protocol"
+        description: "3-minute routine for neck, shoulders, and upper back"
+    )
+    
+    static let lowerBodyRoutine = ExerciseSet(
+        id: "lower-body",
+        name: "Hips, Glutes & Knees",
+        duration: 240,
+        exercises: [lowBackFlex, standingHipFlexor, squatHipExtensions, standingGroinStretch, seatedGluteMedStretch],
+        description: "5-minute routine to relieve lower body tension from sitting"
+    )
+    
+    static let ankleFootRoutine = ExerciseSet(
+        id: "ankle-foot",
+        name: "Ankle & Foot Mobility",
+        duration: 270,
+        exercises: [gastrocnemiusStretch, soleusStretch, toesUpInversionEversion, plantarDorsiflexion, ankleCircles],
+        description: "4.5-minute routine for ankle flexibility and foot health"
     )
     
     static let allExerciseSets = [
-        quickReset,
         oneMinuteBreak,
-        twoMinuteRoutine,
-        fullRoutine
+        upperBodyRoutine,
+        lowerBodyRoutine,
+        ankleFootRoutine
     ]
     
     static let coreExercises = [

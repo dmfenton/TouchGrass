@@ -13,10 +13,12 @@ struct ExerciseView: View {
     @State private var timeRemaining: Int
     @State private var isCountingDown = false
     @State private var timerSubscription: AnyCancellable?
+    var onCompletion: (() -> Void)?
     
-    init(exercise: Exercise) {
+    init(exercise: Exercise, onCompletion: (() -> Void)? = nil) {
         self.exercise = exercise
         self._timeRemaining = State(initialValue: exercise.duration)
+        self.onCompletion = onCompletion
     }
     
     var body: some View {
@@ -148,6 +150,8 @@ struct ExerciseView: View {
                     NSSound.beep()
                     // Reset for next use
                     timeRemaining = exercise.duration
+                    // Call completion handler if provided
+                    onCompletion?()
                 }
             }
     }
@@ -161,27 +165,46 @@ struct ExerciseView: View {
 
 struct ExerciseSetView: View {
     let exerciseSet: ExerciseSet
+    var onClose: (() -> Void)? = nil
     @State private var currentExerciseIndex = 0
     @State private var showingExercise = false
+    @State private var autoAdvance = true
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
-        VStack(spacing: 20) {
-            // Header
-            VStack(spacing: 8) {
-                Text(exerciseSet.name)
-                    .font(.title2)
-                    .fontWeight(.semibold)
+        VStack(spacing: 12) {
+            // Header with close button inline
+            HStack(alignment: .top) {
+                Spacer(minLength: 30) // Balance for close button
                 
-                Text(exerciseSet.description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                VStack(spacing: 6) {
+                    Text(exerciseSet.name)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    Text(exerciseSet.description)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    
+                    Label("\(exerciseSet.duration / 60) min \(exerciseSet.duration % 60) sec total", 
+                          systemImage: "clock")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 
-                Label("\(exerciseSet.duration / 60) min \(exerciseSet.duration % 60) sec total", 
-                      systemImage: "clock")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                Spacer(minLength: 30)
+                
+                if let onClose = onClose {
+                    Button(action: onClose) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 20))
+                            .foregroundColor(.secondary)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.top, 2)
+                }
             }
+            .padding(.top, 8)
             
             Divider()
             
@@ -196,6 +219,13 @@ struct ExerciseSetView: View {
                         
                         Spacer()
                         
+                        // Auto-advance toggle for quick reset
+                        if exerciseSet.id == "quick-reset" {
+                            Toggle("Auto-advance", isOn: $autoAdvance)
+                                .toggleStyle(.switch)
+                                .scaleEffect(0.8)
+                        }
+                        
                         // Progress dots
                         HStack(spacing: 6) {
                             ForEach(0..<exerciseSet.exercises.count, id: \.self) { index in
@@ -207,13 +237,32 @@ struct ExerciseSetView: View {
                     }
                     .padding(.horizontal)
                     
-                    ExerciseView(exercise: exerciseSet.exercises[currentExerciseIndex])
+                    ExerciseView(
+                        exercise: exerciseSet.exercises[currentExerciseIndex],
+                        onCompletion: {
+                            // Auto-advance for quick posture reset
+                            if exerciseSet.id == "quick-reset" && autoAdvance {
+                                if currentExerciseIndex < exerciseSet.exercises.count - 1 {
+                                    currentExerciseIndex += 1
+                                } else {
+                                    // All exercises completed
+                                    dismiss()
+                                }
+                            }
+                        }
+                    )
                     
                     HStack(spacing: 16) {
-                        if currentExerciseIndex > 0 {
-                            Button("Previous") {
+                        Button(action: {
+                            if currentExerciseIndex > 0 {
                                 currentExerciseIndex -= 1
+                            } else {
+                                // Go back to overview
+                                showingExercise = false
                             }
+                        }) {
+                            Label(currentExerciseIndex > 0 ? "Previous" : "Overview", 
+                                  systemImage: "chevron.left")
                         }
                         
                         Spacer()
@@ -233,46 +282,105 @@ struct ExerciseSetView: View {
                     .padding(.horizontal)
                 }
             } else {
-                // Exercise preview list
-                VStack(alignment: .leading, spacing: 12) {
-                    Text("Exercises included:")
-                        .font(.footnote)
-                        .fontWeight(.medium)
-                        .foregroundColor(.secondary)
-                    
-                    ForEach(exerciseSet.exercises) { exercise in
-                        HStack {
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                // Exercise overview list
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Exercise Overview")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        ForEach(Array(exerciseSet.exercises.enumerated()), id: \.offset) { index, exercise in
+                            Button(action: {
+                                // Jump directly to this exercise
+                                currentExerciseIndex = index
+                                showingExercise = true
+                            }) {
+                                HStack(alignment: .top, spacing: 12) {
+                                    // Exercise number
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.blue.opacity(0.1))
+                                            .frame(width: 30, height: 30)
+                                        Text("\(index + 1)")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundColor(.blue)
+                                    }
+                                    
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack {
+                                            Text(exercise.name)
+                                                .font(.system(size: 14, weight: .medium))
+                                                .foregroundColor(.primary)
+                                            
+                                            Spacer()
+                                            
+                                            Label("\(exercise.duration)s", systemImage: "clock")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                        
+                                        // Show first instruction as preview
+                                        if let firstInstruction = exercise.instructions.first {
+                                            Text(firstInstruction)
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                                .lineLimit(2)
+                                        }
+                                    }
+                                }
+                                .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
+                            .padding(.vertical, 4)
+                            .background(
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.blue.opacity(0.02))
+                                    .opacity(0)
+                            )
+                            .onHover { isHovered in
+                                // Add hover effect if desired
+                            }
                             
-                            Text(exercise.name)
-                                .font(.body)
-                            
-                            Spacer()
-                            
-                            Text("\(exercise.duration)s")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                            if index < exerciseSet.exercises.count - 1 {
+                                Divider()
+                                    .padding(.leading, 42)
+                            }
                         }
+                        
+                        // Total time summary
+                        HStack {
+                            Image(systemName: "clock.fill")
+                                .foregroundColor(.blue)
+                            Text("Total time: \(exerciseSet.duration / 60) min \(exerciseSet.duration % 60) sec")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(.primary)
+                        }
+                        .padding(.top, 8)
                     }
+                    .padding(.horizontal)
                 }
-                .padding(.horizontal)
+                .frame(maxHeight: 500)
                 
-                Spacer()
-                
-                Button(action: {
-                    showingExercise = true
-                    currentExerciseIndex = 0
-                }, label: {
-                    Label("Start Exercises", systemImage: "play.fill")
-                        .frame(width: 140)
-                })
-                .buttonStyle(.borderedProminent)
-                .controlSize(.large)
+                VStack(spacing: 12) {
+                    Button(action: {
+                        showingExercise = true
+                        currentExerciseIndex = 0
+                    }, label: {
+                        Label("Start Exercises", systemImage: "play.fill")
+                            .frame(width: 160)
+                    })
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    
+                    Text("You can return to this overview at any time")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
-        .padding()
-        .frame(width: 400, height: 500)
+        .padding(.horizontal)
+        .padding(.vertical, 12)
+        .frame(width: 500, height: 600)
     }
 }

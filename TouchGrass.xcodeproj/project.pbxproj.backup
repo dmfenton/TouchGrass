@@ -31,6 +31,7 @@
 		30B479FBA504482A8F7BA75A /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BE8D81285A44548A10D308 /* TouchGrassMode.swift */; };
 		9B600EA7FC6E4925ABA45DA0 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4577B53971344178DBF81FC /* TouchGrassModeController.swift */; };
 		ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = ABCDEF1234567890ABCDEF12 /* AppIcon.icns */; };
+		C854EC83667240A89EC7F593 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06BBA045A15C44ABA847C38C /* TouchGrassMode.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -60,6 +61,7 @@
 		18BE8D81285A44548A10D308 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
 		D4577B53971344178DBF81FC /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
 		ABCDEF1234567890ABCDEF12 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		06BBA045A15C44ABA847C38C /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,28 +100,6 @@
 				B71234601234567812345679 /* Exercise.swift */,
 				B71234621234567812345680 /* ExerciseView.swift */,
 				B71234671234567812345683 /* ExerciseWindowController.swift */,
-				BA83B7517FF14B0EBD299443 /* SimpleOnboardingWindow.swift */,
-				FE1BCD8A7BC84EB59B4542CF /* SimpleOnboardingWindowController.swift */,
-				D6504E903CE149B69AF7C53C /* OnboardingManager.swift */,
-				3272165349B04F708B95A8D9 /* OnboardingWindow.swift */,
-				67342ED3544348E5ADDF64D3 /* OnboardingWindowController.swift */,
-				C791EDAE16754E15B354BA8B /* GrassIcon.swift */,
-				B0AE4300A68C49A9BC221624 /* WorkHoursManager.swift */,
-				13ABE024A6F44C97A9A0EF88 /* CalendarManager.swift */,
-				8088B4B348364BDA8D5688D5 /* CustomizationView.swift */,
-				D068017085594D0CB074C81B /* CustomizationWindowController.swift */,
-
-				A5F57DBF12B24106B7258905 /* SimpleOnboardingWindow.swift */,
-				3893216455C14D04B97CC142 /* SimpleOnboardingWindowController.swift */,
-				DBD6C43152FE401097988E7B /* OnboardingManager.swift */,
-				2685F1F9BDD645E5970B13AF /* OnboardingWindow.swift */,
-				688E35721A50400C97C01880 /* OnboardingWindowController.swift */,
-				EFB64E11B99148449E6D16D6 /* GrassIcon.swift */,
-				301053B354164F1FAA1EC5C6 /* WorkHoursManager.swift */,
-				15B21CD464624EA7BA1DBC0E /* CalendarManager.swift */,
-				BE9A5B1EB7CF486987F7AD5F /* CustomizationView.swift */,
-				07F52ED788EE4E328AE96990 /* CustomizationWindowController.swift */,
-
 				4239FA02D00C4A588C9D3F52 /* SimpleOnboardingWindow.swift */,
 				34CF7EFB14534DE8810A25C9 /* SimpleOnboardingWindowController.swift */,
 				BB4CB4B7AAA04202B5B278FD /* OnboardingManager.swift */,
@@ -259,28 +239,6 @@
 				B71234641234567812345681 /* Exercise.swift in Sources */,
 				B71234661234567812345682 /* ExerciseView.swift in Sources */,
 				B71234681234567812345683 /* ExerciseWindowController.swift in Sources */,
-				06938C11D83C4C188BBA0351 /* SimpleOnboardingWindow.swift in Sources */,
-				FDFCE929B6CA431BA3A2F9E4 /* SimpleOnboardingWindowController.swift in Sources */,
-				03CBD59D480E4D24AC72BAA8 /* OnboardingManager.swift in Sources */,
-				63B33053DC1C4189A2E307F7 /* OnboardingWindow.swift in Sources */,
-				ADF7E08267E244079DEA99FB /* OnboardingWindowController.swift in Sources */,
-				CC30DE84C6D74B0098F9BEAA /* GrassIcon.swift in Sources */,
-				CC552F618B934413A4F87CF6 /* WorkHoursManager.swift in Sources */,
-				D3190AA67DB3486DACA018E1 /* CalendarManager.swift in Sources */,
-				127C95F7F31744AD9404139A /* CustomizationView.swift in Sources */,
-				57508485BFEE4982A4242888 /* CustomizationWindowController.swift in Sources */,
-
-				9917B4E7DF5B442882004AB7 /* SimpleOnboardingWindow.swift in Sources */,
-				0C267F283C63402F870CC086 /* SimpleOnboardingWindowController.swift in Sources */,
-				B7C241042434419F9F955B37 /* OnboardingManager.swift in Sources */,
-				EADC9B81F2714F48BA4F4D37 /* OnboardingWindow.swift in Sources */,
-				F2818E66110C42AE8479D391 /* OnboardingWindowController.swift in Sources */,
-				CF901A1F8F754F42944EC3C3 /* GrassIcon.swift in Sources */,
-				3FE058C4FBD4425CB69C3C2D /* WorkHoursManager.swift in Sources */,
-				A669852C1D9D49979FEF1D83 /* CalendarManager.swift in Sources */,
-				87FFB2E5230246418DB264F8 /* CustomizationView.swift in Sources */,
-				9576F0FBB4AF4D05BB6437E6 /* CustomizationWindowController.swift in Sources */,
-
 				EF2E253F17194B0DBEC27653 /* SimpleOnboardingWindow.swift in Sources */,
 				4B791FC06C034237A2029801 /* SimpleOnboardingWindowController.swift in Sources */,
 				60C2AD30A303458D96FBC802 /* OnboardingManager.swift in Sources */,
