@@ -124,3 +124,6 @@ releases/
 *.dmg
 *.zip
 SHA256SUMS.txt
+
+# Xcode project backups
+*.pbxproj.backup
