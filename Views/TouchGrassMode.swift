@@ -304,7 +304,9 @@ struct TouchGrassMode: View {
                 }
             }
         }
-        .padding(24)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 24)
+        .padding(.top, 32)
         .frame(width: 400)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {

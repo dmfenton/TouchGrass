@@ -27,38 +27,38 @@ struct TouchGrassOnboarding: View {
             VStack(alignment: .leading, spacing: 16) {
                 FeatureRow(
                     icon: "figure.walk",
-                    title: "Regular movement breaks",
-                    subtitle: "Stand up every 45 minutes"
+                    title: "Regular movement reminders",
+                    subtitle: "Stand up and move every 45 minutes"
                 )
                 
                 FeatureRow(
-                    icon: "clock.badge.checkmark",
-                    title: "Work hours aware",
-                    subtitle: "Active only 9am - 5pm weekdays"
+                    icon: "figure.flexibility",
+                    title: "Guided exercise routines",
+                    subtitle: "Stretches, posture resets, and breathing"
                 )
                 
                 FeatureRow(
                     icon: "drop.fill",
-                    title: "Stay hydrated",
-                    subtitle: "Track water intake goals"
+                    title: "Water tracking",
+                    subtitle: "Track daily hydration goals"
                 )
                 
                 FeatureRow(
                     icon: "leaf.fill",
-                    title: "Build healthy habits",
-                    subtitle: "Track your daily streak"
+                    title: "Multiple break activities",
+                    subtitle: "Touch grass, stretch, or meditate"
                 )
                 
                 FeatureRow(
                     icon: "calendar",
-                    title: "Meeting smart",
-                    subtitle: "Pauses during your calls"
+                    title: "Calendar aware",
+                    subtitle: "See your schedule at a glance"
                 )
                 
                 FeatureRow(
-                    icon: "wand.and.stars",
-                    title: "Adaptive timing",
-                    subtitle: "Learns your work patterns"
+                    icon: "chart.line.uptrend.xyaxis",
+                    title: "Build healthy habits",
+                    subtitle: "Track streaks and progress"
                 )
             }
             .padding(24)
@@ -140,7 +140,7 @@ struct TouchGrassOnboarding: View {
                         )
                     }
                     
-                    Text("Touch Grass will pause reminders during meetings")
+                    Text("Touch Grass helps you maximize breaks between meetings")
                         .font(.system(size: 10))
                         .foregroundColor(.secondary)
                 }

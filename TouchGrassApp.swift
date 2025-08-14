@@ -70,39 +70,26 @@ struct MenuView: View {
             .padding(.top, 12)
             .padding(.bottom, 4)
                 
-            // Primary Status - Countdown Timer with integrated pause button
-            HStack(spacing: 12) {
-                VStack(spacing: 2) {
-                    Text(manager.isPaused ? "Paused" : nextReminderText)
-                        .font(.system(size: manager.isPaused ? 20 : 28, weight: .semibold, design: .monospaced))
-                        .foregroundColor(manager.isPaused ? .orange : .primary)
-                    Text(manager.isPaused ? "Reminders paused" : "until next reminder")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
+            // Primary Action - Touch Grass (at the top)
+            Button(action: { manager.showTouchGrassMode() }) {
+                HStack {
+                    Image(systemName: "leaf.circle.fill")
+                        .font(.system(size: 16))
+                        .foregroundColor(.green)
+                    Text("Touch Grass Now")
+                        .font(.system(size: 14, weight: .semibold))
+                    Spacer()
                 }
-                .frame(maxWidth: .infinity)
-                
-                // Integrated pause/resume button
-                Button(action: { 
-                    if manager.isPaused {
-                        manager.resume()
-                    } else {
-                        manager.pause()
-                    }
-                }) {
-                    Image(systemName: manager.isPaused ? "play.circle.fill" : "pause.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(manager.isPaused ? .green : .orange.opacity(0.8))
-                }
-                .buttonStyle(PlainButtonStyle())
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill(Color.green.opacity(hoveredItem == "touch-grass" ? 0.15 : 0.08))
+                )
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(manager.isPaused ? Color.orange.opacity(0.08) : Color.accentColor.opacity(0.08))
-            )
+            .buttonStyle(PlainButtonStyle())
             .padding(.horizontal, 12)
+            .onHover { hoveredItem = $0 ? "touch-grass" : nil }
                 
             // Calendar Context (Streamlined but informative)
             if let calManager = manager.calendarManager,
@@ -221,95 +208,94 @@ struct MenuView: View {
                 .padding(.horizontal, 12)
             }
                 
-            // Stats Display (Streak + Water tracking)
-            HStack(spacing: 16) {
-                // Streak info
-                if manager.currentStreak > 0 || manager.bestStreak > 0 {
-                    HStack(spacing: 8) {
-                        Image(systemName: "flame.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(.orange)
-                        Text("\(manager.currentStreak) day")
-                            .font(.system(size: 12, weight: .medium))
-                        if manager.bestStreak > manager.currentStreak {
-                            Text("• best: \(manager.bestStreak)")
-                                .font(.system(size: 11))
-                                .foregroundColor(.secondary)
-                        }
-                    }
-                }
-                
-                Spacer()
-                
-                // Water tracking display (no buttons here)
-                if manager.waterTrackingEnabled {
-                    HStack(spacing: 6) {
+            // Water tracking section
+            if manager.waterTrackingEnabled {
+                VStack(spacing: 8) {
+                    HStack {
                         Image(systemName: "drop.fill")
                             .font(.system(size: 12))
                             .foregroundColor(.blue)
-                        Text("\(manager.currentWaterIntake)/\(manager.dailyWaterGoal) \(manager.waterUnit == .glasses ? "glasses" : manager.waterUnit.rawValue)")
+                        Text("Water: \(manager.currentWaterIntake)/\(manager.dailyWaterGoal) \(manager.waterUnit == .glasses ? "glasses" : manager.waterUnit.rawValue)")
                             .font(.system(size: 12, weight: .medium))
+                        Spacer()
                     }
-                }
-            }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 6)
-            
-            // Water logging buttons (separate section)
-            if manager.waterTrackingEnabled {
-                HStack(spacing: 8) {
-                    ForEach([1, 2, 4, 8], id: \.self) { amount in
-                        Button(action: { manager.logWater(amount) }) {
-                            HStack(spacing: 4) {
-                                Image(systemName: "plus.circle.fill")
-                                    .font(.system(size: 10))
-                                Text("+\(amount)")
-                                    .font(.system(size: 11, weight: .medium))
+                    .padding(.horizontal, 12)
+                    
+                    HStack(spacing: 8) {
+                        ForEach([1, 2, 4, 8], id: \.self) { amount in
+                            Button(action: { manager.logWater(amount) }) {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "plus.circle.fill")
+                                        .font(.system(size: 10))
+                                    Text("+\(amount)")
+                                        .font(.system(size: 11, weight: .medium))
+                                }
+                                .foregroundColor(.blue)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 5)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.blue.opacity(hoveredItem == "water-\(amount)" ? 0.15 : 0.08))
+                                )
                             }
-                            .foregroundColor(.blue)
-                            .padding(.horizontal, 10)
-                            .padding(.vertical, 5)
-                            .background(
-                                RoundedRectangle(cornerRadius: 6)
-                                    .fill(Color.blue.opacity(hoveredItem == "water-\(amount)" ? 0.15 : 0.08))
-                            )
+                            .buttonStyle(PlainButtonStyle())
+                            .onHover { hoveredItem = $0 ? "water-\(amount)" : nil }
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .onHover { hoveredItem = $0 ? "water-\(amount)" : nil }
                     }
+                    .padding(.horizontal, 12)
                 }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 4)
             }
             
             Divider()
                 .padding(.vertical, 4)
             
-            // Primary Action - Touch Grass (larger, more prominent)
-            Button(action: { manager.showTouchGrassMode() }) {
-                HStack {
-                    Image(systemName: "leaf.circle.fill")
-                        .font(.system(size: 16))
-                        .foregroundColor(.green)
-                    Text("Touch Grass")
-                        .font(.system(size: 14, weight: .semibold))
-                    Spacer()
-                    Text("Now")
-                        .font(.system(size: 11))
+            // Timer and control section (more compact)
+            HStack(spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(manager.isPaused ? "Paused" : nextReminderText)
+                        .font(.system(size: 16, weight: .semibold, design: .monospaced))
+                        .foregroundColor(manager.isPaused ? .orange : .primary)
+                    Text(manager.isPaused ? "Reminders paused" : "until next reminder")
+                        .font(.system(size: 10))
                         .foregroundColor(.secondary)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color.green.opacity(hoveredItem == "touch-grass" ? 0.15 : 0.08))
-                )
+                
+                Spacer()
+                
+                // Pause/resume button
+                Button(action: { 
+                    if manager.isPaused {
+                        manager.resume()
+                    } else {
+                        manager.pause()
+                    }
+                }) {
+                    Image(systemName: manager.isPaused ? "play.circle.fill" : "pause.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundColor(manager.isPaused ? .green : .orange.opacity(0.8))
+                }
+                .buttonStyle(PlainButtonStyle())
+                
+                // Streak info (if exists)
+                if manager.currentStreak > 0 {
+                    Divider()
+                        .frame(height: 20)
+                    HStack(spacing: 4) {
+                        Image(systemName: "flame.fill")
+                            .font(.system(size: 11))
+                            .foregroundColor(.orange)
+                        Text("\(manager.currentStreak)")
+                            .font(.system(size: 11, weight: .medium))
+                    }
+                }
             }
-            .buttonStyle(PlainButtonStyle())
+            .padding(.horizontal, 16)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(manager.isPaused ? Color.orange.opacity(0.08) : Color(NSColor.controlBackgroundColor))
+            )
             .padding(.horizontal, 12)
-            .onHover { hoveredItem = $0 ? "touch-grass" : nil }
-            
-            // No secondary pause/resume button needed anymore since it's in the timer
             
             Spacer()
             
