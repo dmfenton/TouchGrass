@@ -24,6 +24,10 @@ struct TouchGrassApp: App {
     var body: some Scene {
         MenuBarExtra {
             MenuView(manager: manager)
+                .onAppear {
+                    // Set the manager reference when the menu appears
+                    NotificationDelegate.shared.reminderManager = manager
+                }
         } label: {
             GrassIcon(isActive: manager.hasActiveReminder, size: 20)
         }
@@ -334,6 +338,7 @@ struct MenuButton: View {
 // MARK: - Notification Delegate
 class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationDelegate()
+    weak var reminderManager: ReminderManager?
     
     // Present notifications even when app is in foreground
     func userNotificationCenter(_ center: UNUserNotificationCenter, 
@@ -347,6 +352,10 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        // When user taps notification, open Touch Grass window
+        DispatchQueue.main.async { [weak self] in
+            self?.reminderManager?.showTouchGrassMode()
+        }
         completionHandler()
     }
 }
