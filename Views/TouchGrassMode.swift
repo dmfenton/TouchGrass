@@ -481,6 +481,11 @@ struct TouchGrassMode: View {
         .onAppear {
             // Refresh calendar data when window opens
             reminderManager.calendarManager?.updateCurrentAndNextEvents()
+            
+            // Reset active reminder state when Touch Grass window opens
+            if reminderManager.hasActiveReminder {
+                reminderManager.hasActiveReminder = false
+            }
         }
         .animation(.easeInOut(duration: 0.2), value: showExerciseMenu)
         .animation(.easeInOut(duration: 0.2), value: selectedExerciseSet?.id)

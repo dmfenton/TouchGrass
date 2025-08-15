@@ -58,6 +58,11 @@ struct MenuView: View {
             .onAppear {
                 // Refresh calendar data whenever menu is opened
                 manager.calendarManager?.updateCurrentAndNextEvents()
+                
+                // Reset active reminder state when menu is opened
+                if manager.hasActiveReminder {
+                    manager.hasActiveReminder = false
+                }
             }
     }
     
