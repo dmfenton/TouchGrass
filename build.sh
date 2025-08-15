@@ -24,6 +24,18 @@ xcodebuild -project TouchGrass.xcodeproj \
 if [ $? -eq 0 ]; then
     echo "✅ Build successful!"
     
+    # Copy audio files into app bundle
+    APP_RESOURCES="build/Release/Touch Grass.app/Contents/Resources"
+    if [ -d "Assets/Audio/Exercises" ]; then
+        echo "📦 Copying audio files into app bundle..."
+        mkdir -p "$APP_RESOURCES/Assets/Audio"
+        cp -R "Assets/Audio/Exercises" "$APP_RESOURCES/Assets/Audio/"
+        AUDIO_COUNT=$(find "$APP_RESOURCES/Assets/Audio/Exercises" -name "*.mp3" 2>/dev/null | wc -l | tr -d ' ')
+        echo "✅ Copied $AUDIO_COUNT audio files"
+    else
+        echo "⚠️  No audio files found to copy"
+    fi
+    
     # Kill existing app if running
     killall "Touch Grass" 2>/dev/null || true
     

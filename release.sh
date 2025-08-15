@@ -47,14 +47,22 @@ fi
 
 print_status "Starting release process for version $VERSION"
 
-# 1. Update exercise audio if needed (check for text changes)
-if [ -f "./update_exercise_audio.sh" ]; then
-    print_status "Checking for exercise text changes..."
+# 1. Generate/update exercise audio files
+print_status "Checking exercise audio files..."
+if [ -f "./generate_exercise_audio.sh" ]; then
     if [ -n "$OPENAI_API_KEY" ]; then
-        ./update_exercise_audio.sh
+        print_status "Generating/updating exercise audio files..."
+        ./generate_exercise_audio.sh --check
+        
+        # Run generation if needed
+        if ./generate_exercise_audio.sh | grep -q "Updated:"; then
+            print_status "Audio files generated/updated"
+        else
+            print_status "Audio files up to date"
+        fi
         
         # Check if any audio files were updated
-        if git diff --quiet Assets/Audio/; then
+        if git diff --quiet Assets/Audio/ 2>/dev/null; then
             print_status "No audio files changed"
         else
             print_status "Audio files updated - adding to release"
@@ -63,9 +71,21 @@ if [ -f "./update_exercise_audio.sh" ]; then
             git commit -m "Update exercise audio files for version $VERSION" 2>/dev/null || true
         fi
     else
-        print_warning "OPENAI_API_KEY not set - skipping audio regeneration"
+        print_warning "OPENAI_API_KEY not set - skipping audio generation"
         print_warning "To enable: export OPENAI_API_KEY='your-key'"
+        
+        # Check if we have existing audio files
+        if [ -d "Assets/Audio/Exercises" ] && [ "$(find Assets/Audio/Exercises -name "*.mp3" | wc -l)" -gt 0 ]; then
+            print_status "Using existing audio files"
+        else
+            print_error "No audio files found and OPENAI_API_KEY not set"
+            print_error "Please set OPENAI_API_KEY to generate audio files"
+            exit 1
+        fi
     fi
+else
+    print_error "generate_exercise_audio.sh not found"
+    exit 1
 fi
 
 # 2. Check for uncommitted changes
@@ -130,6 +150,24 @@ fi
 # 5. Verify the app was built
 if [ ! -d "build/Release/Touch Grass.app" ]; then
     print_error "Build failed. App not found at build/Release/Touch Grass.app"
+    exit 1
+fi
+
+# 5a. Copy audio files into app bundle
+print_status "Copying audio files into app bundle..."
+APP_RESOURCES="build/Release/Touch Grass.app/Contents/Resources"
+if [ -d "Assets/Audio/Exercises" ]; then
+    # Create the Assets directory structure in the app bundle
+    mkdir -p "$APP_RESOURCES/Assets/Audio"
+    
+    # Copy all audio files
+    cp -R "Assets/Audio/Exercises" "$APP_RESOURCES/Assets/Audio/"
+    
+    # Count files copied
+    AUDIO_COUNT=$(find "$APP_RESOURCES/Assets/Audio/Exercises" -name "*.mp3" | wc -l | tr -d ' ')
+    print_status "Copied $AUDIO_COUNT audio files into app bundle"
+else
+    print_error "Audio files directory not found: Assets/Audio/Exercises"
     exit 1
 fi
 
