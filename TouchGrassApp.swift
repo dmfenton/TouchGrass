@@ -249,6 +249,30 @@ struct MenuView: View {
             
             Divider()
             
+            // Check for Updates
+            HStack {
+                Button(action: { checkForUpdates() }) {
+                    HStack {
+                        Label("Check for Updates", systemImage: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                        
+                        Spacer()
+                        
+                        if UpdateManager.shared.updateAvailable {
+                            Circle()
+                                .fill(Color.orange)
+                                .frame(width: 8, height: 8)
+                        }
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            
+            Divider()
+            
             // Footer - Clean and minimal
             HStack {
                 Button(action: { openSettings() }) {
@@ -298,6 +322,12 @@ struct MenuView: View {
             }
         )
         customizationWindow?.showCustomization()
+    }
+    
+    private func checkForUpdates() {
+        Task {
+            await UpdateManager.shared.checkForUpdates(silent: false)
+        }
     }
 }
 

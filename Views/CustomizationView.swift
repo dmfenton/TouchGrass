@@ -228,6 +228,15 @@ struct CustomizationView: View {
                             .font(.system(size: 13))
                     }
                     .toggleStyle(.checkbox)
+                    
+                    Toggle(isOn: .init(
+                        get: { UpdateManager.shared.autoUpdateEnabled },
+                        set: { UpdateManager.shared.autoUpdateEnabled = $0 }
+                    )) {
+                        Label("Check for updates automatically", systemImage: "arrow.triangle.2.circlepath")
+                            .font(.system(size: 13))
+                    }
+                    .toggleStyle(.checkbox)
                 }
                 }
                 .padding(.horizontal, 40)

@@ -10,6 +10,8 @@
 		B71234561234567812345678 /* TouchGrassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234551234567812345678 /* TouchGrassApp.swift */; };
 		B71234581234567812345678 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234571234567812345678 /* Messages.swift */; };
 		B712345E1234567812345678 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B712345D1234567812345678 /* ReminderManager.swift */; };
+		AB1234567890ABCDEF123456 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD1234567890ABCDEF123456 /* UpdateManager.swift */; };
+		EF1234567890ABCDEF123456 /* UpdateProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = GH1234567890ABCDEF123456 /* UpdateProgressView.swift */; };
 		B71234641234567812345681 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234601234567812345679 /* Exercise.swift */; };
 		B71234661234567812345682 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234621234567812345680 /* ExerciseView.swift */; };
 		B71234681234567812345683 /* ExerciseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B71234671234567812345683 /* ExerciseWindowController.swift */; };
@@ -38,6 +40,8 @@
 		B71234551234567812345678 /* TouchGrassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassApp.swift; sourceTree = "<group>"; };
 		B71234571234567812345678 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Messages.swift"; sourceTree = "<group>"; };
 		B712345D1234567812345678 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/ReminderManager.swift"; sourceTree = "<group>"; };
+		CD1234567890ABCDEF123456 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/UpdateManager.swift"; sourceTree = "<group>"; };
+		GH1234567890ABCDEF123456 /* UpdateProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/UpdateProgressView.swift"; sourceTree = "<group>"; };
 		B71234601234567812345679 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Exercise.swift"; sourceTree = "<group>"; };
 		B71234621234567812345680 /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseView.swift"; sourceTree = "<group>"; };
 		B71234671234567812345683 /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseWindowController.swift"; sourceTree = "<group>"; };
@@ -94,9 +98,11 @@
 			children = (
 				B71234551234567812345678 /* TouchGrassApp.swift */,
 				B712345D1234567812345678 /* ReminderManager.swift */,
+				CD1234567890ABCDEF123456 /* UpdateManager.swift */,
 				B71234571234567812345678 /* Messages.swift */,
 				B71234601234567812345679 /* Exercise.swift */,
 				B71234621234567812345680 /* ExerciseView.swift */,
+				GH1234567890ABCDEF123456 /* UpdateProgressView.swift */,
 				B71234671234567812345683 /* ExerciseWindowController.swift */,
 				BA83B7517FF14B0EBD299443 /* SimpleOnboardingWindow.swift */,
 				FE1BCD8A7BC84EB59B4542CF /* SimpleOnboardingWindowController.swift */,
@@ -256,6 +262,8 @@
 				30B479FBA504482A8F7BA75A /* TouchGrassMode.swift in Sources */,
 				9B600EA7FC6E4925ABA45DA0 /* TouchGrassModeController.swift in Sources */,
 				B712345E1234567812345678 /* ReminderManager.swift in Sources */,
+				AB1234567890ABCDEF123456 /* UpdateManager.swift in Sources */,
+				EF1234567890ABCDEF123456 /* UpdateProgressView.swift in Sources */,
 				B71234641234567812345681 /* Exercise.swift in Sources */,
 				B71234661234567812345682 /* ExerciseView.swift in Sources */,
 				B71234681234567812345683 /* ExerciseWindowController.swift in Sources */,
