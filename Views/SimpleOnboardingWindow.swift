@@ -210,19 +210,43 @@ struct SimpleOnboardingWindow: View {
             
             Spacer()
             
-            // Permissions notice (non-blocking)
-            HStack(spacing: 8) {
-                Image(systemName: notificationStatus == .authorized ? "checkmark.circle.fill" : "info.circle")
-                    .foregroundColor(notificationStatus == .authorized ? .green : .secondary)
-                    .font(.system(size: 14))
-                
-                Text(notificationStatus == .authorized ? 
-                     "Notifications enabled" : 
-                     "We'll ask for notification permission after setup")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+            // Notification Permission Section
+            if notificationStatus != .authorized {
+                VStack(spacing: 8) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "bell.badge")
+                            .foregroundColor(.orange)
+                            .font(.system(size: 16))
+                        
+                        Text("Enable notifications to get reminders")
+                            .font(.system(size: 13))
+                            .foregroundColor(.primary)
+                    }
+                    
+                    Button("Enable Notifications") {
+                        requestNotificationPermission()
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.small)
+                }
+                .padding(.vertical, 12)
+                .padding(.horizontal, 20)
+                .background(Color.orange.opacity(0.1))
+                .cornerRadius(8)
+                .padding(.horizontal, 40)
+                .padding(.bottom, 12)
+            } else {
+                HStack(spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.system(size: 14))
+                    
+                    Text("Notifications enabled")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.bottom, 12)
             }
-            .padding(.bottom, 12)
             
             // Action buttons
             HStack(spacing: 12) {
@@ -267,7 +291,18 @@ struct SimpleOnboardingWindow: View {
         }
     }
     
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in
+            checkNotificationStatus()
+        }
+    }
+    
     private func completeOnboarding() {
+        // Request notifications if not already authorized
+        if notificationStatus != .authorized {
+            requestNotificationPermission()
+        }
+        
         // Apply settings
         reminderManager.intervalMinutes = reminderInterval
         reminderManager.adaptiveIntervalEnabled = enableSmartTiming

@@ -52,6 +52,9 @@ if [ $? -eq 0 ]; then
     # Kill existing app if running
     killall "Touch Grass" 2>/dev/null || true
     
+    # Wait a moment for the app to fully quit
+    sleep 1
+    
     # Open the newly built app
     open "build/Release/Touch Grass.app"
     echo "🌱 Touch Grass launched!"

@@ -28,5 +28,7 @@
 	<string>Touch Grass needs access to your calendar to automatically pause reminders during meetings and show upcoming events.</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Touch Grass needs access to reminders to help you maintain good posture.</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Touch Grass sends notifications to remind you to take breaks and maintain good posture.</string>
 </dict>
 </plist>

@@ -1,4 +1,5 @@
 import SwiftUI
+import UserNotifications
 
 @main
 struct TouchGrassApp: App {
@@ -7,6 +8,10 @@ struct TouchGrassApp: App {
     @State private var touchGrassController = TouchGrassModeController()
 
     init() {
+        // Set up notification delegate
+        UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+        
+        
         // Check for onboarding after a short delay to let the app fully initialize
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             if TouchGrassOnboardingController.shouldShowOnboarding() {
@@ -23,12 +28,8 @@ struct TouchGrassApp: App {
             GrassIcon(isActive: manager.hasActiveReminder, size: 20)
         }
         .menuBarExtraStyle(.window)
-        .onChange(of: manager.hasActiveReminder) { newValue in
-            if newValue {
-                // When reminder triggers, open the Touch Grass window
-                manager.showTouchGrassMode()
-            }
-        }
+        // No longer automatically open window when reminder triggers
+        // User will click the icon when they see the notification
     }
 }
 
@@ -327,6 +328,26 @@ struct MenuButton: View {
         }
         .buttonStyle(PlainButtonStyle())
         .onHover(perform: onHover)
+    }
+}
+
+// MARK: - Notification Delegate
+class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
+    static let shared = NotificationDelegate()
+    
+    // Present notifications even when app is in foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter, 
+                                willPresent notification: UNNotification, 
+                                withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // Show banner and play sound even when app is active
+        completionHandler([.banner, .sound, .badge])
+    }
+    
+    // Handle notification tap
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse,
+                                withCompletionHandler completionHandler: @escaping () -> Void) {
+        completionHandler()
     }
 }
 

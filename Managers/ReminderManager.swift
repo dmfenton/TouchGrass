@@ -146,6 +146,7 @@ final class ReminderManager: ObservableObject {
         exerciseWindow.isWindowVisible()
     }
     
+    
     // MARK: - Water tracking
     func logWater(_ amount: Int = 1) {
         currentWaterIntake += amount
@@ -348,9 +349,6 @@ final class ReminderManager: ObservableObject {
         
         let isCurrentlyInMeeting = calManager.isInMeeting
         let now = Date()
-        
-        // Debug logging
-        print("[Touch Grass] Meeting check at \(now): In meeting: \(isCurrentlyInMeeting), Was in meeting: \(wasInMeeting)")
         
         // Detect meeting end transition
         if wasInMeeting && !isCurrentlyInMeeting {
@@ -685,17 +683,26 @@ final class ReminderManager: ObservableObject {
     
     // MARK: - Notifications
     private func requestNotificationPermissions() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
     
     private func sendSystemNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Time to touch grass!"
-        content.body = "Click the Touch Grass icon in the menu bar to see your options."
+        content.title = "Time to touch grass! 🌱"
+        content.body = "Take a break - click the Touch Grass icon in the menu bar"
         content.sound = .default
+        content.interruptionLevel = .timeSensitive
+        
+        // Try to set app icon explicitly
+        if let iconURL = Bundle.main.url(forResource: "AppIcon", withExtension: "icns") {
+            let attachment = try? UNNotificationAttachment(identifier: "appIcon", url: iconURL, options: nil)
+            if let attachment = attachment {
+                content.attachments = [attachment]
+            }
+        }
         
         let request = UNNotificationRequest(
-            identifier: "posture-reminder",
+            identifier: "touch-grass-\(UUID().uuidString)",
             content: content,
             trigger: nil
         )
