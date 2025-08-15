@@ -103,44 +103,52 @@ struct MenuView: View {
                calManager.hasCalendarAccess,
                !calManager.selectedCalendarIdentifiers.isEmpty {
                 
-                Group {
-                    if let currentEvent = calManager.currentEvent {
-                        // In meeting
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(Color.red)
-                                .frame(width: 5, height: 5)
-                            Text("In meeting until \(calManager.formatEventTime(currentEvent.endDate))")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("CALENDAR")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(.secondary.opacity(0.7))
                         .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                    } else if let _ = calManager.nextEvent,
-                              let timeUntil = calManager.timeUntilNextEvent {
-                        // Free time between meetings
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(Color.green)
-                                .frame(width: 5, height: 5)
-                            Text("Free for \(calManager.formatTimeUntilEvent(timeUntil))")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
+                        .padding(.top, 8)
+                    
+                    Group {
+                        if let currentEvent = calManager.currentEvent {
+                            // In meeting
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(Color.red)
+                                    .frame(width: 5, height: 5)
+                                Text("In meeting until \(calManager.formatEventTime(currentEvent.endDate))")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 8)
+                        } else if let _ = calManager.nextEvent,
+                                  let timeUntil = calManager.timeUntilNextEvent {
+                            // Free time between meetings
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 5, height: 5)
+                                Text("Free for \(calManager.formatTimeUntilEvent(timeUntil))")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 8)
+                        } else {
+                            // Check if work day is over or just no meetings
+                            HStack(spacing: 6) {
+                                Circle()
+                                    .fill(Color.green)
+                                    .frame(width: 5, height: 5)
+                                Text(calendarStatusMessage(calManager: calManager))
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.bottom, 8)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
-                    } else {
-                        // Check if work day is over or just no meetings
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(Color.green)
-                                .frame(width: 5, height: 5)
-                            Text(calendarStatusMessage(calManager: calManager))
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 8)
                     }
                 }
             }
@@ -154,65 +162,77 @@ struct MenuView: View {
                     .padding(.vertical, 4)
             }
                 
-            // Water Section - clear and simple
+            // Water Section - clean single line
             if manager.waterTrackingEnabled {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Water")
-                            .font(.system(size: 11))
-                            .foregroundColor(.secondary)
-                        Text("\(manager.currentWaterIntake) of \(manager.dailyWaterGoal) glasses")
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("HYDRATION")
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundColor(.secondary.opacity(0.7))
+                        .padding(.horizontal, 12)
+                        .padding(.top, 4)
+                    
+                    HStack {
+                        Image(systemName: "drop.fill")
+                            .font(.system(size: 13))
+                            .foregroundColor(Color(red: 0.0, green: 0.5, blue: 1.0))
+                        
+                        Text("\(manager.currentWaterIntake * 8) / 64 oz")
                             .font(.system(size: 13, weight: .medium))
                             .foregroundColor(.primary)
-                    }
-                    
-                    Spacer()
-                    
-                    Button(action: { manager.logWater(1) }) {
-                        HStack(spacing: 4) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 14))
-                            Text("Add 8oz")
-                                .font(.system(size: 12, weight: .medium))
+                        
+                        Spacer()
+                        
+                        Button(action: { manager.logWater(1) }) {
+                            Text("+8oz")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 10)
+                                .padding(.vertical, 4)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color(red: 0.0, green: 0.5, blue: 1.0))
+                                )
                         }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color(red: 0.0, green: 0.5, blue: 1.0))
-                        )
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .buttonStyle(PlainButtonStyle())
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 8)
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 10)
             }
             
             Divider()
             
             // Timer Section - Simplified
-            HStack {
-                Text(manager.isPaused ? "Paused" : "Next in \(nextReminderText)")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.primary)
+            VStack(alignment: .leading, spacing: 6) {
+                Text("REMINDER")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.secondary.opacity(0.7))
+                    .padding(.horizontal, 12)
+                    .padding(.top, 8)
                 
-                Spacer()
-                
-                Button(action: { 
-                    if manager.isPaused {
-                        manager.resume()
-                    } else {
-                        manager.pause()
+                HStack {
+                    Text(manager.isPaused ? "Paused" : "Next in \(nextReminderText)")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Button(action: { 
+                        if manager.isPaused {
+                            manager.resume()
+                        } else {
+                            manager.pause()
+                        }
+                    }) {
+                        Image(systemName: manager.isPaused ? "play.fill" : "pause.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(manager.isPaused ? Color(red: 0.0, green: 0.6, blue: 0.0) : .secondary)
                     }
-                }) {
-                    Image(systemName: manager.isPaused ? "play.fill" : "pause.fill")
-                        .font(.system(size: 16))
-                        .foregroundColor(manager.isPaused ? Color(red: 0.0, green: 0.6, blue: 0.0) : .secondary)
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
+                .padding(.horizontal, 12)
+                .padding(.bottom, 8)
             }
-            .padding(12)
             
             Spacer()
             
@@ -220,21 +240,21 @@ struct MenuView: View {
             
             // Footer - Clean and minimal
             HStack {
-                Button("Settings") {
-                    openSettings()
+                Button(action: { openSettings() }) {
+                    Label("Settings", systemImage: "gearshape")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
                 
                 Spacer()
                 
-                Button("Quit") {
-                    NSApplication.shared.terminate(nil)
+                Button(action: { NSApplication.shared.terminate(nil) }) {
+                    Label("Quit", systemImage: "xmark.circle")
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                 }
                 .buttonStyle(PlainButtonStyle())
-                .font(.system(size: 12))
-                .foregroundColor(.secondary)
             }
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
