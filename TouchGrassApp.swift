@@ -18,16 +18,17 @@ struct TouchGrassApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            if manager.hasActiveReminder {
-                TouchGrassMode(reminderManager: manager)
-                    .frame(width: 400, height: 500)
-            } else {
-                MenuView(manager: manager)
-            }
+            MenuView(manager: manager)
         } label: {
             GrassIcon(isActive: manager.hasActiveReminder, size: 20)
         }
         .menuBarExtraStyle(.window)
+        .onChange(of: manager.hasActiveReminder) { newValue in
+            if newValue {
+                // When reminder triggers, open the Touch Grass window
+                manager.showTouchGrassMode()
+            }
+        }
     }
 }
 
