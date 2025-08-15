@@ -405,9 +405,29 @@ struct ExerciseSetView: View {
     
     var body: some View {
         VStack(spacing: 12) {
-            // Header with close button inline
-            HStack(alignment: .top) {
-                Spacer(minLength: 30) // Balance for close button
+            // Header with back button
+            HStack(alignment: .center, spacing: 12) {
+                if let onClose = onClose {
+                    Button(action: onClose) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 14, weight: .medium))
+                            Text("Back")
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .foregroundColor(.primary)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .onHover { hovering in
+                        if hovering {
+                            NSCursor.pointingHand.push()
+                        } else {
+                            NSCursor.pop()
+                        }
+                    }
+                }
+                
+                Spacer()
                 
                 VStack(spacing: 6) {
                     Text(exerciseSet.name)
@@ -424,17 +444,16 @@ struct ExerciseSetView: View {
                         .foregroundColor(.secondary)
                 }
                 
-                Spacer(minLength: 30)
+                Spacer()
                 
-                if let onClose = onClose {
-                    Button(action: onClose) {
-                        Image(systemName: "xmark.circle.fill")
-                            .font(.system(size: 20))
-                            .foregroundColor(.secondary)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                    .padding(.top, 2)
+                // Empty space to balance the back button
+                HStack(spacing: 4) {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 14, weight: .medium))
+                    Text("Back")
+                        .font(.system(size: 14, weight: .medium))
                 }
+                .opacity(0) // Invisible placeholder for balance
             }
             .padding(.top, 8)
             
