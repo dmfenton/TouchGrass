@@ -7,35 +7,51 @@
 
 import SwiftUI
 import Combine
+import AVFoundation
 
 struct ExerciseView: View {
     let exercise: Exercise
     @State private var timeRemaining: Int
     @State private var isCountingDown = false
     @State private var timerSubscription: AnyCancellable?
+    @State private var speechSynthesizer = AVSpeechSynthesizer()
+    @State private var isSpeaking = false
+    @State private var currentInstructionIndex = 0
     var onCompletion: (() -> Void)?
+    var withCoaching: Bool = false
+    var startImmediately: Bool = true
     
-    init(exercise: Exercise, onCompletion: (() -> Void)? = nil) {
+    init(exercise: Exercise, withCoaching: Bool = false, startImmediately: Bool = true, onCompletion: (() -> Void)? = nil) {
         self.exercise = exercise
+        self.withCoaching = withCoaching
+        self.startImmediately = startImmediately
         self._timeRemaining = State(initialValue: exercise.duration)
         self.onCompletion = onCompletion
     }
     
     var body: some View {
-        VStack(spacing: 20) {
-            // Header with name and timer
-            VStack(spacing: 12) {
-                Text(exercise.name)
-                    .font(.title)
-                    .fontWeight(.semibold)
+        VStack(spacing: 16) {
+            // Header with name and timer - more compact
+            VStack(spacing: 8) {
+                HStack {
+                    Text(exercise.name)
+                        .font(.title2)
+                        .fontWeight(.semibold)
+                    
+                    if withCoaching && isSpeaking {
+                        Image(systemName: "dot.radiowaves.left.and.right")
+                            .foregroundColor(.blue)
+                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isSpeaking)
+                    }
+                }
                 
                 // Timer display with category info
-                HStack(spacing: 24) {
+                HStack(spacing: 20) {
                     Text(timeString)
-                        .font(.system(size: 36, weight: .medium, design: .monospaced))
+                        .font(.system(size: 32, weight: .medium, design: .monospaced))
                         .foregroundColor(isCountingDown ? .blue : .primary)
                     
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Label(exercise.category.rawValue, systemImage: categoryIcon)
                             .font(.caption)
                             .foregroundColor(.secondary)
@@ -49,13 +65,14 @@ struct ExerciseView: View {
             
             Divider()
             
-            // All instructions visible at once
-            VStack(alignment: .leading, spacing: 12) {
+            // All instructions visible at once - reduced spacing
+            VStack(alignment: .leading, spacing: 8) {
                 Text("Instructions")
-                    .font(.headline)
+                    .font(.subheadline)
+                    .fontWeight(.medium)
                     .foregroundColor(.secondary)
                 
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
                         HStack(alignment: .top, spacing: 12) {
                             Text("\(index + 1).")
@@ -69,16 +86,21 @@ struct ExerciseView: View {
                                 .fixedSize(horizontal: false, vertical: true)
                         }
                         .padding(.vertical, 2)
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: 4)
+                                .fill(withCoaching && isSpeaking && index == currentInstructionIndex ? 
+                                      Color.blue.opacity(0.1) : Color.clear)
+                        )
                     }
                 }
             }
             .padding(.horizontal)
             
-            Spacer()
+            Spacer(minLength: 10)
             
             // Benefits section (compact)
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Text("Benefits")
                     .font(.caption)
                     .fontWeight(.medium)
@@ -88,25 +110,47 @@ struct ExerciseView: View {
                     .font(.caption)
                     .multilineTextAlignment(.center)
                     .foregroundColor(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(2)
             }
             .padding(.horizontal)
             
             // Control buttons
-            Button(action: toggleTimer) {
-                Label(
-                    isCountingDown ? "Pause" : "Start Exercise",
-                    systemImage: isCountingDown ? "pause.fill" : "play.fill"
-                )
-                .frame(width: 140)
+            HStack(spacing: 16) {
+                Button(action: toggleTimer) {
+                    Label(
+                        isCountingDown ? "Pause" : (startImmediately ? "Resume" : "Start Exercise"),
+                        systemImage: isCountingDown ? "pause.fill" : "play.fill"
+                    )
+                    .frame(width: 140)
+                }
+                .controlSize(.large)
+                .buttonStyle(.borderedProminent)
+                
+                if withCoaching {
+                    Button(action: toggleSpeech) {
+                        Image(systemName: isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                            .font(.system(size: 18))
+                    }
+                    .buttonStyle(.bordered)
+                    .help(isSpeaking ? "Stop coaching" : "Resume coaching")
+                }
             }
-            .controlSize(.large)
-            .buttonStyle(.borderedProminent)
         }
-        .padding()
-        .frame(width: 500, height: 600)
+        .padding(.horizontal)
+        .padding(.vertical, 16)
+        .frame(width: 500, height: 520)
         .onDisappear {
             stopTimer()
+            stopSpeaking()
+        }
+        .onAppear {
+            if startImmediately {
+                // Start the timer immediately
+                startTimer()
+            }
+            if withCoaching {
+                startCoaching()
+            }
         }
     }
     
@@ -161,6 +205,75 @@ struct ExerciseView: View {
         timerSubscription?.cancel()
         timerSubscription = nil
     }
+    
+    // MARK: - Speech Methods
+    
+    private func startCoaching() {
+        guard withCoaching && !exercise.instructions.isEmpty else { return }
+        
+        // Announce exercise name first
+        let introText = "Starting \(exercise.name). \(exercise.benefits)"
+        speak(introText) {
+            // After intro, speak the instructions
+            self.speakInstructions()
+        }
+    }
+    
+    private func speakInstructions() {
+        guard currentInstructionIndex < exercise.instructions.count else {
+            // All instructions spoken
+            return
+        }
+        
+        let instruction = exercise.instructions[currentInstructionIndex]
+        let text = "Step \(currentInstructionIndex + 1): \(instruction)"
+        
+        speak(text) {
+            self.currentInstructionIndex += 1
+            // Add a small delay between instructions
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.speakInstructions()
+            }
+        }
+    }
+    
+    private func speak(_ text: String, completion: @escaping () -> Void = {}) {
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.rate = 0.5 // Slightly slower for clarity
+        utterance.pitchMultiplier = 1.0
+        utterance.volume = 0.9
+        
+        // Use a delegate-like approach with completion
+        speechSynthesizer.speak(utterance)
+        isSpeaking = true
+        
+        // Simple completion after estimated duration
+        let estimatedDuration = Double(text.count) * 0.06 // Rough estimate
+        DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) {
+            if !self.speechSynthesizer.isSpeaking {
+                self.isSpeaking = false
+                completion()
+            }
+        }
+    }
+    
+    private func toggleSpeech() {
+        if speechSynthesizer.isSpeaking {
+            speechSynthesizer.pauseSpeaking(at: .immediate)
+            isSpeaking = false
+        } else if speechSynthesizer.isPaused {
+            speechSynthesizer.continueSpeaking()
+            isSpeaking = true
+        } else {
+            // Restart from current instruction
+            speakInstructions()
+        }
+    }
+    
+    private func stopSpeaking() {
+        speechSynthesizer.stopSpeaking(at: .immediate)
+        isSpeaking = false
+    }
 }
 
 struct ExerciseSetView: View {
@@ -169,6 +282,7 @@ struct ExerciseSetView: View {
     @State private var currentExerciseIndex = 0
     @State private var showingExercise = false
     @State private var autoAdvance = true
+    @State private var withCoaching = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -239,6 +353,8 @@ struct ExerciseSetView: View {
                     
                     ExerciseView(
                         exercise: exerciseSet.exercises[currentExerciseIndex],
+                        withCoaching: withCoaching,
+                        startImmediately: true,
                         onCompletion: {
                             // Auto-advance for quick posture reset
                             if exerciseSet.id == "quick-reset" && autoAdvance {
@@ -259,6 +375,7 @@ struct ExerciseSetView: View {
                             } else {
                                 // Go back to overview
                                 showingExercise = false
+                                withCoaching = false
                             }
                         }) {
                             Label(currentExerciseIndex > 0 ? "Previous" : "Overview", 
@@ -363,17 +480,31 @@ struct ExerciseSetView: View {
                 .frame(maxHeight: 500)
                 
                 VStack(spacing: 12) {
-                    Button(action: {
-                        showingExercise = true
-                        currentExerciseIndex = 0
-                    }, label: {
-                        Label("Start Exercises", systemImage: "play.fill")
-                            .frame(width: 160)
-                    })
-                    .buttonStyle(.borderedProminent)
-                    .controlSize(.large)
+                    HStack(spacing: 16) {
+                        Button(action: {
+                            withCoaching = false
+                            showingExercise = true
+                            currentExerciseIndex = 0
+                        }, label: {
+                            Label("Start Exercises", systemImage: "play.fill")
+                                .frame(width: 140)
+                        })
+                        .buttonStyle(.borderedProminent)
+                        .controlSize(.large)
+                        
+                        Button(action: {
+                            withCoaching = true
+                            showingExercise = true
+                            currentExerciseIndex = 0
+                        }, label: {
+                            Label("Start with Coaching", systemImage: "speaker.wave.2.fill")
+                                .frame(width: 160)
+                        })
+                        .buttonStyle(.bordered)
+                        .controlSize(.large)
+                    }
                     
-                    Text("You can return to this overview at any time")
+                    Text("Coaching will read instructions aloud as you exercise")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }

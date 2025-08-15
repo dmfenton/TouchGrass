@@ -637,7 +637,15 @@ final class ReminderManager: ObservableObject {
     }
     
     private func startCountdownTimer() {
-        let publisher = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        // Update immediately
+        if !self.isPaused {
+            self.timeUntilNextReminder = max(0, self.nextFireDate.timeIntervalSinceNow)
+        } else {
+            self.timeUntilNextReminder = 0
+        }
+        
+        // Then update every 60 seconds for minute-level precision
+        let publisher = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
         countdownCancellable = publisher.sink { [weak self] _ in
             guard let self else { return }
             if !self.isPaused {
