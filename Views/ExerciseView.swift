@@ -78,6 +78,23 @@ class SpeechController: NSObject, ObservableObject, AVSpeechSynthesizerDelegate 
     }
 }
 
+// Separate view for speech indicator to prevent title re-renders
+struct SpeechIndicator: View {
+    let isSpeaking: Bool
+    @State private var animating = false
+    
+    var body: some View {
+        Image(systemName: "dot.radiowaves.left.and.right")
+            .foregroundColor(.blue)
+            .opacity(isSpeaking ? 1 : 0)
+            .scaleEffect(animating ? 1.1 : 0.9)
+            .animation(isSpeaking ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true) : .default, value: animating)
+            .onAppear {
+                animating = true
+            }
+    }
+}
+
 // Separate view for instruction rows to prevent full re-renders
 struct InstructionRow: View {
     let index: Int
@@ -130,15 +147,19 @@ struct ExerciseView: View {
         VStack(spacing: 16) {
             // Header with name and timer - more compact
             VStack(spacing: 8) {
-                HStack {
+                ZStack {
+                    // Static title that never changes
                     Text(exercise.name)
                         .font(.title2)
                         .fontWeight(.semibold)
+                        .frame(maxWidth: .infinity)
                     
-                    if withCoaching && speechController.isSpeaking {
-                        Image(systemName: "dot.radiowaves.left.and.right")
-                            .foregroundColor(.blue)
-                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: speechController.isSpeaking)
+                    // Speech indicator overlaid on the right
+                    HStack {
+                        Spacer()
+                        if withCoaching {
+                            SpeechIndicator(isSpeaking: speechController.isSpeaking)
+                        }
                     }
                 }
                 
