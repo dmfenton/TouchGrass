@@ -196,12 +196,24 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.secondary.opacity(0.05))
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .onHover { hovering in
+                            if hovering {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
                         
                         // Lower Body Routine
                         Button(action: {
@@ -223,12 +235,24 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.secondary.opacity(0.05))
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .onHover { hovering in
+                            if hovering {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
                         
                         // Ankle & Foot Routine
                         Button(action: {
@@ -250,12 +274,24 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.secondary.opacity(0.05))
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .onHover { hovering in
+                            if hovering {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
                         
                         // Eye Break
                         Button(action: {
@@ -277,12 +313,24 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
+                            .background(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .fill(Color.secondary.opacity(0.05))
+                            )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .onHover { hovering in
+                            if hovering {
+                                NSCursor.pointingHand.push()
+                            } else {
+                                NSCursor.pop()
+                            }
+                        }
                     }
                 }
             } else {
