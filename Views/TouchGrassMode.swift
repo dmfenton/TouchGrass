@@ -331,12 +331,24 @@ struct TouchGrassMode: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 80)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 12)
+                                        .fill(Color.secondary.opacity(0.05))
+                                )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
                                         .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                                 )
                             }
                             .buttonStyle(.plain)
+                            .contentShape(Rectangle())
+                            .onHover { hovering in
+                                if hovering {
+                                    NSCursor.pointingHand.push()
+                                } else {
+                                    NSCursor.pop()
+                                }
+                            }
                         }
                     }
                 }
