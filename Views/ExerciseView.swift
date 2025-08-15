@@ -39,6 +39,8 @@ class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate {
             audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
             audioPlayer?.delegate = self
             audioPlayer?.volume = 0.9
+            audioPlayer?.rate = 0.85  // Slow down playback to 85% speed
+            audioPlayer?.enableRate = true
             audioPlayer?.prepareToPlay()
             audioPlayer?.play()
             isPlaying = true
@@ -59,12 +61,12 @@ class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate {
             .replacingOccurrences(of: " ", with: "_")
             .lowercased()
         
-        // Build file path
+        // Build file name - audio files are copied flat into Resources
         var fileName: String
         if let step = stepNumber {
-            fileName = "Assets/Audio/Exercises/\(snakeKey)/step_\(step)"
+            fileName = "\(snakeKey)_step_\(step)"
         } else {
-            fileName = "Assets/Audio/Exercises/\(snakeKey)/\(audioType)"
+            fileName = "\(snakeKey)_\(audioType)"
         }
         
         playAudioFile(fileName, completion: completion)
@@ -217,6 +219,7 @@ struct ExerciseView: View {
                     .font(.subheadline)
                     .fontWeight(.medium)
                     .foregroundColor(.secondary)
+                    .padding(.horizontal)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
@@ -227,8 +230,8 @@ struct ExerciseView: View {
                         )
                     }
                 }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
             
             Spacer(minLength: 10)
             
@@ -269,7 +272,6 @@ struct ExerciseView: View {
                 }
             }
         }
-        .padding(.horizontal)
         .padding(.vertical, 16)
         .frame(width: 500, height: 520)
         .onDisappear {
@@ -315,8 +317,12 @@ struct ExerciseView: View {
     }
     
     private func startTimer() {
-        // Play start sound
-        NSSound.beep()
+        // Play start sound using system sound
+        if let sound = NSSound(named: NSSound.Name("Tink")) {
+            sound.play()
+        } else {
+            NSSound.beep()
+        }
         isCountingDown = true
         timerSubscription = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
@@ -361,15 +367,12 @@ struct ExerciseView: View {
     
     private func playInstructions() {
         guard currentInstructionIndex < exercise.instructions.count else {
-            // All instructions played - play complete message then start timer
+            // All instructions played - just start timer, no complete message
             hasFinishedReadingInstructions = true
             
-            let exerciseKey = exercise.id.replacingOccurrences(of: "-", with: "_")
-            audioController.playExerciseAudio(exerciseKey: exerciseKey, audioType: "complete") {
-                // Small delay before starting timer
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    self.startTimer()
-                }
+            // Small delay before starting timer
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.startTimer()
             }
             return
         }
@@ -396,6 +399,7 @@ struct ExerciseView: View {
 
 struct ExerciseSetView: View {
     let exerciseSet: ExerciseSet
+    var reminderManager: ReminderManager? = nil
     var onClose: (() -> Void)? = nil
     @State private var currentExerciseIndex = 0
     @State private var showingExercise = false
@@ -455,7 +459,7 @@ struct ExerciseSetView: View {
                 }
                 .opacity(0) // Invisible placeholder for balance
             }
-            .padding(.top, 8)
+            .padding(.top, 20)
             
             Divider()
             
@@ -470,15 +474,17 @@ struct ExerciseSetView: View {
                         
                         Spacer()
                         
-                        // Auto-advance toggle for quick reset or when not coaching
-                        if !withCoaching && exerciseSet.id == "quick-reset" {
-                            Toggle("Auto-advance", isOn: $autoAdvance)
-                                .toggleStyle(.switch)
-                                .scaleEffect(0.8)
-                        } else if withCoaching {
-                            Text("Auto-advance")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
+                        // Auto-advance toggle for quick reset or when not coaching (only if multiple exercises)
+                        if exerciseSet.exercises.count > 1 {
+                            if !withCoaching && exerciseSet.id == "quick-reset" {
+                                Toggle("Auto-advance", isOn: $autoAdvance)
+                                    .toggleStyle(.switch)
+                                    .scaleEffect(0.8)
+                            } else if withCoaching {
+                                Text("Auto-advance")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                         
                         // Progress dots
@@ -503,6 +509,7 @@ struct ExerciseSetView: View {
                                     currentExerciseIndex += 1
                                 } else {
                                     // All exercises completed
+                                    reminderManager?.completeBreak()
                                     dismiss()
                                 }
                             }
@@ -533,6 +540,7 @@ struct ExerciseSetView: View {
                             .buttonStyle(.borderedProminent)
                         } else {
                             Button("Complete") {
+                                reminderManager?.completeBreak()
                                 dismiss()
                             }
                             .buttonStyle(.borderedProminent)

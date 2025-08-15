@@ -24,13 +24,26 @@ xcodebuild -project TouchGrass.xcodeproj \
 if [ $? -eq 0 ]; then
     echo "✅ Build successful!"
     
-    # Copy audio files into app bundle
+    # Copy audio files into app bundle with flattened names
     APP_RESOURCES="build/Release/Touch Grass.app/Contents/Resources"
     if [ -d "Assets/Audio/Exercises" ]; then
         echo "📦 Copying audio files into app bundle..."
-        mkdir -p "$APP_RESOURCES/Assets/Audio"
-        cp -R "Assets/Audio/Exercises" "$APP_RESOURCES/Assets/Audio/"
-        AUDIO_COUNT=$(find "$APP_RESOURCES/Assets/Audio/Exercises" -name "*.mp3" 2>/dev/null | wc -l | tr -d ' ')
+        AUDIO_COUNT=0
+        # Copy each audio file with a flattened name
+        for exercise_dir in Assets/Audio/Exercises/*/; do
+            if [ -d "$exercise_dir" ]; then
+                exercise_name=$(basename "$exercise_dir")
+                for audio_file in "$exercise_dir"*.mp3; do
+                    if [ -f "$audio_file" ]; then
+                        base_name=$(basename "$audio_file" .mp3)
+                        # Create flattened name: exercise_audiofile.mp3
+                        flat_name="${exercise_name}_${base_name}.mp3"
+                        cp "$audio_file" "$APP_RESOURCES/$flat_name"
+                        ((AUDIO_COUNT++))
+                    fi
+                done
+            fi
+        done
         echo "✅ Copied $AUDIO_COUNT audio files"
     else
         echo "⚠️  No audio files found to copy"

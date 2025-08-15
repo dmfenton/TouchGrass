@@ -66,6 +66,7 @@ struct TouchGrassMode: View {
             // Show exercise view directly
             ExerciseSetView(
                 exerciseSet: exerciseSet,
+                reminderManager: reminderManager,
                 onClose: {
                     // Go back to main menu
                     selectedExerciseSet = nil
