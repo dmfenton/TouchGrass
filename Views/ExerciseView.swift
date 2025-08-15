@@ -9,62 +9,93 @@ import SwiftUI
 import Combine
 import AVFoundation
 
-// Speech controller with proper delegate handling
-class SpeechController: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
-    @Published var isSpeaking = false
+// Audio controller using pre-generated audio files
+class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate {
+    @Published var isPlaying = false
     @Published var currentUtteranceIndex = 0
     
-    private let synthesizer = AVSpeechSynthesizer()
+    private var audioPlayer: AVAudioPlayer?
     private var completionHandler: (() -> Void)?
+    private var isPaused = false
     
     override init() {
         super.init()
-        synthesizer.delegate = self
     }
     
-    func speak(_ text: String, completion: @escaping () -> Void) {
+    func playAudioFile(_ fileName: String, completion: @escaping () -> Void) {
         completionHandler = completion
         
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.rate = 0.55
-        utterance.pitchMultiplier = 1.05
-        utterance.volume = 0.9
-        
-        // Use enhanced voice if available
-        if let voice = AVSpeechSynthesisVoice(language: "en-US") {
-            let voices = AVSpeechSynthesisVoice.speechVoices()
-            if let premiumVoice = voices.first(where: { 
-                $0.language == "en-US" && 
-                ($0.name.contains("Samantha") || $0.name.contains("Alex") || $0.quality == .enhanced)
-            }) {
-                utterance.voice = premiumVoice
-            } else {
-                utterance.voice = voice
+        // Construct the file path
+        guard let audioURL = Bundle.main.url(forResource: fileName, withExtension: "mp3") else {
+            print("Audio file not found: \(fileName).mp3")
+            // Fallback: call completion immediately
+            DispatchQueue.main.async {
+                completion()
             }
+            return
         }
         
-        isSpeaking = true
-        synthesizer.speak(utterance)
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: audioURL)
+            audioPlayer?.delegate = self
+            audioPlayer?.volume = 0.9
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+            isPlaying = true
+            isPaused = false
+        } catch {
+            print("Error playing audio file: \(error)")
+            // Fallback: call completion immediately
+            DispatchQueue.main.async {
+                completion()
+            }
+        }
+    }
+    
+    func playExerciseAudio(exerciseKey: String, audioType: String, stepNumber: Int? = nil, completion: @escaping () -> Void) {
+        // Convert exercise key to snake_case for file path
+        let snakeKey = exerciseKey
+            .replacingOccurrences(of: "-", with: "_")
+            .replacingOccurrences(of: " ", with: "_")
+            .lowercased()
+        
+        // Build file path
+        var fileName: String
+        if let step = stepNumber {
+            fileName = "Assets/Audio/Exercises/\(snakeKey)/step_\(step)"
+        } else {
+            fileName = "Assets/Audio/Exercises/\(snakeKey)/\(audioType)"
+        }
+        
+        playAudioFile(fileName, completion: completion)
     }
     
     func stop() {
-        synthesizer.stopSpeaking(at: .immediate)
-        isSpeaking = false
+        audioPlayer?.stop()
+        isPlaying = false
+        isPaused = false
         completionHandler = nil
     }
     
     func pause() {
-        synthesizer.pauseSpeaking(at: .immediate)
+        if isPlaying && !isPaused {
+            audioPlayer?.pause()
+            isPaused = true
+        }
     }
     
     func resume() {
-        synthesizer.continueSpeaking()
+        if isPaused {
+            audioPlayer?.play()
+            isPaused = false
+        }
     }
     
-    // MARK: - AVSpeechSynthesizerDelegate
+    // MARK: - AVAudioPlayerDelegate
     
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        isSpeaking = false
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        isPlaying = false
+        isPaused = false
         if let completion = completionHandler {
             completionHandler = nil
             DispatchQueue.main.async {
@@ -72,23 +103,19 @@ class SpeechController: NSObject, ObservableObject, AVSpeechSynthesizerDelegate 
             }
         }
     }
-    
-    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
-        isSpeaking = true
-    }
 }
 
-// Separate view for speech indicator to prevent title re-renders
-struct SpeechIndicator: View {
-    let isSpeaking: Bool
+// Separate view for audio indicator to prevent title re-renders
+struct AudioIndicator: View {
+    let isPlaying: Bool
     @State private var animating = false
     
     var body: some View {
         Image(systemName: "dot.radiowaves.left.and.right")
             .foregroundColor(.blue)
-            .opacity(isSpeaking ? 1 : 0)
+            .opacity(isPlaying ? 1 : 0)
             .scaleEffect(animating ? 1.1 : 0.9)
-            .animation(isSpeaking ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true) : .default, value: animating)
+            .animation(isPlaying ? .easeInOut(duration: 0.5).repeatForever(autoreverses: true) : .default, value: animating)
             .onAppear {
                 animating = true
             }
@@ -128,7 +155,7 @@ struct ExerciseView: View {
     @State private var timeRemaining: Int
     @State private var isCountingDown = false
     @State private var timerSubscription: AnyCancellable?
-    @StateObject private var speechController = SpeechController()
+    @StateObject private var audioController = AudioController()
     @State private var currentInstructionIndex = 0
     @State private var hasFinishedReadingInstructions = false
     var onCompletion: (() -> Void)?
@@ -154,11 +181,11 @@ struct ExerciseView: View {
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                     
-                    // Speech indicator overlaid on the right
+                    // Audio indicator overlaid on the right
                     HStack {
                         Spacer()
                         if withCoaching {
-                            SpeechIndicator(isSpeaking: speechController.isSpeaking)
+                            AudioIndicator(isPlaying: audioController.isPlaying)
                         }
                     }
                 }
@@ -196,7 +223,7 @@ struct ExerciseView: View {
                         InstructionRow(
                             index: index,
                             instruction: instruction,
-                            isHighlighted: withCoaching && speechController.isSpeaking && index == currentInstructionIndex
+                            isHighlighted: withCoaching && audioController.isPlaying && index == currentInstructionIndex
                         )
                     }
                 }
@@ -233,12 +260,12 @@ struct ExerciseView: View {
                 .buttonStyle(.borderedProminent)
                 
                 if withCoaching {
-                    Button(action: toggleSpeech) {
-                        Image(systemName: speechController.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                    Button(action: toggleAudio) {
+                        Image(systemName: audioController.isPlaying ? "speaker.slash.fill" : "speaker.wave.2.fill")
                             .font(.system(size: 18))
                     }
                     .buttonStyle(.bordered)
-                    .help(speechController.isSpeaking ? "Stop coaching" : "Resume coaching")
+                    .help(audioController.isPlaying ? "Stop coaching" : "Resume coaching")
                 }
             }
         }
@@ -247,7 +274,7 @@ struct ExerciseView: View {
         .frame(width: 500, height: 520)
         .onDisappear {
             stopTimer()
-            speechController.stop()
+            audioController.stop()
         }
         .onAppear {
             if withCoaching {
@@ -314,7 +341,7 @@ struct ExerciseView: View {
         timerSubscription = nil
     }
     
-    // MARK: - Speech Methods
+    // MARK: - Audio Methods
     
     private func startCoaching() {
         guard withCoaching && !exercise.instructions.isEmpty else { return }
@@ -322,42 +349,47 @@ struct ExerciseView: View {
         // Reset instruction index
         currentInstructionIndex = 0
         
-        // Announce exercise name first
-        let introText = "Starting \(exercise.name). \(exercise.benefits)"
-        speechController.speak(introText) {
-            // After intro, speak the instructions
-            self.speakInstructions()
+        // Get exercise key from ID (e.g., "chin-tuck" -> "chin_tuck")
+        let exerciseKey = exercise.id.replacingOccurrences(of: "-", with: "_")
+        
+        // Play intro audio
+        audioController.playExerciseAudio(exerciseKey: exerciseKey, audioType: "intro") {
+            // After intro, play the instructions
+            self.playInstructions()
         }
     }
     
-    private func speakInstructions() {
+    private func playInstructions() {
         guard currentInstructionIndex < exercise.instructions.count else {
-            // All instructions spoken - now start the timer
+            // All instructions played - play complete message then start timer
             hasFinishedReadingInstructions = true
-            // Small delay before starting
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.startTimer()
+            
+            let exerciseKey = exercise.id.replacingOccurrences(of: "-", with: "_")
+            audioController.playExerciseAudio(exerciseKey: exerciseKey, audioType: "complete") {
+                // Small delay before starting timer
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.startTimer()
+                }
             }
             return
         }
         
-        let instruction = exercise.instructions[currentInstructionIndex]
-        let text = "Step \(currentInstructionIndex + 1): \(instruction)"
+        let exerciseKey = exercise.id.replacingOccurrences(of: "-", with: "_")
         
-        // Speak this instruction, then move to next
-        speechController.speak(text) {
+        // Play this instruction audio, then move to next
+        audioController.playExerciseAudio(exerciseKey: exerciseKey, audioType: "step", stepNumber: currentInstructionIndex + 1) {
             // Move to next instruction
             self.currentInstructionIndex += 1
-            // Immediately speak next instruction (no artificial delay)
-            self.speakInstructions()
+            // Immediately play next instruction (no artificial delay)
+            self.playInstructions()
         }
     }
     
-    private func toggleSpeech() {
-        if speechController.isSpeaking {
-            speechController.pause()
+    private func toggleAudio() {
+        if audioController.isPlaying {
+            audioController.pause()
         } else {
-            speechController.resume()
+            audioController.resume()
         }
     }
 }
