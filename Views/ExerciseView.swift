@@ -9,14 +9,111 @@ import SwiftUI
 import Combine
 import AVFoundation
 
+// Speech controller with proper delegate handling
+class SpeechController: NSObject, ObservableObject, AVSpeechSynthesizerDelegate {
+    @Published var isSpeaking = false
+    @Published var currentUtteranceIndex = 0
+    
+    private let synthesizer = AVSpeechSynthesizer()
+    private var completionHandler: (() -> Void)?
+    
+    override init() {
+        super.init()
+        synthesizer.delegate = self
+    }
+    
+    func speak(_ text: String, completion: @escaping () -> Void) {
+        completionHandler = completion
+        
+        let utterance = AVSpeechUtterance(string: text)
+        utterance.rate = 0.55
+        utterance.pitchMultiplier = 1.05
+        utterance.volume = 0.9
+        
+        // Use enhanced voice if available
+        if let voice = AVSpeechSynthesisVoice(language: "en-US") {
+            let voices = AVSpeechSynthesisVoice.speechVoices()
+            if let premiumVoice = voices.first(where: { 
+                $0.language == "en-US" && 
+                ($0.name.contains("Samantha") || $0.name.contains("Alex") || $0.quality == .enhanced)
+            }) {
+                utterance.voice = premiumVoice
+            } else {
+                utterance.voice = voice
+            }
+        }
+        
+        isSpeaking = true
+        synthesizer.speak(utterance)
+    }
+    
+    func stop() {
+        synthesizer.stopSpeaking(at: .immediate)
+        isSpeaking = false
+        completionHandler = nil
+    }
+    
+    func pause() {
+        synthesizer.pauseSpeaking(at: .immediate)
+    }
+    
+    func resume() {
+        synthesizer.continueSpeaking()
+    }
+    
+    // MARK: - AVSpeechSynthesizerDelegate
+    
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        isSpeaking = false
+        if let completion = completionHandler {
+            completionHandler = nil
+            DispatchQueue.main.async {
+                completion()
+            }
+        }
+    }
+    
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didStart utterance: AVSpeechUtterance) {
+        isSpeaking = true
+    }
+}
+
+// Separate view for instruction rows to prevent full re-renders
+struct InstructionRow: View {
+    let index: Int
+    let instruction: String
+    let isHighlighted: Bool
+    
+    var body: some View {
+        HStack(alignment: .top, spacing: 12) {
+            Text("\(index + 1).")
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary)
+                .frame(width: 20, alignment: .trailing)
+            
+            Text(instruction)
+                .font(.system(size: 14))
+                .foregroundColor(.primary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.vertical, 2)
+        .padding(.horizontal, 6)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(isHighlighted ? Color.blue.opacity(0.1) : Color.clear)
+                .animation(.easeInOut(duration: 0.2), value: isHighlighted)
+        )
+    }
+}
+
 struct ExerciseView: View {
     let exercise: Exercise
     @State private var timeRemaining: Int
     @State private var isCountingDown = false
     @State private var timerSubscription: AnyCancellable?
-    @State private var speechSynthesizer = AVSpeechSynthesizer()
-    @State private var isSpeaking = false
+    @StateObject private var speechController = SpeechController()
     @State private var currentInstructionIndex = 0
+    @State private var hasFinishedReadingInstructions = false
     var onCompletion: (() -> Void)?
     var withCoaching: Bool = false
     var startImmediately: Bool = true
@@ -38,10 +135,10 @@ struct ExerciseView: View {
                         .font(.title2)
                         .fontWeight(.semibold)
                     
-                    if withCoaching && isSpeaking {
+                    if withCoaching && speechController.isSpeaking {
                         Image(systemName: "dot.radiowaves.left.and.right")
                             .foregroundColor(.blue)
-                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: isSpeaking)
+                            .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: speechController.isSpeaking)
                     }
                 }
                 
@@ -50,6 +147,7 @@ struct ExerciseView: View {
                     Text(timeString)
                         .font(.system(size: 32, weight: .medium, design: .monospaced))
                         .foregroundColor(isCountingDown ? .blue : .primary)
+                        .id("timer-\(timeRemaining)") // Force update only this text
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Label(exercise.category.rawValue, systemImage: categoryIcon)
@@ -74,23 +172,10 @@ struct ExerciseView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
-                        HStack(alignment: .top, spacing: 12) {
-                            Text("\(index + 1).")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                                .frame(width: 20, alignment: .trailing)
-                            
-                            Text(instruction)
-                                .font(.system(size: 14))
-                                .foregroundColor(.primary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .padding(.vertical, 2)
-                        .padding(.horizontal, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: 4)
-                                .fill(withCoaching && isSpeaking && index == currentInstructionIndex ? 
-                                      Color.blue.opacity(0.1) : Color.clear)
+                        InstructionRow(
+                            index: index,
+                            instruction: instruction,
+                            isHighlighted: withCoaching && speechController.isSpeaking && index == currentInstructionIndex
                         )
                     }
                 }
@@ -128,11 +213,11 @@ struct ExerciseView: View {
                 
                 if withCoaching {
                     Button(action: toggleSpeech) {
-                        Image(systemName: isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
+                        Image(systemName: speechController.isSpeaking ? "speaker.slash.fill" : "speaker.wave.2.fill")
                             .font(.system(size: 18))
                     }
                     .buttonStyle(.bordered)
-                    .help(isSpeaking ? "Stop coaching" : "Resume coaching")
+                    .help(speechController.isSpeaking ? "Stop coaching" : "Resume coaching")
                 }
             }
         }
@@ -141,15 +226,15 @@ struct ExerciseView: View {
         .frame(width: 500, height: 520)
         .onDisappear {
             stopTimer()
-            stopSpeaking()
+            speechController.stop()
         }
         .onAppear {
-            if startImmediately {
-                // Start the timer immediately
-                startTimer()
-            }
             if withCoaching {
+                // In coaching mode, read instructions first, then start timer
                 startCoaching()
+            } else if startImmediately {
+                // Without coaching, start timer immediately
+                startTimer()
             }
         }
     }
@@ -182,6 +267,8 @@ struct ExerciseView: View {
     }
     
     private func startTimer() {
+        // Play start sound
+        NSSound.beep()
         isCountingDown = true
         timerSubscription = Timer.publish(every: 1.0, on: .main, in: .common)
             .autoconnect()
@@ -211,9 +298,12 @@ struct ExerciseView: View {
     private func startCoaching() {
         guard withCoaching && !exercise.instructions.isEmpty else { return }
         
+        // Reset instruction index
+        currentInstructionIndex = 0
+        
         // Announce exercise name first
         let introText = "Starting \(exercise.name). \(exercise.benefits)"
-        speak(introText) {
+        speechController.speak(introText) {
             // After intro, speak the instructions
             self.speakInstructions()
         }
@@ -221,58 +311,33 @@ struct ExerciseView: View {
     
     private func speakInstructions() {
         guard currentInstructionIndex < exercise.instructions.count else {
-            // All instructions spoken
+            // All instructions spoken - now start the timer
+            hasFinishedReadingInstructions = true
+            // Small delay before starting
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                self.startTimer()
+            }
             return
         }
         
         let instruction = exercise.instructions[currentInstructionIndex]
         let text = "Step \(currentInstructionIndex + 1): \(instruction)"
         
-        speak(text) {
+        // Speak this instruction, then move to next
+        speechController.speak(text) {
+            // Move to next instruction
             self.currentInstructionIndex += 1
-            // Add a small delay between instructions
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                self.speakInstructions()
-            }
-        }
-    }
-    
-    private func speak(_ text: String, completion: @escaping () -> Void = {}) {
-        let utterance = AVSpeechUtterance(string: text)
-        utterance.rate = 0.5 // Slightly slower for clarity
-        utterance.pitchMultiplier = 1.0
-        utterance.volume = 0.9
-        
-        // Use a delegate-like approach with completion
-        speechSynthesizer.speak(utterance)
-        isSpeaking = true
-        
-        // Simple completion after estimated duration
-        let estimatedDuration = Double(text.count) * 0.06 // Rough estimate
-        DispatchQueue.main.asyncAfter(deadline: .now() + estimatedDuration) {
-            if !self.speechSynthesizer.isSpeaking {
-                self.isSpeaking = false
-                completion()
-            }
+            // Immediately speak next instruction (no artificial delay)
+            self.speakInstructions()
         }
     }
     
     private func toggleSpeech() {
-        if speechSynthesizer.isSpeaking {
-            speechSynthesizer.pauseSpeaking(at: .immediate)
-            isSpeaking = false
-        } else if speechSynthesizer.isPaused {
-            speechSynthesizer.continueSpeaking()
-            isSpeaking = true
+        if speechController.isSpeaking {
+            speechController.pause()
         } else {
-            // Restart from current instruction
-            speakInstructions()
+            speechController.resume()
         }
-    }
-    
-    private func stopSpeaking() {
-        speechSynthesizer.stopSpeaking(at: .immediate)
-        isSpeaking = false
     }
 }
 
@@ -333,11 +398,15 @@ struct ExerciseSetView: View {
                         
                         Spacer()
                         
-                        // Auto-advance toggle for quick reset
-                        if exerciseSet.id == "quick-reset" {
+                        // Auto-advance toggle for quick reset or when not coaching
+                        if !withCoaching && exerciseSet.id == "quick-reset" {
                             Toggle("Auto-advance", isOn: $autoAdvance)
                                 .toggleStyle(.switch)
                                 .scaleEffect(0.8)
+                        } else if withCoaching {
+                            Text("Auto-advance")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                         
                         // Progress dots
@@ -356,8 +425,8 @@ struct ExerciseSetView: View {
                         withCoaching: withCoaching,
                         startImmediately: true,
                         onCompletion: {
-                            // Auto-advance for quick posture reset
-                            if exerciseSet.id == "quick-reset" && autoAdvance {
+                            // Auto-advance when coaching or for quick reset
+                            if withCoaching || (exerciseSet.id == "quick-reset" && autoAdvance) {
                                 if currentExerciseIndex < exerciseSet.exercises.count - 1 {
                                     currentExerciseIndex += 1
                                 } else {
@@ -367,6 +436,7 @@ struct ExerciseSetView: View {
                             }
                         }
                     )
+                    .id("exercise-\(currentExerciseIndex)") // Force re-creation when index changes
                     
                     HStack(spacing: 16) {
                         Button(action: {
