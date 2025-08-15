@@ -6,6 +6,7 @@ struct TouchGrassMode: View {
     @State private var showingCompletion = false
     @State private var completedActivity: String? = nil
     @State private var showExerciseMenu = false
+    @State private var selectedExerciseSet: ExerciseSet? = nil
     
     private func closeMenuBar() {
         NSApplication.shared.keyWindow?.close()
@@ -25,15 +26,13 @@ struct TouchGrassMode: View {
             switch activity {
             case "1 Min Reset":
                 // Quick 1-minute posture reset
-                reminderManager.showExerciseSet(ExerciseData.oneMinuteBreak)
-                dismiss()
+                selectedExerciseSet = ExerciseData.oneMinuteBreak
             case "Exercises":
                 // Show exercise menu state
                 showExerciseMenu = true
             case "Meditation":
                 // Breathing and relaxation exercises
-                reminderManager.showExerciseSet(ExerciseData.breathingExercise)
-                dismiss()
+                selectedExerciseSet = ExerciseData.breathingExercise
             default:
                 break
             }
@@ -57,7 +56,19 @@ struct TouchGrassMode: View {
     }
     
     var body: some View {
-        VStack(spacing: 20) {
+        if let exerciseSet = selectedExerciseSet {
+            // Show exercise view directly
+            ExerciseSetView(
+                exerciseSet: exerciseSet,
+                onClose: {
+                    // Go back to main menu
+                    selectedExerciseSet = nil
+                    showExerciseMenu = false
+                }
+            )
+        } else {
+            // Show normal Touch Grass mode
+            VStack(spacing: 20) {
             // Header
             HStack {
                 GrassIcon(isActive: false, size: 24)
@@ -161,8 +172,7 @@ struct TouchGrassMode: View {
                     VStack(spacing: 8) {
                         // Upper Body Routine
                         Button(action: {
-                            reminderManager.showExerciseSet(ExerciseData.upperBodyRoutine)
-                            dismiss()
+                            selectedExerciseSet = ExerciseData.upperBodyRoutine
                         }) {
                             HStack {
                                 Image(systemName: "figure.arms.open")
@@ -187,8 +197,7 @@ struct TouchGrassMode: View {
                         
                         // Lower Body Routine
                         Button(action: {
-                            reminderManager.showExerciseSet(ExerciseData.lowerBodyRoutine)
-                            dismiss()
+                            selectedExerciseSet = ExerciseData.lowerBodyRoutine
                         }) {
                             HStack {
                                 Image(systemName: "figure.walk")
@@ -213,8 +222,7 @@ struct TouchGrassMode: View {
                         
                         // Ankle & Foot Routine
                         Button(action: {
-                            reminderManager.showExerciseSet(ExerciseData.ankleFootRoutine)
-                            dismiss()
+                            selectedExerciseSet = ExerciseData.ankleFootRoutine
                         }) {
                             HStack {
                                 Image(systemName: "shoeprints.fill")
@@ -239,8 +247,7 @@ struct TouchGrassMode: View {
                         
                         // Eye Break
                         Button(action: {
-                            reminderManager.showExerciseSet(ExerciseData.eyeBreak)
-                            dismiss()
+                            selectedExerciseSet = ExerciseData.eyeBreak
                         }) {
                             HStack {
                                 Image(systemName: "eye")
@@ -400,5 +407,6 @@ struct TouchGrassMode: View {
             // Refresh calendar data when window opens
             reminderManager.calendarManager?.updateCurrentAndNextEvents()
         }
+        } // End else
     }
 }

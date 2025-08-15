@@ -8,8 +8,8 @@ final class TouchGrassModeController: NSObject {
         // Create window if needed
         if window == nil {
             let panel = NSPanel(
-                contentRect: NSRect(x: 0, y: 0, width: 400, height: 500),
-                styleMask: [.titled, .closable, .nonactivatingPanel],
+                contentRect: NSRect(x: 0, y: 0, width: 500, height: 600),
+                styleMask: [.titled, .closable, .nonactivatingPanel, .resizable],
                 backing: .buffered,
                 defer: false
             )
