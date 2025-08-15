@@ -26,13 +26,19 @@ struct TouchGrassMode: View {
             switch activity {
             case "1 Min Reset":
                 // Quick 1-minute posture reset
-                selectedExerciseSet = ExerciseData.oneMinuteBreak
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedExerciseSet = ExerciseData.oneMinuteBreak
+                }
             case "Exercises":
                 // Show exercise menu state
-                showExerciseMenu = true
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    showExerciseMenu = true
+                }
             case "Meditation":
                 // Breathing and relaxation exercises
-                selectedExerciseSet = ExerciseData.breathingExercise
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    selectedExerciseSet = ExerciseData.breathingExercise
+                }
             default:
                 break
             }
@@ -172,7 +178,9 @@ struct TouchGrassMode: View {
                     VStack(spacing: 8) {
                         // Upper Body Routine
                         Button(action: {
-                            selectedExerciseSet = ExerciseData.upperBodyRoutine
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedExerciseSet = ExerciseData.upperBodyRoutine
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "figure.arms.open")
@@ -197,7 +205,9 @@ struct TouchGrassMode: View {
                         
                         // Lower Body Routine
                         Button(action: {
-                            selectedExerciseSet = ExerciseData.lowerBodyRoutine
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedExerciseSet = ExerciseData.lowerBodyRoutine
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "figure.walk")
@@ -222,7 +232,9 @@ struct TouchGrassMode: View {
                         
                         // Ankle & Foot Routine
                         Button(action: {
-                            selectedExerciseSet = ExerciseData.ankleFootRoutine
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedExerciseSet = ExerciseData.ankleFootRoutine
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "shoeprints.fill")
@@ -247,7 +259,9 @@ struct TouchGrassMode: View {
                         
                         // Eye Break
                         Button(action: {
-                            selectedExerciseSet = ExerciseData.eyeBreak
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                selectedExerciseSet = ExerciseData.eyeBreak
+                            }
                         }) {
                             HStack {
                                 Image(systemName: "eye")
@@ -407,6 +421,8 @@ struct TouchGrassMode: View {
             // Refresh calendar data when window opens
             reminderManager.calendarManager?.updateCurrentAndNextEvents()
         }
+        .animation(.easeInOut(duration: 0.2), value: showExerciseMenu)
+        .animation(.easeInOut(duration: 0.2), value: selectedExerciseSet?.id)
         } // End else
     }
 }
