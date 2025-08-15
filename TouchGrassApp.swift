@@ -3,12 +3,14 @@ import UserNotifications
 
 @main
 struct TouchGrassApp: App {
-    @StateObject private var manager = ReminderManager()
+    static let sharedManager = ReminderManager()
+    @StateObject private var manager = TouchGrassApp.sharedManager
     private var onboardingWindow: TouchGrassOnboardingController?
     @State private var touchGrassController = TouchGrassModeController()
 
     init() {
-        // Set up notification delegate
+        // Set up notification delegate with the shared manager
+        NotificationDelegate.shared.reminderManager = TouchGrassApp.sharedManager
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         
         
@@ -24,10 +26,6 @@ struct TouchGrassApp: App {
     var body: some Scene {
         MenuBarExtra {
             MenuView(manager: manager)
-                .onAppear {
-                    // Set the manager reference when the menu appears
-                    NotificationDelegate.shared.reminderManager = manager
-                }
         } label: {
             GrassIcon(isActive: manager.hasActiveReminder, size: 20)
         }
