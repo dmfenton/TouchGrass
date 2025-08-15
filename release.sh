@@ -47,7 +47,28 @@ fi
 
 print_status "Starting release process for version $VERSION"
 
-# 1. Check for uncommitted changes
+# 1. Update exercise audio if needed (check for text changes)
+if [ -f "./update_exercise_audio.sh" ]; then
+    print_status "Checking for exercise text changes..."
+    if [ -n "$OPENAI_API_KEY" ]; then
+        ./update_exercise_audio.sh
+        
+        # Check if any audio files were updated
+        if git diff --quiet Assets/Audio/; then
+            print_status "No audio files changed"
+        else
+            print_status "Audio files updated - adding to release"
+            git add Assets/Audio/
+            git add .audio_cache/
+            git commit -m "Update exercise audio files for version $VERSION" 2>/dev/null || true
+        fi
+    else
+        print_warning "OPENAI_API_KEY not set - skipping audio regeneration"
+        print_warning "To enable: export OPENAI_API_KEY='your-key'"
+    fi
+fi
+
+# 2. Check for uncommitted changes
 if [ -n "$(git status --porcelain)" ]; then
     print_warning "You have uncommitted changes. Please commit or stash them first."
     echo "Uncommitted files:"

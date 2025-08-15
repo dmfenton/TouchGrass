@@ -156,22 +156,24 @@ The entire release process is automated through a single command:
 ```
 
 The release script automatically:
-1. Updates version in Info.plist and VERSION file
-2. Builds the app with code signing (if configured)
-3. Creates a DMG installer
-4. Generates SHA256 checksums
-5. Creates release notes (with your input)
-6. Commits version changes
-7. Creates and pushes git tag
-8. Pushes to GitHub
-9. Creates GitHub release
-10. Uploads the DMG to the release
+1. Checks for exercise text changes and regenerates audio if needed (requires OPENAI_API_KEY)
+2. Updates version in Info.plist and VERSION file
+3. Builds the app with code signing (if configured)
+4. Creates a DMG installer
+5. Generates SHA256 checksums
+6. Creates release notes (with your input)
+7. Commits version changes
+8. Creates and pushes git tag
+9. Pushes to GitHub
+10. Creates GitHub release
+11. Uploads the DMG to the release
 
 ### Requirements
 
 - `create-dmg` installed via Homebrew: `brew install create-dmg`
 - GitHub CLI authenticated: `gh auth login`
 - Write access to the repository
+- Optional: `OPENAI_API_KEY` environment variable for audio regeneration
 
 ### Version Guidelines
 
@@ -218,3 +220,62 @@ EOF
 
 # The script handles everything else automatically!
 ```
+
+## Exercise Audio Generation
+
+Touch Grass includes high-quality TTS audio for all exercise instructions using OpenAI's Text-to-Speech API.
+
+### Audio Generation Script
+
+The `generate_exercise_audio.sh` script automatically:
+- Extracts exercise data from `Models/Exercise.swift`
+- Generates audio files for intro, steps, and completion
+- Uses parallel processing to avoid timeouts
+- Implements smart caching to only regenerate changed content
+
+### Usage
+
+```bash
+# Generate/update audio files as needed (uses cache)
+./generate_exercise_audio.sh
+
+# Force regenerate all audio files
+./generate_exercise_audio.sh --force
+
+# Check which files need updating without generating
+./generate_exercise_audio.sh --check
+
+# Generate with verbose output
+./generate_exercise_audio.sh --verbose
+
+# Generate sequentially instead of parallel
+./generate_exercise_audio.sh --sequential
+```
+
+### Requirements
+
+- `OPENAI_API_KEY` environment variable set
+- macOS with bash 3.2+ (script is compatible with default macOS bash)
+
+### Audio Organization
+
+Audio files are stored in `Assets/Audio/Exercises/` with the following structure:
+```
+Assets/Audio/Exercises/
+├── chin_tuck/
+│   ├── intro.mp3      # "Starting Chin Tucks. Strengthens muscles..."
+│   ├── step_1.mp3     # "Step 1: Sit or stand with spine tall..."
+│   ├── step_2.mp3     # "Step 2: Keep your eyes looking..."
+│   └── complete.mp3   # "Great job! Exercise complete."
+├── deep_breathing/
+│   └── ...
+```
+
+### Integration with Release Process
+
+The release script automatically checks for exercise text changes and regenerates audio files if:
+1. The `OPENAI_API_KEY` environment variable is set
+2. Exercise instruction text has changed since last generation
+3. The `update_exercise_audio.sh` script exists
+
+Audio generation adds approximately 2-3 minutes to the release process when updates are needed.
