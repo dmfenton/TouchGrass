@@ -178,3 +178,43 @@ The release script automatically:
 - **PATCH** (0.0.X): Bug fixes, minor tweaks
 - **MINOR** (0.X.0): New features, backwards compatible
 - **MAJOR** (X.0.0): Breaking changes, major redesigns
+
+### Example Release Workflow
+
+When ready to release after making changes:
+
+```bash
+# 1. Check what's changed since last release
+git describe --tags --abbrev=0  # Get last tag (e.g., v0.8.0)
+git log v0.8.0..HEAD --oneline  # View commits since last release
+
+# 2. Determine version number based on changes
+# For UI improvements and feature enhancements: MINOR bump
+# For bug fixes only: PATCH bump
+# For breaking changes: MAJOR bump
+
+# 3. Create release with detailed notes
+./release.sh 0.9.0 "$(cat <<'EOF'
+Major UI improvements and exercise coaching enhancements
+
+### UI Redesign
+- Completely redesigned menu bar interface
+- Added forest green header button
+- Simplified water tracking to single +8oz button
+- Added subtle section labels for organization
+
+### Exercise Coaching Improvements  
+- Added intelligent text-to-speech coaching
+- Instructions read before timer starts
+- Automatic progression through exercise sets
+- Visual highlighting synchronized with speech
+
+### Other Improvements
+- Fixed UI jittering issues
+- Better calendar status messages
+- Improved visual hierarchy throughout
+EOF
+)"
+
+# The script handles everything else automatically!
+```
