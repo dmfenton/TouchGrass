@@ -60,8 +60,7 @@ struct TouchGrassMode: View {
         VStack(spacing: 20) {
             // Header
             HStack {
-                Image(systemName: "leaf.circle")
-                    .font(.title2)
+                GrassIcon(isActive: false, size: 24)
                     .foregroundColor(.primary.opacity(0.8))
                 Text("Time to Touch Grass")
                     .font(.title2)
@@ -179,9 +178,9 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
-                            .background(
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
@@ -205,9 +204,9 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
-                            .background(
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
@@ -231,9 +230,9 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
-                            .background(
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
@@ -257,9 +256,9 @@ struct TouchGrassMode: View {
                             }
                             .padding(12)
                             .frame(maxWidth: .infinity)
-                            .background(
+                            .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .fill(Color(NSColor.controlBackgroundColor))
+                                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
                         .buttonStyle(.plain)
@@ -311,13 +310,9 @@ struct TouchGrassMode: View {
                                 }
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 80)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 12)
-                                        .fill(Color(NSColor.controlBackgroundColor))
-                                )
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 12)
-                                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                                        .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                                 )
                             }
                             .buttonStyle(.plain)
@@ -328,58 +323,32 @@ struct TouchGrassMode: View {
                 Divider()
                 
                 // Water Tracking Section - consistent with main menu
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("Quick water log:")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        
-                        Spacer()
-                        
-                        // Daily total - show in current unit
-                        HStack(spacing: 4) {
-                            Image(systemName: "drop.fill")
-                                .foregroundColor(.primary.opacity(0.6))
-                            Text("\(reminderManager.currentWaterIntake)/\(reminderManager.dailyWaterGoal) \(reminderManager.waterUnit.rawValue)")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.primary)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 4)
-                        .background(
-                            RoundedRectangle(cornerRadius: 6)
-                                .fill(Color(NSColor.controlBackgroundColor))
-                        )
-                    }
+                HStack {
+                    Image(systemName: "drop.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(Color(red: 0.0, green: 0.5, blue: 1.0))
                     
-                    HStack(spacing: 12) {
-                        // Use consistent amounts with main menu (+1, +2, +3 in current unit)
-                        ForEach([1, 2, 3], id: \.self) { amount in
-                            Button(action: {
-                                reminderManager.logWater(amount)
-                            }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "plus.circle")
-                                        .font(.system(size: 14))
-                                    Text("+\(amount)")
-                                        .font(.system(size: 13, weight: .medium))
-                                }
-                                .foregroundColor(.primary)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .fill(Color(NSColor.controlBackgroundColor))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 8)
-                                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-                                )
-                            }
-                            .buttonStyle(.plain)
-                        }
+                    Text("\(reminderManager.currentWaterIntake * 8) / 64 oz")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    Button(action: { reminderManager.logWater(1) }) {
+                        Text("+8oz")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color(red: 0.0, green: 0.5, blue: 1.0))
+                            )
                     }
+                    .buttonStyle(.plain)
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
                 
                 Spacer()
                 
@@ -399,9 +368,9 @@ struct TouchGrassMode: View {
                         .foregroundColor(.orange)
                         .padding(.horizontal, 16)
                         .padding(.vertical, 8)
-                        .background(
+                        .overlay(
                             RoundedRectangle(cornerRadius: 6)
-                                .fill(Color.orange.opacity(0.08))
+                                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
                         )
                     }
                     .buttonStyle(.plain)
@@ -426,7 +395,7 @@ struct TouchGrassMode: View {
         .padding(.bottom, 24)
         .padding(.top, 32)
         .frame(width: 400)
-        .background(Color(NSColor.windowBackgroundColor))
+        .background(Color(NSColor.controlBackgroundColor))
         .onAppear {
             // Refresh calendar data when window opens
             reminderManager.calendarManager?.updateCurrentAndNextEvents()

@@ -61,7 +61,14 @@ struct MenuView: View {
     var mainMenuContent: some View {
         VStack(spacing: 0) {
             // Header Button - Combines title and action with streak
-            Button(action: { manager.showTouchGrassMode() }) {
+            Button(action: { 
+                // Close the menu first
+                NSApplication.shared.sendAction(#selector(NSMenu.cancelTracking), to: nil, from: nil)
+                // Then show Touch Grass mode after a small delay
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    manager.showTouchGrassMode()
+                }
+            }) {
                 HStack {
                     HStack(spacing: 8) {
                         GrassIcon(isActive: false, size: 16)
