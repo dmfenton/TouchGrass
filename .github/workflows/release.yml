@@ -1,0 +1,60 @@
+name: Release Prep
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to prepare (e.g., 1.2.0)'
+        required: true
+
+jobs:
+  prepare-release:
+    name: Prepare Release
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Validate Version
+      run: |
+        VERSION=${{ github.event.inputs.version }}
+        if ! [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+          echo "Invalid version format. Use semantic versioning (e.g., 1.2.0)"
+          exit 1
+        fi
+    
+    - name: Update Version
+      run: |
+        VERSION=${{ github.event.inputs.version }}
+        # Update VERSION file
+        echo "$VERSION" > VERSION
+        # Update Info.plist
+        /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Info.plist
+    
+    - name: Generate Changelog
+      run: |
+        VERSION=${{ github.event.inputs.version }}
+        echo "## Touch Grass v$VERSION" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "### Changes since last release:" >> RELEASE_NOTES.md
+        git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"- %s" >> RELEASE_NOTES.md
+    
+    - name: Create Release PR
+      uses: peter-evans/create-pull-request@v5
+      with:
+        title: "Release v${{ github.event.inputs.version }}"
+        body: |
+          This PR prepares release v${{ github.event.inputs.version }}
+          
+          ## Checklist
+          - [ ] Version updated in VERSION and Info.plist
+          - [ ] Changelog reviewed
+          - [ ] Tests passing
+          - [ ] Manual testing completed
+          
+          After merging, build and sign locally with:
+          ```bash
+          make release VERSION=${{ github.event.inputs.version }}
+          ```
+        branch: release/v${{ github.event.inputs.version }}
+        commit-message: "Prepare release v${{ github.event.inputs.version }}"

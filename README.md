@@ -1,5 +1,10 @@
 # Touch Grass
 
+[![CI](https://github.com/dmfenton/touchgrass/actions/workflows/ci.yml/badge.svg)](https://github.com/dmfenton/touchgrass/actions/workflows/ci.yml)
+[![macOS](https://img.shields.io/badge/macOS-13.0%2B-blue)](https://www.apple.com/macos/)
+[![Swift](https://img.shields.io/badge/Swift-5.9-orange)](https://swift.org)
+[![License](https://img.shields.io/github/license/dmfenton/touchgrass)](LICENSE)
+
 A native macOS menu bar app that helps you maintain good posture with gentle, periodic reminders to touch grass.
 
 <img width="286" alt="Touch Grass Menu" src="https://github.com/user-attachments/assets/placeholder-menu.png">
