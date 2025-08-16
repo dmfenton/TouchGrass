@@ -13,7 +13,6 @@ struct TouchGrassApp: App {
         NotificationDelegate.shared.reminderManager = TouchGrassApp.sharedManager
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         
-        
         // Check for onboarding after a short delay to let the app fully initialize
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             if TouchGrassOnboardingController.shouldShowOnboarding() {

@@ -165,7 +165,6 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
     var waterStreak: Int {
         waterTracker.streak
     }
-
     
     func setWorkHours(start: (hour: Int, minute: Int), end: (hour: Int, minute: Int), days: Set<WorkDay>) {
         workHoursManager.setWorkHours(start: start, end: end, days: days)
@@ -186,7 +185,6 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
         }
     }
     
-
     // MARK: - Init
     init() {
         // Initialize trackers with same UserDefaults suite
@@ -368,8 +366,6 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
         adaptiveIntervalEnabled = defaults.object(forKey: adaptiveKey) as? Bool ?? true
         smartSchedulingEnabled = defaults.object(forKey: smartSchedulingKey) as? Bool ?? true
         
-        
-        
         // Load work hours
         let startHour = defaults.object(forKey: workStartHourKey) as? Int ?? 9
         let endHour = defaults.object(forKey: workEndHourKey) as? Int ?? 17
@@ -392,7 +388,6 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
         defaults.set(intervalMinutes, forKey: intervalKey)
         defaults.set(adaptiveIntervalEnabled, forKey: adaptiveKey)
         defaults.set(smartSchedulingEnabled, forKey: smartSchedulingKey)
-        
         
         // Save work hours
         defaults.set(currentWorkStartHour, forKey: workStartHourKey)
