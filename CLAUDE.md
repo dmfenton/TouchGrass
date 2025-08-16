@@ -100,18 +100,29 @@ Touch Grass uses a Ruby-based system for maintaining organized Xcode project str
 
 ### Project Structure
 ```
-TouchGrass.xcodeproj
-├── Managers/          # Core service classes
+TouchGrass.xcodeproj (MVC Architecture)
+├── Managers/          # Business logic and services
 │   ├── ReminderManager.swift
 │   ├── CalendarManager.swift
-│   ├── WorkHoursManager.swift
+│   ├── OnboardingManager.swift
+│   ├── WaterTracker.swift
 │   └── ...
 ├── Models/            # Data models
 │   ├── Exercise.swift
 │   └── Messages.swift
-├── Views/             # SwiftUI views and controllers
+├── Views/             # SwiftUI views only
+│   ├── Onboarding/    # Onboarding UI components
+│   │   ├── OnboardingWindow.swift
+│   │   ├── OnboardingCustomizationView.swift
+│   │   └── TouchGrassOnboarding.swift
 │   ├── TouchGrassMode.swift
-│   ├── OnboardingWindow.swift
+│   ├── ExerciseView.swift
+│   └── ...
+├── Controllers/       # View controllers and coordinators
+│   ├── Onboarding/    # Onboarding controllers
+│   │   └── TouchGrassOnboardingController.swift
+│   ├── TouchGrassModeController.swift
+│   ├── ExerciseWindowController.swift
 │   └── ...
 ├── TouchGrass/        # Core app structure
 │   ├── Design/        # Design system
@@ -144,8 +155,12 @@ scripts/sync_xcode.rb add file1.swift file2.swift  # Add specific files
 
 The system automatically places files in the correct groups based on:
 - **File name patterns**: `*Manager.swift` → Managers group
+- **MVC separation**: `*Controller.swift` → Controllers group
 - **Path location**: `Views/Components/*` → Components group  
 - **Content type**: Models, Views, etc.
+- **Feature subgrouping**: 
+  - Onboarding views → Views/Onboarding/
+  - Onboarding controllers → Controllers/Onboarding/
 
 ### Requirements
 

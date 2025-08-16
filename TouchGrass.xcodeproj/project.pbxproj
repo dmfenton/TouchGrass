@@ -101,6 +101,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		34253C8D0EF7DBDE57F58279 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */,
+			);
+			name = Onboarding;
+			sourceTree = "<group>";
+		};
 		34681C3AE33484B960CD3332 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -137,23 +145,38 @@
 			isa = PBXGroup;
 			children = (
 				710F0FEBF32D491D8771CA1A /* CustomizationView.swift */,
-				9CA7B53ACD134163B7C04E24 /* CustomizationWindowController.swift */,
 				CF05E7D3B0CC48C5A1A91100 /* ExerciseSelectionView.swift */,
 				BF2BD545B00140FDAF4B2FCE /* ExerciseView.swift */,
-				815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */,
 				79311D2091E54488B94FFADC /* GrassIcon.swift */,
+				BC1BEDC2F808400987D69A8B /* UpdateProgressView.swift */,
+				123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */,
+				C7A37EE6B8C1432D81699E7A /* TouchGrassMode.swift */,
+				6F7BF4189653BB275EDB094B /* Onboarding */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
+		6F7BF4189653BB275EDB094B /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
 				62A89115D30340428D810C63 /* OnboardingCustomizationView.swift */,
 				FEF78D7D40114727A453DB81 /* OnboardingHeaderView.swift */,
 				8A9A84660C7543CFBEB28545 /* OnboardingWindow.swift */,
 				D75514C88ECE4BF1A60DBB70 /* SimpleOnboardingWindow.swift */,
 				34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */,
-				8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */,
-				BC1BEDC2F808400987D69A8B /* UpdateProgressView.swift */,
-				123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */,
-				C7A37EE6B8C1432D81699E7A /* TouchGrassMode.swift */,
+			);
+			name = Onboarding;
+			sourceTree = "<group>";
+		};
+		9A0D029C68B1827390B75064 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				34253C8D0EF7DBDE57F58279 /* Onboarding */,
+				9CA7B53ACD134163B7C04E24 /* CustomizationWindowController.swift */,
+				815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */,
 				DCFD3A05466E47FBBE9C0C95 /* TouchGrassModeController.swift */,
 			);
-			name = Views;
+			name = Controllers;
 			sourceTree = "<group>";
 		};
 		B71234471234567812345678 = {
@@ -165,6 +188,7 @@
 				4746AFF1FFD7440AC89A288C /* Models */,
 				5B00D992D328A98543218C69 /* Views */,
 				5801F16888EAD17046CED222 /* TouchGrass */,
+				9A0D029C68B1827390B75064 /* Controllers */,
 			);
 			sourceTree = "<group>";
 		};
@@ -194,11 +218,11 @@
 				C617EE0264CF46AFA3EA084D /* OnboardingManager.swift */,
 				024C45B060374A5BAEDAE1D3 /* ReminderManager.swift */,
 				53F5FC669419485A98B0C9B6 /* UpdateManager.swift */,
-				F914D9DC3AA54CAC900E757B /* WaterTracker.swift */,
-				D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */,
 				A88E3131787846B3ABDBF43F /* WorkHoursManager.swift */,
 				C1B49700923E42A4A45984EF /* TimerService.swift */,
 				D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */,
+				F914D9DC3AA54CAC900E757B /* WaterTracker.swift */,
+				D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";

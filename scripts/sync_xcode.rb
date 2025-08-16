@@ -50,18 +50,25 @@ class XcodeProjectSync
   end
 
   def ensure_groups_exist
-    # Find or create groups at the main level
+    # Find or create groups at the main level (MVC structure)
     @managers_group = find_or_create_group(@main_group, 'Managers')
     @models_group = find_or_create_group(@main_group, 'Models')
     @views_group = find_or_create_group(@main_group, 'Views')
+    @controllers_group = find_or_create_group(@main_group, 'Controllers')
     @touchgrass_group = find_or_create_group(@main_group, 'TouchGrass')
 
-    # Create subgroups
+    # Create Views subgroups
+    @views_onboarding_group = find_or_create_group(@views_group, 'Onboarding')
+
+    # Create Controllers subgroups
+    @controllers_onboarding_group = find_or_create_group(@controllers_group, 'Onboarding')
+
+    # Create TouchGrass subgroups
     @design_group = find_or_create_group(@touchgrass_group, 'Design')
     @components_group = find_or_create_group(@touchgrass_group, 'Components', 'Views/Components')
 
     # Ensure groups don't have problematic paths that cause duplication
-    [@managers_group, @models_group, @views_group, @touchgrass_group, @design_group].each do |group|
+    [@managers_group, @models_group, @views_group, @controllers_group, @touchgrass_group, @design_group, @views_onboarding_group, @controllers_onboarding_group].each do |group|
       group.path = nil if group
     end
   end
@@ -80,7 +87,7 @@ class XcodeProjectSync
     
     # Determine target based on file name and path
     case file_name
-    when /Manager\.swift$/, 'ActivityTracker.swift', 'TimerService.swift', 'PreferencesStore.swift'
+    when /Manager\.swift$/, 'ActivityTracker.swift', 'TimerService.swift', 'PreferencesStore.swift', 'WaterTracker.swift', 'WindowHelper.swift'
       @managers_group
     when 'Exercise.swift', 'Messages.swift'
       @models_group
@@ -89,12 +96,23 @@ class XcodeProjectSync
     when 'TouchGrassModeRefactored.swift'
       @touchgrass_group
     else
-      # Check path-based classification
-      if file_path.include?('Views/Components/') || 
+      # Check for controllers first (MVC separation)
+      if file_name.include?('Controller')
+        if file_name.include?('Onboarding')
+          @controllers_onboarding_group
+        else
+          @controllers_group
+        end
+      # Check for onboarding views (not controllers)
+      elsif file_name.include?('Onboarding') && (file_name.include?('View') || file_name.include?('Window') || file_name == 'TouchGrassOnboarding.swift')
+        @views_onboarding_group
+      # Check path-based classification for components
+      elsif file_path.include?('Views/Components/') || 
          ['ActivitySelectionView.swift', 'CalendarContextView.swift', 'CompletionView.swift',
           'ExerciseMenuView.swift', 'InteractiveButton.swift', 'WaterTrackingBar.swift'].include?(file_name)
         @components_group
-      elsif file_path.include?('Views/') || file_name.include?('View') || file_name.include?('Window') || file_name.include?('Controller')
+      # Regular views and windows
+      elsif file_path.include?('Views/') || file_name.include?('View') || file_name.include?('Window')
         @views_group
       else
         # Keep in source group for root files like TouchGrassApp.swift, Info.plist
@@ -145,28 +163,33 @@ class XcodeProjectSync
     # Files to keep in source group root
     root_files = ['Info.plist', 'TouchGrassApp.swift', 'AppIcon.icns']
     
-    # Process all file references in the source group
-    files_to_move = @source_group.files.dup
+    # Process all file references in ALL groups, not just source group
+    all_groups = [@source_group, @managers_group, @models_group, @views_group, @controllers_group, @touchgrass_group, @design_group, @components_group, @views_onboarding_group, @controllers_onboarding_group].compact
     
-    files_to_move.each do |file_ref|
-      file_name = File.basename(file_ref.path || file_ref.name || '')
+    all_groups.each do |group|
+      files_to_move = group.files.dup
       
-      # Skip if it's a root file
-      next if root_files.include?(file_name)
-      
-      target_group = determine_target_group(file_ref.path || file_name)
-      
-      # Skip if already in the right group
-      next if file_ref.parent == target_group
-      
-      if target_group && target_group != @source_group
-        # Remove from current group
-        file_ref.parent.children.delete(file_ref)
-        # Add to target group
-        target_group.children << file_ref
+      files_to_move.each do |file_ref|
+        file_name = File.basename(file_ref.path || file_ref.name || '')
         
-        @organized_count += 1
-        puts "📁 Moved #{file_name} to #{target_group.name}"
+        # Skip if it's a root file
+        next if root_files.include?(file_name)
+        
+        target_group = determine_target_group(file_ref.path || file_name)
+        
+        # Skip if already in the right group
+        next if file_ref.parent == target_group
+        
+        if target_group && target_group != file_ref.parent
+          # Remove from current group
+          file_ref.parent.children.delete(file_ref)
+          # Add to target group
+          target_group.children << file_ref
+          
+          @organized_count += 1
+          target_path = target_group.parent && target_group.parent != @main_group ? "#{target_group.parent.name}/#{target_group.name}" : target_group.name
+          puts "📁 Moved #{file_name} to #{target_path}"
+        end
       end
     end
 
@@ -181,10 +204,11 @@ class XcodeProjectSync
     puts ""
     
     puts "Current groups:"
-    [@managers_group, @models_group, @views_group, @design_group, @components_group].each do |group|
+    [@managers_group, @models_group, @views_group, @views_onboarding_group, @controllers_group, @controllers_onboarding_group, @design_group, @components_group].each do |group|
       next unless group
       file_count = group.files.count
-      puts "  - #{group.name}: #{file_count} files"
+      group_path = group.parent && group.parent != @main_group ? "#{group.parent.name}/#{group.name}" : group.name
+      puts "  - #{group_path}: #{file_count} files"
       if file_count > 0
         group.files.each { |f| puts "    • #{File.basename(f.path || f.name || 'Unknown')}" }
       end
