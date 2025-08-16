@@ -1,7 +1,7 @@
 # Touch Grass Makefile
 # Common development tasks
 
-.PHONY: help build clean lint lint-fix test release run install setup check all
+.PHONY: help build clean lint lint-fix test release run install setup check all xcode-organize xcode-add xcode-check
 
 # Default target shows help
 help:
@@ -26,7 +26,13 @@ help:
 	@echo "  make install    - Install dependencies (SwiftLint, etc.)"
 	@echo "  make setup      - Complete development setup"
 	@echo "  make check      - Pre-commit checks (lint + build + test)"
-	@echo "  make xcode-add  - Instructions for adding files to Xcode"
+	@echo ""
+	@echo "Xcode Project Management:"
+	@echo "  make xcode-organize - Organize files into proper Xcode groups"
+	@echo "  make xcode-add FILES='file1 file2' - Add files to Xcode project"
+	@echo "  make xcode-check    - Check current Xcode organization"
+	@echo ""
+	@echo "Other:"
 	@echo "  make audio      - Generate exercise audio files"
 	@echo "  make version    - Show current app version"
 	@echo ""
@@ -149,10 +155,25 @@ watch:
 version:
 	@grep "CFBundleShortVersionString" Info.plist -A1 | tail -1 | cut -d'>' -f2 | cut -d'<' -f1
 
+# Organize Xcode project structure
+xcode-organize:
+	@echo "🗂  Organizing Xcode project structure..."
+	@scripts/sync_xcode.rb organize
+
 # Add files to Xcode project
 xcode-add:
-	@echo "Usage: scripts/add_to_xcode.sh <file1> <file2> ..."
-	@echo "Example: scripts/add_to_xcode.sh Views/NewView.swift"
+	@if [ -z "$(FILES)" ]; then \
+		echo "❌ FILES required"; \
+		echo "Usage: make xcode-add FILES='file1.swift file2.swift'"; \
+		echo "Example: make xcode-add FILES='Views/NewView.swift Models/NewModel.swift'"; \
+		exit 1; \
+	fi
+	@echo "📁 Adding files to Xcode project..."
+	@scripts/sync_xcode.rb add $(FILES)
+
+# Check Xcode project organization
+xcode-check:
+	@scripts/sync_xcode.rb check
 
 # Generate exercise audio files
 audio:

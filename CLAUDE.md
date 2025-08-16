@@ -44,8 +44,12 @@ make rebuild    # Clean, build, and run
 make lint       # Run SwiftLint checks
 make lint-fix   # Auto-fix SwiftLint violations
 
+# Xcode Project Management
+make xcode-organize         # Organize files into proper Xcode groups
+make xcode-add FILES='...'  # Add files to Xcode project in correct groups
+make xcode-check           # Check current Xcode organization status
+
 # Project Maintenance
-make xcode-add  # Instructions for adding files to Xcode
 make audio      # Generate exercise audio files
 make version    # Show current app version
 ```
@@ -67,8 +71,10 @@ scripts/release.sh 1.2.0      # Create and publish release
 scripts/generate_exercise_audio.sh  # Generate TTS audio for exercises
 scripts/generate_all_audio.sh       # Generate all audio files
 
-# Xcode Project Management
-scripts/add_to_xcode.sh Views/NewView.swift  # Add files to Xcode project
+# Xcode Project Management (Ruby-based)
+scripts/sync_xcode.rb organize               # Organize files into proper groups
+scripts/sync_xcode.rb add Views/NewView.swift # Add files to correct groups
+scripts/sync_xcode.rb check                  # Check organization status
 ```
 
 **Note:** Always use `make` commands when available, as they provide better error handling and consistent output.
@@ -87,6 +93,66 @@ killall "Touch Grass" 2>/dev/null || true && open "build/Release/Touch Grass.app
 ```
 
 Note: With proper code signing via `Local.xcconfig`, calendar permissions will persist across rebuilds.
+
+## Xcode Project Management
+
+Touch Grass uses a Ruby-based system for maintaining organized Xcode project structure. The project is organized into logical groups that mirror the architecture:
+
+### Project Structure
+```
+TouchGrass.xcodeproj
+├── Managers/          # Core service classes
+│   ├── ReminderManager.swift
+│   ├── CalendarManager.swift
+│   ├── WorkHoursManager.swift
+│   └── ...
+├── Models/            # Data models
+│   ├── Exercise.swift
+│   └── Messages.swift
+├── Views/             # SwiftUI views and controllers
+│   ├── TouchGrassMode.swift
+│   ├── OnboardingWindow.swift
+│   └── ...
+├── TouchGrass/        # Core app structure
+│   ├── Design/        # Design system
+│   │   └── DesignSystem.swift
+│   └── Components/    # Reusable UI components
+│       ├── InteractiveButton.swift
+│       └── CalendarContextView.swift
+└── TouchGrassApp.swift # App entry point
+```
+
+### Xcode Management Commands
+
+```bash
+# Check current organization status
+make xcode-check
+
+# Organize existing files into proper groups
+make xcode-organize
+
+# Add new files to project in correct groups
+make xcode-add FILES='Views/NewView.swift Models/NewModel.swift'
+
+# Direct script usage
+scripts/sync_xcode.rb check     # Check organization
+scripts/sync_xcode.rb organize  # Organize all files
+scripts/sync_xcode.rb add file1.swift file2.swift  # Add specific files
+```
+
+### Automatic Group Assignment
+
+The system automatically places files in the correct groups based on:
+- **File name patterns**: `*Manager.swift` → Managers group
+- **Path location**: `Views/Components/*` → Components group  
+- **Content type**: Models, Views, etc.
+
+### Requirements
+
+- Ruby with `xcodeproj` gem: `gem install xcodeproj`
+- The gem is already included in modern macOS Ruby installations
+
+**Important**: After any Xcode organization changes, rebuild the project in Xcode to ensure proper compilation.
 
 ## Architecture Overview
 

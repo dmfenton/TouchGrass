@@ -111,10 +111,37 @@ To have TouchGrass start automatically:
 ```bash
 make            # Show all available commands
 make setup      # Set up development environment
+make build      # Build the app
+make run        # Build and run
 make test       # Run tests (21 integration tests)
 make lint       # Check code style
-make check      # Pre-commit checks
-make release VERSION=1.0.0  # Create a release
+make check      # Pre-commit checks (lint + build + test)
+```
+
+### Essential Commands
+
+```bash
+# Development Workflow
+make setup      # Complete development setup
+make build      # Build the app
+make run        # Build and run the app
+make clean      # Clean build artifacts
+make rebuild    # Clean, build, and run
+
+# Code Quality
+make lint       # Run SwiftLint checks
+make lint-fix   # Auto-fix SwiftLint violations
+make test       # Run comprehensive test suite
+
+# Xcode Project Management
+make xcode-organize         # Organize files into proper Xcode groups
+make xcode-add FILES='...'  # Add files to Xcode project in correct groups
+make xcode-check           # Check current Xcode organization
+
+# Release Management
+make release VERSION=1.0.0  # Create and publish release
+make audio      # Generate exercise audio files
+make version    # Show current app version
 ```
 
 ### Architecture
