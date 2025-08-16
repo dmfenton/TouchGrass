@@ -26,6 +26,9 @@ help:
 	@echo "  make install    - Install dependencies (SwiftLint, etc.)"
 	@echo "  make setup      - Complete development setup"
 	@echo "  make check      - Pre-commit checks (lint + build + test)"
+	@echo "  make xcode-add  - Instructions for adding files to Xcode"
+	@echo "  make audio      - Generate exercise audio files"
+	@echo "  make version    - Show current app version"
 	@echo ""
 
 # Combined target for CI or pre-commit
@@ -38,27 +41,7 @@ check: lint build test
 
 # Build the app
 build:
-	@echo "🔨 Building Touch Grass..."
-	@if [ ! -f "Local.xcconfig" ]; then \
-		echo "❌ Local.xcconfig not found!"; \
-		echo "Building without code signing..."; \
-		xcodebuild -project TouchGrass.xcodeproj \
-			-scheme TouchGrass \
-			-configuration Release \
-			build \
-			SYMROOT=build \
-			-quiet; \
-	else \
-		xcodebuild -project TouchGrass.xcodeproj \
-			-scheme TouchGrass \
-			-configuration Release \
-			-xcconfig Local.xcconfig \
-			build \
-			SYMROOT=build \
-			CODE_SIGN_ENTITLEMENTS=TouchGrass.entitlements \
-			-quiet; \
-	fi
-	@echo "✅ Build successful!"
+	@scripts/build.sh
 
 # Clean build artifacts
 clean:
@@ -70,27 +53,11 @@ clean:
 
 # Run linting
 lint:
-	@if [ -f "./lint.sh" ]; then \
-		./lint.sh; \
-	else \
-		echo "🧹 Running SwiftLint..."; \
-		if command -v swiftlint >/dev/null 2>&1; then \
-			swiftlint lint --config .swiftlint.yml; \
-		else \
-			echo "❌ SwiftLint not installed. Run: make install"; \
-			exit 1; \
-		fi \
-	fi
+	@scripts/lint.sh
 
 # Fix lint violations
 lint-fix:
-	@if [ -f "./lint.sh" ]; then \
-		./lint.sh --fix; \
-	else \
-		echo "🔧 Auto-fixing violations..."; \
-		swiftlint --fix --config .swiftlint.yml; \
-		echo "✅ Fixed what could be auto-fixed"; \
-	fi
+	@scripts/lint.sh --fix
 
 # Run tests
 test:
@@ -109,15 +76,10 @@ release:
 		echo "Usage: make release VERSION=1.2.0"; \
 		echo ""; \
 		echo "Or for interactive mode:"; \
-		echo "  ./release.sh 1.2.0"; \
+		echo "  scripts/release.sh 1.2.0"; \
 		exit 1; \
 	fi
-	@if [ -f "./release.sh" ]; then \
-		./release.sh $(VERSION); \
-	else \
-		echo "❌ release.sh not found"; \
-		exit 1; \
-	fi
+	@scripts/release.sh $(VERSION)
 
 # Run the app after building
 run: build
@@ -184,12 +146,21 @@ watch:
 version:
 	@grep "CFBundleShortVersionString" Info.plist -A1 | tail -1 | cut -d'>' -f2 | cut -d'<' -f1
 
-# Update Xcode project with new files
-sync:
-	@if [ -f "sync_xcode_project.py" ]; then \
-		python3 sync_xcode_project.py; \
-	else \
-		echo "❌ sync_xcode_project.py not found"; \
-	fi
+# Add files to Xcode project
+xcode-add:
+	@echo "Usage: scripts/add_to_xcode.sh <file1> <file2> ..."
+	@echo "Example: scripts/add_to_xcode.sh Views/NewView.swift"
+
+# Generate exercise audio files
+audio:
+	@scripts/generate_exercise_audio.sh
+
+# Generate all audio files
+audio-all:
+	@scripts/generate_all_audio.sh
+
+# Check audio status
+audio-check:
+	@scripts/generate_exercise_audio.sh --check
 
 .DEFAULT_GOAL := help

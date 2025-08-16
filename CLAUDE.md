@@ -20,20 +20,67 @@ To find your Team ID:
 - Xcode → Settings → Accounts → Select your Apple ID → View Details
 - Or: developer.apple.com → Account → Membership → Team ID
 
-### Build Commands
+### Development Commands
+
+**We use Make for all common tasks.** The Makefile wraps our shell scripts and provides a consistent interface:
+
+```bash
+# Essential Commands
+make            # Show all available commands
+make setup      # Set up development environment
+make build      # Build the app
+make run        # Build and run the app
+make lint       # Check code style
+make test       # Run tests
+make release VERSION=1.2.0  # Create a release
+
+# Development Workflow
+make check      # Pre-commit checks (lint + build + test)
+make all        # Run full validation suite
+make clean      # Clean build artifacts
+make rebuild    # Clean, build, and run
+
+# Code Quality
+make lint       # Run SwiftLint checks
+make lint-fix   # Auto-fix SwiftLint violations
+
+# Project Maintenance
+make xcode-add  # Instructions for adding files to Xcode
+make audio      # Generate exercise audio files
+make version    # Show current app version
+```
+
+### Shell Scripts
+
+All scripts are organized in the `scripts/` directory:
+
+```bash
+# Build and Development
+scripts/build.sh              # Build with code signing
+scripts/lint.sh               # Run SwiftLint with nice output
+scripts/lint.sh --fix         # Auto-fix violations
+
+# Release Management
+scripts/release.sh 1.2.0      # Create and publish release
+
+# Audio Generation
+scripts/generate_exercise_audio.sh  # Generate TTS audio for exercises
+scripts/generate_all_audio.sh       # Generate all audio files
+
+# Xcode Project Management
+scripts/add_to_xcode.sh Views/NewView.swift  # Add files to Xcode project
+```
+
+**Note:** Always use `make` commands when available, as they provide better error handling and consistent output.
+
+### Manual Build Commands (if needed)
 
 ```bash
 # Build with proper code signing (recommended - uses Local.xcconfig)
-./build.sh
-
-# Manual build with signing
 xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release -xcconfig Local.xcconfig build SYMROOT=build -quiet
 
 # Build without signing (calendar permissions will reset each build)
 xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build -quiet
-
-# Clean build
-xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release clean build SYMROOT=build
 
 # Restart app after changes
 killall "Touch Grass" 2>/dev/null || true && open "build/Release/Touch Grass.app"
