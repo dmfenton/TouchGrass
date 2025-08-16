@@ -5,36 +5,22 @@ final class TouchGrassOnboardingController: NSWindowController {
     private var hostingController: NSHostingController<TouchGrassOnboarding>?
     
     convenience init(reminderManager: ReminderManager) {
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 600),
-            styleMask: [.titled, .closable],
-            backing: .buffered,
-            defer: false
+        let window = WindowHelper.createFloatingWindow(
+            title: "",
+            size: NSSize(width: 520, height: 600),
+            transparentTitlebar: true
         )
-        
-        window.title = ""
-        window.titlebarAppearsTransparent = true
-        window.titleVisibility = .hidden
-        window.isMovableByWindowBackground = true
-        window.center()
-        window.level = .floating
-        window.backgroundColor = NSColor.windowBackgroundColor
-        
-        // Prevent window from being resizable
-        window.styleMask.remove(.resizable)
         
         self.init(window: window)
         
         let onboardingView = TouchGrassOnboarding(reminderManager: reminderManager)
-        let hostingController = NSHostingController(rootView: onboardingView)
-        self.hostingController = hostingController
-        
-        window.contentViewController = hostingController
+        WindowHelper.setContent(onboardingView, on: window)
     }
     
     func showOnboarding() {
-        window?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        if let window = window {
+            WindowHelper.showWindow(window)
+        }
     }
     
     static func shouldShowOnboarding() -> Bool {

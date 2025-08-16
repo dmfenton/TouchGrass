@@ -7,33 +7,21 @@ final class TouchGrassModeController: NSObject {
     func show(manager: ReminderManager) {
         // Create window if needed
         if window == nil {
-            let panel = NSPanel(
-                contentRect: NSRect(x: 0, y: 0, width: 500, height: 600),
-                styleMask: [.titled, .closable, .nonactivatingPanel, .resizable],
-                backing: .buffered,
-                defer: false
+            window = WindowHelper.createFloatingPanel(
+                title: "Touch Grass",
+                size: NSSize(width: 500, height: 600),
+                resizable: true
             )
-            
-            panel.title = "Touch Grass"
-            panel.level = .floating
-            panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-            panel.isMovableByWindowBackground = true
-            panel.backgroundColor = NSColor.windowBackgroundColor
-            panel.titlebarAppearsTransparent = false
-            
-            window = panel
         }
         
-        // Set content
-        let contentView = TouchGrassMode(reminderManager: manager)
-        window?.contentView = NSHostingView(rootView: contentView)
-        
-        // Center on screen
-        window?.center()
-        
-        // Show window
-        window?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        // Set content and show
+        if let panel = window {
+            WindowHelper.setPanelContent(
+                TouchGrassMode(reminderManager: manager),
+                on: panel
+            )
+            WindowHelper.showWindow(panel)
+        }
         
         manager.isTouchGrassModeActive = true
     }

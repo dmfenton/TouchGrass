@@ -5,22 +5,11 @@ final class CustomizationWindowController: NSWindowController {
     private var hostingController: NSHostingController<CustomizationView>?
     
     convenience init(reminderManager: ReminderManager, onComplete: @escaping () -> Void) {
-        let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 480, height: 720),
-            styleMask: [.titled, .closable],
-            backing: .buffered,
-            defer: false
+        let window = WindowHelper.createFloatingWindow(
+            title: "Customize Touch Grass",
+            size: NSSize(width: 480, height: 720),
+            transparentTitlebar: false
         )
-        
-        window.title = "Customize Touch Grass"
-        window.titlebarAppearsTransparent = false
-        window.isMovableByWindowBackground = true
-        window.center()
-        window.level = .floating
-        window.backgroundColor = NSColor.windowBackgroundColor
-        
-        // Prevent window from being resizable
-        window.styleMask.remove(.resizable)
         
         self.init(window: window)
         
@@ -31,14 +20,13 @@ final class CustomizationWindowController: NSWindowController {
                 self?.close()
             }
         )
-        let hostingController = NSHostingController(rootView: customizationView)
-        self.hostingController = hostingController
         
-        window.contentViewController = hostingController
+        WindowHelper.setContent(customizationView, on: window)
     }
     
     func showCustomization() {
-        window?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
+        if let window = window {
+            WindowHelper.showWindow(window)
+        }
     }
 }

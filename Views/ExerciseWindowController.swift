@@ -9,13 +9,24 @@ class ExerciseWindowController: NSObject {
         currentExerciseSet = exerciseSet
         
         if window == nil {
-            createWindow()
+            window = WindowHelper.createFloatingPanel(
+                title: "Touch Grass Exercises",
+                size: NSSize(width: 520, height: 750),
+                resizable: true
+            )
         }
         
-        // For quick reset and other specific sets, ensure we start directly
-        updateWindowContent(exerciseSet)
-        window?.makeKeyAndOrderFront(nil)
-        window?.center()
+        // Update content and show
+        if let panel = window {
+            let exerciseView = ExerciseWindowView(
+                exerciseSet: exerciseSet,
+                onClose: { [weak self] in
+                    self?.hideWindow()
+                }
+            )
+            WindowHelper.setPanelContent(exerciseView, on: panel)
+            WindowHelper.showWindow(panel)
+        }
     }
     
     func showLastExercise() {
@@ -33,37 +44,6 @@ class ExerciseWindowController: NSObject {
     
     func isWindowVisible() -> Bool {
         window?.isVisible ?? false
-    }
-    
-    private func createWindow() {
-        let panel = NSPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 520, height: 750),
-            styleMask: [.titled, .closable, .resizable, .nonactivatingPanel],
-            backing: .buffered,
-            defer: false
-        )
-        
-        panel.title = "Touch Grass Exercises"
-        panel.level = .floating
-        panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
-        panel.isMovableByWindowBackground = true
-        panel.hidesOnDeactivate = false
-        panel.becomesKeyOnlyIfNeeded = false
-        
-        self.window = panel
-    }
-    
-    private func updateWindowContent(_ exerciseSet: ExerciseSet) {
-        guard let window = window else { return }
-        
-        let exerciseView = ExerciseWindowView(
-            exerciseSet: exerciseSet,
-            onClose: { [weak self] in
-                self?.hideWindow()
-            }
-        )
-        
-        window.contentView = NSHostingView(rootView: exerciseView)
     }
 }
 
