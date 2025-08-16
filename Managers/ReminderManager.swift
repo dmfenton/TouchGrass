@@ -21,8 +21,7 @@ final class ReminderManager: ObservableObject {
         }
     }
     @Published var timeUntilNextReminder: TimeInterval = 0
-    @Published var currentStreak: Int = 0
-    @Published var bestStreak: Int = 0
+    @Published var activityTracker = ActivityTracker()
     @Published var adaptiveIntervalEnabled: Bool = true { didSet { saveSettings() } }
     @Published var hasActiveReminder = false  // New: indicates a reminder is waiting
     @Published var isTouchGrassModeActive = false  // Track if touch grass mode is open
@@ -31,9 +30,6 @@ final class ReminderManager: ObservableObject {
     
     // Water tracking
     @Published var waterTracker = WaterTracker()
-    
-    // Activity tracking
-    @Published var completedActivities: [String] = []
     
     private var timerCancellable: AnyCancellable?
     private var countdownCancellable: AnyCancellable?
@@ -70,9 +66,6 @@ final class ReminderManager: ObservableObject {
     }()
     
     // UserDefaults keys
-    private let streakKey = "TouchGrass.currentStreak"
-    private let bestStreakKey = "TouchGrass.bestStreak"
-    private let lastCheckDateKey = "TouchGrass.lastCheckDate"
     private let intervalKey = "TouchGrass.intervalMinutes"
     private let adaptiveKey = "TouchGrass.adaptiveEnabled"
     private let workStartHourKey = "TouchGrass.workStartHour"
@@ -113,17 +106,29 @@ final class ReminderManager: ObservableObject {
         exerciseWindow.isWindowVisible()
     }
     
-    // MARK: - Activity tracking
+    // MARK: - Activity tracking (delegates to ActivityTracker)
     func completeActivity(_ activity: String) {
-        completedActivities.append(activity)
-        // Could save to UserDefaults if we want persistence
+        activityTracker.completeActivity(activity)
     }
     
     func completeBreak() {
         hasActiveReminder = false
         isTouchGrassModeActive = false
-        updateStreak(completed: true)
+        activityTracker.completeBreak()
         scheduleNextTick()
+    }
+    
+    // Computed properties for backward compatibility
+    var currentStreak: Int {
+        activityTracker.currentStreak
+    }
+    
+    var bestStreak: Int {
+        activityTracker.bestStreak
+    }
+    
+    var completedActivities: [String] {
+        activityTracker.completedActivities
     }
     
     func snoozeReminder() {
@@ -190,8 +195,9 @@ final class ReminderManager: ObservableObject {
 
     // MARK: - Init
     init() {
-        // Initialize water tracker with same UserDefaults suite
+        // Initialize trackers with same UserDefaults suite
         waterTracker = WaterTracker(userDefaults: defaults)
+        activityTracker = ActivityTracker(userDefaults: defaults)
         
         loadSettings()
         checkLoginItemStatus()
@@ -357,8 +363,6 @@ final class ReminderManager: ObservableObject {
 
     // MARK: - Settings Persistence
     private func loadSettings() {
-        currentStreak = defaults.integer(forKey: streakKey)
-        bestStreak = defaults.integer(forKey: bestStreakKey)
         intervalMinutes = defaults.double(forKey: intervalKey) > 0 ? defaults.double(forKey: intervalKey) : 45
         adaptiveIntervalEnabled = defaults.object(forKey: adaptiveKey) as? Bool ?? true
         smartSchedulingEnabled = defaults.object(forKey: smartSchedulingKey) as? Bool ?? true
@@ -379,19 +383,11 @@ final class ReminderManager: ObservableObject {
             startsAtLogin = savedStartsAtLogin
         }
         
-        // Check if streak should be reset (missed a day)
-        if let lastCheck = defaults.object(forKey: lastCheckDateKey) as? Date {
-            let calendar = Calendar.current
-            if !calendar.isDateInToday(lastCheck) && !calendar.isDateInYesterday(lastCheck) {
-                currentStreak = 0
-                saveSettings()
-            }
-        }
+        // Check activity tracker streak status
+        activityTracker.resetDailyTracking()
     }
     
     private func saveSettings() {
-        defaults.set(currentStreak, forKey: streakKey)
-        defaults.set(bestStreak, forKey: bestStreakKey)
         defaults.set(intervalMinutes, forKey: intervalKey)
         defaults.set(adaptiveIntervalEnabled, forKey: adaptiveKey)
         defaults.set(smartSchedulingEnabled, forKey: smartSchedulingKey)
@@ -406,57 +402,6 @@ final class ReminderManager: ObservableObject {
         
         // Force synchronization to disk
         defaults.synchronize()
-    }
-    
-    private func updateStreak(completed: Bool) {
-        let calendar = Calendar.current
-        let now = Date()
-        
-        if completed {
-            // Check if this is a new day
-            if let lastCheck = defaults.object(forKey: lastCheckDateKey) as? Date {
-                if !calendar.isDateInToday(lastCheck) {
-                    // New day - increment streak
-                    currentStreak += 1
-                }
-                // Same day - maintain streak
-            } else {
-                // First check ever
-                currentStreak = 1
-            }
-            
-            defaults.set(now, forKey: lastCheckDateKey)
-            
-            // Update best streak
-            if currentStreak > bestStreak {
-                bestStreak = currentStreak
-            }
-            
-            // Track completion for adaptive timing
-            recentCompletions.append(now)
-            // Keep only last 10 completions
-            if recentCompletions.count > 10 {
-                recentCompletions.removeFirst()
-            }
-            
-            consecutiveSkips = 0
-            
-            // Adaptive interval adjustment
-            if adaptiveIntervalEnabled {
-                adjustIntervalBasedOnBehavior()
-            }
-        } else {
-            // Skipped
-            consecutiveSkips += 1
-            
-            // If skipping too much, increase interval
-            if adaptiveIntervalEnabled && consecutiveSkips >= 3 {
-                intervalMinutes = min(maxInterval, intervalMinutes + 5)
-                consecutiveSkips = 0
-            }
-        }
-        
-        saveSettings()
     }
     
     private func adjustIntervalBasedOnBehavior() {
