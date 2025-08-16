@@ -5,20 +5,33 @@
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange)](https://swift.org)
 [![License](https://img.shields.io/github/license/dmfenton/touchgrass)](LICENSE)
 
-A native macOS menu bar app that helps you maintain good posture with gentle, periodic reminders to touch grass.
+A smart macOS menu bar app that reminds you to take breaks, maintain good posture, stay hydrated, and literally touch grass. With calendar-aware scheduling and evidence-based exercises.
 
 <img width="286" alt="Touch Grass Menu" src="https://github.com/user-attachments/assets/placeholder-menu.png">
 <img width="380" alt="Touch Grass Reminder" src="https://github.com/user-attachments/assets/placeholder-reminder.png">
 
 ## Features
 
-- 🕐 **Smart Scheduling** - Fixed-interval reminders synced to clock time (e.g., every 45 minutes at :00, :45)
-- ⏱️ **Live Countdown** - See exactly when your next reminder will appear
-- 🪑 **Posture Reset Steps** - Three core steps for proper posture alignment
-- 💡 **Bonus Tips** - Random ergonomic tips with each reminder
-- ⏸️ **Flexible Control** - Pause, resume, or snooze reminders as needed
-- 🎨 **Native Design** - Clean UI that matches macOS aesthetics
-- 🔕 **Non-Intrusive** - Gentle reminders that don't interrupt your flow
+### Core Functionality
+- 🌱 **Touch Grass Mode** - Transform your menu bar into a break reminder interface
+- 📅 **Calendar Integration** - Smart scheduling that respects your meetings
+- 💧 **Water Tracking** - Built-in hydration tracking with daily goals and streaks
+- 🏃 **Evidence-Based Exercises** - Curated posture and wellness exercises with audio coaching
+- ⏰ **Work Hours Aware** - Only reminds you during configured work hours
+- 🔥 **Streak Tracking** - Motivation through completion streaks
+
+### Smart Scheduling
+- Fixed-interval reminders aligned to clock time (e.g., :00, :30, :45)
+- Automatic meeting detection and smart reminder timing
+- Adapts suggestions based on available time before next meeting
+- Pause/resume/snooze with intelligent meeting awareness
+
+### Exercise Library
+- **Quick Resets** (30s): Chin tucks, shoulder blade squeezes
+- **Focused Routines** (1-2min): Stretches, eye exercises, desk yoga
+- **Comprehensive Sets** (3min): Full posture reset routines
+- **Breathing & Meditation**: Stress relief and mindfulness exercises
+- **Audio Coaching**: Professional TTS guidance for all exercises
 
 ## Requirements
 
@@ -31,8 +44,8 @@ A native macOS menu bar app that helps you maintain good posture with gentle, pe
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/posture.git
-cd posture
+git clone https://github.com/dmfenton/touchgrass.git
+cd touchgrass
 ```
 
 2. Open in Xcode:
@@ -42,26 +55,36 @@ open TouchGrass.xcodeproj
 
 3. Build and run (⌘R)
 
-### Option 2: Command Line Build
+### Option 2: Using Make (Recommended)
+
+```bash
+make setup   # Set up development environment
+make build   # Build the app
+make run     # Build and run
+```
+
+### Option 3: Command Line Build
 
 ```bash
 xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release build SYMROOT=build
 open build/Release/Touch\ Grass.app
 ```
 
-### Option 3: Download Release
+### Option 4: Download Release
 
-Download the latest `.app` from the [Releases](https://github.com/yourusername/posture/releases) page.
+Download the latest DMG from the [Releases](https://github.com/dmfenton/touchgrass/releases) page.
 
 ## Usage
 
-1. **Launch** - TouchGrass appears as a walking figure icon in your menu bar
-2. **Check Timer** - Click the icon to see countdown to next reminder
-3. **Adjust Interval** - Use the slider to set reminder frequency (15-120 minutes)
-4. **Respond to Reminders** - When reminded:
-   - ✅ **Done** - Complete the posture reset
-   - ⏰ **Snooze** - Delay 10 or 20 minutes
-   - ⏭️ **Skip** - Skip this reminder
+1. **Launch** - Touch Grass appears as a forest green icon in your menu bar
+2. **First Run** - Complete onboarding to set up your preferences
+3. **Check Timer** - Menu shows live countdown to next reminder
+4. **Take Breaks** - When reminder appears:
+   - 🌱 **Touch Grass** - Go outside for fresh air
+   - 🏃 **Exercises** - Choose from posture, stretching, or breathing exercises
+   - 💧 **Log Water** - Quick +8oz button to track hydration
+   - ⏰ **Snooze** - Delay for 5, 10, or 20 minutes
+5. **Track Progress** - View your completion streak and water intake
 
 ## Start at Login
 
@@ -71,38 +94,64 @@ To have TouchGrass start automatically:
 2. Click **+** under "Open at Login"
 3. Navigate to and select `TouchGrass.app`
 
-## Posture Reset Steps
+## Settings & Customization
 
-Every reminder includes three core steps:
+- **Break Frequency**: 15-90 minute intervals with fixed-time alignment
+- **Work Hours**: Configure start/end times and work days
+- **Calendar Selection**: Choose which calendars to monitor
+- **Water Goals**: Set daily targets (glasses, ounces, or milliliters)
+- **Smart Features**: Toggle meeting awareness and adaptive timing
+- **Launch at Login**: Start automatically when you log in
 
-1. 🪑 **Sit back in your chair, hips all the way back**
-2. 🧍 **Ears over shoulders, gentle chin tuck**
-3. 🎈 **Drop your shoulders, let the base of your skull soften**
-
-Plus a rotating selection of bonus tips for stretching and eye care.
-
-## Customization
-
-- **Interval**: Adjustable from 15 to 120 minutes
-- **Messages**: Edit `Messages.swift` to customize reminder text
-- **Timing**: Reminders align to clock intervals for predictability
 
 ## Development
 
-Built with:
-- SwiftUI for modern macOS UI
-- Combine for reactive state management
-- No external dependencies
+### Quick Start
 
-### Project Structure
+```bash
+make            # Show all available commands
+make setup      # Set up development environment
+make test       # Run tests (21 integration tests)
+make lint       # Check code style
+make check      # Pre-commit checks
+make release VERSION=1.0.0  # Create a release
+```
+
+### Architecture
 
 ```
-├── TouchGrassApp.swift          # Main app and menu bar UI
-├── ReminderManager.swift        # Timer and scheduling logic
-├── ReminderWindow.swift         # Reminder popup view
-├── ReminderWindowController.swift # Window management
-├── Messages.swift               # Reminder messages and tips
-└── Info.plist                   # App configuration
+Touch Grass/
+├── Models/              # Data models and business logic
+│   ├── ReminderManager.swift    # Core state management
+│   ├── CalendarManager.swift    # Calendar integration
+│   ├── WorkHoursManager.swift   # Work schedule logic
+│   └── Exercise.swift           # Exercise definitions
+├── Views/               # SwiftUI views
+│   ├── MenuView.swift           # Main menu interface
+│   ├── TouchGrassMode.swift     # Break reminder UI
+│   ├── ExerciseView.swift       # Exercise interface
+│   └── Settings/                # Settings views
+├── TouchGrassTests/     # Integration test suite
+│   ├── TestRunner.swift         # Standalone test runner
+│   └── Integration/             # E2E test scenarios
+└── scripts/             # Build and automation
+    ├── build.sh                 # Build with code signing
+    ├── test.sh                  # Run tests
+    └── release.sh               # Create releases
+```
+
+### Testing
+
+Touch Grass includes comprehensive integration tests covering:
+- Complete user workflows (menu → exercise → completion)
+- Calendar-aware scheduling
+- Water tracking and streaks
+- Work hours boundaries
+- Timer accuracy and state management
+
+Run tests without Xcode:
+```bash
+make test  # Runs 21 integration tests
 ```
 
 ## Privacy
@@ -115,10 +164,13 @@ TouchGrass is completely offline and private:
 
 ## Contributing
 
-Pull requests welcome! Please:
-1. Keep the UI clean and native
-2. Test on multiple macOS versions
-3. Follow existing code style
+See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
+
+Quick tips:
+- Run `make check` before committing
+- Tests must pass (`make test`)
+- Follow existing code patterns
+- Keep UI native and clean
 
 ## License
 
@@ -126,8 +178,8 @@ MIT License - see LICENSE file for details
 
 ## Acknowledgments
 
-Created to combat the "tech neck" epidemic, one gentle reminder at a time.
+Built to promote wellness in the digital age - one break at a time.
 
 ---
 
-*Built with Swift and SwiftUI for macOS*
+*Native macOS app built with Swift and SwiftUI*
