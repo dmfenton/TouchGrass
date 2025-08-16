@@ -7,129 +7,87 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = ABCDEF1234567890ABCDEF12 /* AppIcon.icns */; };
-		35D7A3C927534702828B71EB /* generate_icon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3006E22A8ECF48C5A8DFD2CD /* generate_icon.swift */; };
-		9C480DBAE43448B5BFB43FFD /* ActivityTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B179B93FB54F9FB0C53269 /* ActivityTracker.swift */; };
-		CC56EFB4CEEE48C584FDFAFE /* CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EAF51DED38476390E916A9 /* CalendarManager.swift */; };
-		796A4CB6894D43BB94D9855D /* CustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710F0FEBF32D491D8771CA1A /* CustomizationView.swift */; };
-		8F499EC6B4504C8EB94B9A3F /* CustomizationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA7B53ACD134163B7C04E24 /* CustomizationWindowController.swift */; };
-		54842E0254CB4DA88C7F462F /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB3B0E52CCA4B5CB2423C58 /* Exercise.swift */; };
-		2D4E54316B97414AB2FBF380 /* ExerciseSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF05E7D3B0CC48C5A1A91100 /* ExerciseSelectionView.swift */; };
-		B8EED555A2DB4FEAB87BB097 /* ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2BD545B00140FDAF4B2FCE /* ExerciseView.swift */; };
-		5AE4088CAC6E40A7AC3AA5BE /* ExerciseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */; };
-		FB153C3101AF42149B138B11 /* GrassIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79311D2091E54488B94FFADC /* GrassIcon.swift */; };
-		F5E7A6A3785E4868A5EE0642 /* Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0BA99FC5F74770988AD0D2 /* Messages.swift */; };
-		B4941CBB31C54967854067F0 /* OnboardingCustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A89115D30340428D810C63 /* OnboardingCustomizationView.swift */; };
-		86D04943CD3D49248FFD5455 /* OnboardingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF78D7D40114727A453DB81 /* OnboardingHeaderView.swift */; };
-		4CD53CDB484747DBB4CEEF7E /* OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C617EE0264CF46AFA3EA084D /* OnboardingManager.swift */; };
-		3BF844C33B444B79A3949A0B /* OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A84660C7543CFBEB28545 /* OnboardingWindow.swift */; };
-		1C0C9630E9EB4ACD87389865 /* ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024C45B060374A5BAEDAE1D3 /* ReminderManager.swift */; };
-		0803800793D440489E35501A /* SimpleOnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75514C88ECE4BF1A60DBB70 /* SimpleOnboardingWindow.swift */; };
+		0087A2362AFB4092A9E95CAD /* TouchGrass/Views/Components/ActivitySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608665F88B9243F88CD4156D /* TouchGrass/Views/Components/ActivitySelectionView.swift */; };
+		00F926DE94574A7FA1226241 /* Managers/WindowHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F9EA36C93D449D837FC0C3 /* Managers/WindowHelper.swift */; };
+		0803800793D440489E35501A /* Views/SimpleOnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D75514C88ECE4BF1A60DBB70 /* Views/SimpleOnboardingWindow.swift */; };
+		11FB02CDEB764C8D81C3435F /* TouchGrass/Design/DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35470E4EB9F4DD482B5C344 /* TouchGrass/Design/DesignSystem.swift */; };
+		1C0C9630E9EB4ACD87389865 /* Managers/ReminderManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 024C45B060374A5BAEDAE1D3 /* Managers/ReminderManager.swift */; };
+		1E73424E605A42A5953234CC /* Views/TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCFD3A05466E47FBBE9C0C95 /* Views/TouchGrassModeController.swift */; };
+		2D4E54316B97414AB2FBF380 /* Views/ExerciseSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF05E7D3B0CC48C5A1A91100 /* Views/ExerciseSelectionView.swift */; };
+		300DC90AEDB14F26A1F4FC87 /* Views/WorkHoursSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123BA605807E42D08D35BEE7 /* Views/WorkHoursSettingsView.swift */; };
+		3BF844C33B444B79A3949A0B /* Views/OnboardingWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9A84660C7543CFBEB28545 /* Views/OnboardingWindow.swift */; };
+		41A2192D1D0D42748C8F753A /* TouchGrass/Views/TouchGrassModeRefactored.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C29DD1ED114761A1E5FBE9 /* TouchGrass/Views/TouchGrassModeRefactored.swift */; };
+		4760E2AFB6D64BCF879DFC19 /* TouchGrass/Views/Components/InteractiveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F190DD70BB63445099922513 /* TouchGrass/Views/Components/InteractiveButton.swift */; };
 		4BA1A292C86F4F6390467DF1 /* TouchGrassApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C742A93C6D6241B186F0135E /* TouchGrassApp.swift */; };
-		A469E57921BB4799A8B8FFB1 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A37EE6B8C1432D81699E7A /* TouchGrassMode.swift */; };
-		1E73424E605A42A5953234CC /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCFD3A05466E47FBBE9C0C95 /* TouchGrassModeController.swift */; };
-		7C0590FAADF9492EA6C0155D /* TouchGrassOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */; };
-		D4747A4349DA4A7E86C444A5 /* TouchGrassOnboardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */; };
-		863A5337B76A42858F620258 /* UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5FC669419485A98B0C9B6 /* UpdateManager.swift */; };
-		C4A5E53AF7CD47F9AF897CDE /* UpdateProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEDC2F808400987D69A8B /* UpdateProgressView.swift */; };
-		C8639872E55F40CFB23151A5 /* WaterTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F914D9DC3AA54CAC900E757B /* WaterTracker.swift */; };
-		00F926DE94574A7FA1226241 /* WindowHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */; };
-		845281A875484FA7871191A1 /* WorkHoursManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88E3131787846B3ABDBF43F /* WorkHoursManager.swift */; };
-		300DC90AEDB14F26A1F4FC87 /* WorkHoursSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */; };
-		386C968E72EF4F51AD3F3638 /* SimpleOnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A3BFC04B44001940C1FF6 /* SimpleOnboardingWindowController.swift */; };
-		24EB0F0B5C2A450B81B5A880 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402006F461F04A5CAB10D5D7 /* OnboardingWindowController.swift */; };
-		41246A7733FF4015BBA59A2C /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9A9EA754E3142149A5C452A /* TouchGrassMode.swift */; };
-		A6D269A6191B4AFEB84DB347 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4CC24ABA32F4D3C9A945E08 /* TouchGrassModeController.swift */; };
-		487D5B05ED7540C4B7167BD8 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAC0ED0D71614A53BC164C1C /* TouchGrassMode.swift */; };
-		3A5B0571C9224270B94B9E6E /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2E9B8FAA86F4C599686B2A1 /* TouchGrassModeController.swift */; };
-		D6149928FDA14A8182DA89FE /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 958EDBDF6FC1466EACCDB9B0 /* TouchGrassMode.swift */; };
-		E6E78478BAD449EB957F25D4 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CFEFA0BF9341D68B782509 /* TouchGrassModeController.swift */; };
-		180A31A5131646CCA921F4E6 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8E59512CCD41388D233AF1 /* TouchGrassMode.swift */; };
-		F777A4DC369645A587242BFD /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F079E699C7574ACFA85D6AF5 /* TouchGrassModeController.swift */; };
-		361EEC07030E4B01B46E7F96 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93DEC6CFB9DD40C2959DC6D8 /* TouchGrassMode.swift */; };
-		0084277BF97545239FA6BFF7 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C168F3B3B99F400C88ECE977 /* TouchGrassModeController.swift */; };
-		BCA29536FF444AAE818164E8 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A46D3E9C59640178FBF520C /* TouchGrassMode.swift */; };
-		BF5885D020E84B86BDEA9995 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3992EE4EE3CA46278BD44DD7 /* TouchGrassModeController.swift */; };
-		922958B582CB4FB9AB2EC5E3 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2D88B18D1A4A0EBC6EC68D /* TouchGrassMode.swift */; };
-		00C0252A86194AC29976D5E2 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C37746E59C8421B9EA12A64 /* TouchGrassModeController.swift */; };
-		386260C5F6B44D32A76390F7 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 277E3E24F24F4F7DBC6AC559 /* TouchGrassMode.swift */; };
-		729974D757324028A25DF706 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC48C51C9B04D1784653C30 /* TouchGrassModeController.swift */; };
-		D6AEA4C1A8994B74921E1DA9 /* TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48D65338E5A843F89F6CB867 /* TouchGrassMode.swift */; };
-		16D88B60E588411F86894046 /* TouchGrassModeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17100602E32541A7AD4788AE /* TouchGrassModeController.swift */; };
-		11FB02CDEB764C8D81C3435F /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C35470E4EB9F4DD482B5C344 /* DesignSystem.swift */; };
-		0087A2362AFB4092A9E95CAD /* ActivitySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 608665F88B9243F88CD4156D /* ActivitySelectionView.swift */; };
-		F8904461C0264384BDD06013 /* CalendarContextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961799C784264550B437C006 /* CalendarContextView.swift */; };
-		744C689D67104C6A9A484C40 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE492424B2249349A6FE13F /* CompletionView.swift */; };
-		5F3E90ABF93F4D83ACB779F1 /* ExerciseMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */; };
-		4760E2AFB6D64BCF879DFC19 /* InteractiveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F190DD70BB63445099922513 /* InteractiveButton.swift */; };
-		D5C3F3FD50984AB296610C02 /* WaterTrackingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */; };
-		41A2192D1D0D42748C8F753A /* TouchGrassModeRefactored.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */; };
-		FD50686FBCC94C46A5BCC653 /* TimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49700923E42A4A45984EF /* TimerService.swift */; };
-		CAC1C9608FA74B14AF9B0DD4 /* PreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */; };
+		4CD53CDB484747DBB4CEEF7E /* Managers/OnboardingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C617EE0264CF46AFA3EA084D /* Managers/OnboardingManager.swift */; };
+		54842E0254CB4DA88C7F462F /* Models/Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFB3B0E52CCA4B5CB2423C58 /* Models/Exercise.swift */; };
+		5AE4088CAC6E40A7AC3AA5BE /* Views/ExerciseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815B8462CE8F4E8E8676A8AA /* Views/ExerciseWindowController.swift */; };
+		5F3E90ABF93F4D83ACB779F1 /* TouchGrass/Views/Components/ExerciseMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8AD738AC814AF790A94260 /* TouchGrass/Views/Components/ExerciseMenuView.swift */; };
+		744C689D67104C6A9A484C40 /* TouchGrass/Views/Components/CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE492424B2249349A6FE13F /* TouchGrass/Views/Components/CompletionView.swift */; };
+		796A4CB6894D43BB94D9855D /* Views/CustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710F0FEBF32D491D8771CA1A /* Views/CustomizationView.swift */; };
+		7C0590FAADF9492EA6C0155D /* Views/TouchGrassOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34360F1EF81742CDB0DD3EAE /* Views/TouchGrassOnboarding.swift */; };
+		845281A875484FA7871191A1 /* Managers/WorkHoursManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88E3131787846B3ABDBF43F /* Managers/WorkHoursManager.swift */; };
+		863A5337B76A42858F620258 /* Managers/UpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53F5FC669419485A98B0C9B6 /* Managers/UpdateManager.swift */; };
+		86D04943CD3D49248FFD5455 /* Views/OnboardingHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEF78D7D40114727A453DB81 /* Views/OnboardingHeaderView.swift */; };
+		8F499EC6B4504C8EB94B9A3F /* Views/CustomizationWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CA7B53ACD134163B7C04E24 /* Views/CustomizationWindowController.swift */; };
+		9C480DBAE43448B5BFB43FFD /* Managers/ActivityTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70B179B93FB54F9FB0C53269 /* Managers/ActivityTracker.swift */; };
+		A469E57921BB4799A8B8FFB1 /* Views/TouchGrassMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7A37EE6B8C1432D81699E7A /* Views/TouchGrassMode.swift */; };
+		ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = ABCDEF1234567890ABCDEF12 /* AppIcon.icns */; };
+		B4941CBB31C54967854067F0 /* Views/OnboardingCustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A89115D30340428D810C63 /* Views/OnboardingCustomizationView.swift */; };
+		B8EED555A2DB4FEAB87BB097 /* Views/ExerciseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF2BD545B00140FDAF4B2FCE /* Views/ExerciseView.swift */; };
+		C4A5E53AF7CD47F9AF897CDE /* Views/UpdateProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1BEDC2F808400987D69A8B /* Views/UpdateProgressView.swift */; };
+		C8639872E55F40CFB23151A5 /* Managers/WaterTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = F914D9DC3AA54CAC900E757B /* Managers/WaterTracker.swift */; };
+		CAC1C9608FA74B14AF9B0DD4 /* Managers/PreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08BCD7E197648CE8D8693F1 /* Managers/PreferencesStore.swift */; };
+		CC56EFB4CEEE48C584FDFAFE /* Managers/CalendarManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2EAF51DED38476390E916A9 /* Managers/CalendarManager.swift */; };
+		D4747A4349DA4A7E86C444A5 /* Views/TouchGrassOnboardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8002EDF1BCE94335BE811585 /* Views/TouchGrassOnboardingController.swift */; };
+		D5C3F3FD50984AB296610C02 /* TouchGrass/Views/Components/WaterTrackingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435F6A81B40E4BB2B3517A4D /* TouchGrass/Views/Components/WaterTrackingBar.swift */; };
+		F5E7A6A3785E4868A5EE0642 /* Models/Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0BA99FC5F74770988AD0D2 /* Models/Messages.swift */; };
+		F8904461C0264384BDD06013 /* TouchGrass/Views/Components/CalendarContextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 961799C784264550B437C006 /* TouchGrass/Views/Components/CalendarContextView.swift */; };
+		FB153C3101AF42149B138B11 /* Views/GrassIcon.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79311D2091E54488B94FFADC /* Views/GrassIcon.swift */; };
+		FD50686FBCC94C46A5BCC653 /* Managers/TimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49700923E42A4A45984EF /* Managers/TimerService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		024C45B060374A5BAEDAE1D3 /* Managers/ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/ReminderManager.swift; sourceTree = "<group>"; };
+		123BA605807E42D08D35BEE7 /* Views/WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/WorkHoursSettingsView.swift; sourceTree = "<group>"; };
+		34360F1EF81742CDB0DD3EAE /* Views/TouchGrassOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TouchGrassOnboarding.swift; sourceTree = "<group>"; };
+		3A8AD738AC814AF790A94260 /* TouchGrass/Views/Components/ExerciseMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/Components/ExerciseMenuView.swift; sourceTree = "<group>"; };
+		435F6A81B40E4BB2B3517A4D /* TouchGrass/Views/Components/WaterTrackingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/Components/WaterTrackingBar.swift; sourceTree = "<group>"; };
+		53F5FC669419485A98B0C9B6 /* Managers/UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/UpdateManager.swift; sourceTree = "<group>"; };
+		608665F88B9243F88CD4156D /* TouchGrass/Views/Components/ActivitySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/Components/ActivitySelectionView.swift; sourceTree = "<group>"; };
+		62A89115D30340428D810C63 /* Views/OnboardingCustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/OnboardingCustomizationView.swift; sourceTree = "<group>"; };
+		70B179B93FB54F9FB0C53269 /* Managers/ActivityTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/ActivityTracker.swift; sourceTree = "<group>"; };
+		710F0FEBF32D491D8771CA1A /* Views/CustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CustomizationView.swift; sourceTree = "<group>"; };
+		79311D2091E54488B94FFADC /* Views/GrassIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/GrassIcon.swift; sourceTree = "<group>"; };
+		8002EDF1BCE94335BE811585 /* Views/TouchGrassOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TouchGrassOnboardingController.swift; sourceTree = "<group>"; };
+		815B8462CE8F4E8E8676A8AA /* Views/ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ExerciseWindowController.swift; sourceTree = "<group>"; };
+		8A9A84660C7543CFBEB28545 /* Views/OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/OnboardingWindow.swift; sourceTree = "<group>"; };
+		961799C784264550B437C006 /* TouchGrass/Views/Components/CalendarContextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/Components/CalendarContextView.swift; sourceTree = "<group>"; };
+		9CA7B53ACD134163B7C04E24 /* Views/CustomizationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/CustomizationWindowController.swift; sourceTree = "<group>"; };
+		A88E3131787846B3ABDBF43F /* Managers/WorkHoursManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/WorkHoursManager.swift; sourceTree = "<group>"; };
+		ABCDEF1234567890ABCDEF12 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
+		ADE492424B2249349A6FE13F /* TouchGrass/Views/Components/CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/Components/CompletionView.swift; sourceTree = "<group>"; };
+		AFB3B0E52CCA4B5CB2423C58 /* Models/Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/Exercise.swift; sourceTree = "<group>"; };
+		B2EAF51DED38476390E916A9 /* Managers/CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/CalendarManager.swift; sourceTree = "<group>"; };
 		B71234501234567812345678 /* Touch Grass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Touch Grass.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B712345F1234567812345678 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		ABCDEF1234567890ABCDEF12 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
-		3006E22A8ECF48C5A8DFD2CD /* generate_icon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "generate_icon.swift"; sourceTree = "<group>"; };
-		70B179B93FB54F9FB0C53269 /* ActivityTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/ActivityTracker.swift"; sourceTree = "<group>"; };
-		B2EAF51DED38476390E916A9 /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/CalendarManager.swift"; sourceTree = "<group>"; };
-		710F0FEBF32D491D8771CA1A /* CustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CustomizationView.swift"; sourceTree = "<group>"; };
-		9CA7B53ACD134163B7C04E24 /* CustomizationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/CustomizationWindowController.swift"; sourceTree = "<group>"; };
-		AFB3B0E52CCA4B5CB2423C58 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Exercise.swift"; sourceTree = "<group>"; };
-		CF05E7D3B0CC48C5A1A91100 /* ExerciseSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseSelectionView.swift"; sourceTree = "<group>"; };
-		BF2BD545B00140FDAF4B2FCE /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseView.swift"; sourceTree = "<group>"; };
-		815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/ExerciseWindowController.swift"; sourceTree = "<group>"; };
-		79311D2091E54488B94FFADC /* GrassIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/GrassIcon.swift"; sourceTree = "<group>"; };
-		EC0BA99FC5F74770988AD0D2 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Models/Messages.swift"; sourceTree = "<group>"; };
-		62A89115D30340428D810C63 /* OnboardingCustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingCustomizationView.swift"; sourceTree = "<group>"; };
-		FEF78D7D40114727A453DB81 /* OnboardingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingHeaderView.swift"; sourceTree = "<group>"; };
-		C617EE0264CF46AFA3EA084D /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/OnboardingManager.swift"; sourceTree = "<group>"; };
-		8A9A84660C7543CFBEB28545 /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindow.swift"; sourceTree = "<group>"; };
-		024C45B060374A5BAEDAE1D3 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/ReminderManager.swift"; sourceTree = "<group>"; };
-		D75514C88ECE4BF1A60DBB70 /* SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindow.swift"; sourceTree = "<group>"; };
-		C742A93C6D6241B186F0135E /* TouchGrassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrassApp.swift"; sourceTree = "<group>"; };
-		C7A37EE6B8C1432D81699E7A /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		DCFD3A05466E47FBBE9C0C95 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassOnboarding.swift"; sourceTree = "<group>"; };
-		8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassOnboardingController.swift"; sourceTree = "<group>"; };
-		53F5FC669419485A98B0C9B6 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/UpdateManager.swift"; sourceTree = "<group>"; };
-		BC1BEDC2F808400987D69A8B /* UpdateProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/UpdateProgressView.swift"; sourceTree = "<group>"; };
-		F914D9DC3AA54CAC900E757B /* WaterTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/WaterTracker.swift"; sourceTree = "<group>"; };
-		D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/WindowHelper.swift"; sourceTree = "<group>"; };
-		A88E3131787846B3ABDBF43F /* WorkHoursManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/WorkHoursManager.swift"; sourceTree = "<group>"; };
-		123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/WorkHoursSettingsView.swift"; sourceTree = "<group>"; };
-		2D0A3BFC04B44001940C1FF6 /* SimpleOnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindowController.swift"; sourceTree = "<group>"; };
-		402006F461F04A5CAB10D5D7 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindowController.swift"; sourceTree = "<group>"; };
-		F9A9EA754E3142149A5C452A /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		B4CC24ABA32F4D3C9A945E08 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		AAC0ED0D71614A53BC164C1C /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		F2E9B8FAA86F4C599686B2A1 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		958EDBDF6FC1466EACCDB9B0 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		02CFEFA0BF9341D68B782509 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		7D8E59512CCD41388D233AF1 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		F079E699C7574ACFA85D6AF5 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		93DEC6CFB9DD40C2959DC6D8 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		C168F3B3B99F400C88ECE977 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		4A46D3E9C59640178FBF520C /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		3992EE4EE3CA46278BD44DD7 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		8F2D88B18D1A4A0EBC6EC68D /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		5C37746E59C8421B9EA12A64 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		277E3E24F24F4F7DBC6AC559 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		ACC48C51C9B04D1784653C30 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		48D65338E5A843F89F6CB867 /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassMode.swift"; sourceTree = "<group>"; };
-		17100602E32541A7AD4788AE /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/TouchGrassModeController.swift"; sourceTree = "<group>"; };
-		C35470E4EB9F4DD482B5C344 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Design/DesignSystem.swift"; sourceTree = "<group>"; };
-		608665F88B9243F88CD4156D /* ActivitySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/ActivitySelectionView.swift"; sourceTree = "<group>"; };
-		961799C784264550B437C006 /* CalendarContextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/CalendarContextView.swift"; sourceTree = "<group>"; };
-		ADE492424B2249349A6FE13F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/CompletionView.swift"; sourceTree = "<group>"; };
-		3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/ExerciseMenuView.swift"; sourceTree = "<group>"; };
-		F190DD70BB63445099922513 /* InteractiveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/InteractiveButton.swift"; sourceTree = "<group>"; };
-		435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/WaterTrackingBar.swift"; sourceTree = "<group>"; };
-		C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/TouchGrassModeRefactored.swift"; sourceTree = "<group>"; };
-		C1B49700923E42A4A45984EF /* TimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/TimerService.swift"; sourceTree = "<group>"; };
-		D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/PreferencesStore.swift"; sourceTree = "<group>"; };
+		BC1BEDC2F808400987D69A8B /* Views/UpdateProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/UpdateProgressView.swift; sourceTree = "<group>"; };
+		BF2BD545B00140FDAF4B2FCE /* Views/ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ExerciseView.swift; sourceTree = "<group>"; };
+		C1B49700923E42A4A45984EF /* Managers/TimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/TimerService.swift; sourceTree = "<group>"; };
+		C35470E4EB9F4DD482B5C344 /* TouchGrass/Design/DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Design/DesignSystem.swift; sourceTree = "<group>"; };
+		C617EE0264CF46AFA3EA084D /* Managers/OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/OnboardingManager.swift; sourceTree = "<group>"; };
+		C742A93C6D6241B186F0135E /* TouchGrassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassApp.swift; sourceTree = "<group>"; };
+		C7A37EE6B8C1432D81699E7A /* Views/TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TouchGrassMode.swift; sourceTree = "<group>"; };
+		C7C29DD1ED114761A1E5FBE9 /* TouchGrass/Views/TouchGrassModeRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/TouchGrassModeRefactored.swift; sourceTree = "<group>"; };
+		CF05E7D3B0CC48C5A1A91100 /* Views/ExerciseSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/ExerciseSelectionView.swift; sourceTree = "<group>"; };
+		D08BCD7E197648CE8D8693F1 /* Managers/PreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/PreferencesStore.swift; sourceTree = "<group>"; };
+		D2F9EA36C93D449D837FC0C3 /* Managers/WindowHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/WindowHelper.swift; sourceTree = "<group>"; };
+		D75514C88ECE4BF1A60DBB70 /* Views/SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/SimpleOnboardingWindow.swift; sourceTree = "<group>"; };
+		DCFD3A05466E47FBBE9C0C95 /* Views/TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/TouchGrassModeController.swift; sourceTree = "<group>"; };
+		EC0BA99FC5F74770988AD0D2 /* Models/Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/Messages.swift; sourceTree = "<group>"; };
+		F190DD70BB63445099922513 /* TouchGrass/Views/Components/InteractiveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrass/Views/Components/InteractiveButton.swift; sourceTree = "<group>"; };
+		F914D9DC3AA54CAC900E757B /* Managers/WaterTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managers/WaterTracker.swift; sourceTree = "<group>"; };
+		FEF78D7D40114727A453DB81 /* Views/OnboardingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/OnboardingHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,11 +101,57 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		89F263EB2E50BDBA00B968BA /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				C35470E4EB9F4DD482B5C344 /* TouchGrass/Design/DesignSystem.swift */,
+				608665F88B9243F88CD4156D /* TouchGrass/Views/Components/ActivitySelectionView.swift */,
+				961799C784264550B437C006 /* TouchGrass/Views/Components/CalendarContextView.swift */,
+				ADE492424B2249349A6FE13F /* TouchGrass/Views/Components/CompletionView.swift */,
+				3A8AD738AC814AF790A94260 /* TouchGrass/Views/Components/ExerciseMenuView.swift */,
+				F190DD70BB63445099922513 /* TouchGrass/Views/Components/InteractiveButton.swift */,
+				435F6A81B40E4BB2B3517A4D /* TouchGrass/Views/Components/WaterTrackingBar.swift */,
+				C7C29DD1ED114761A1E5FBE9 /* TouchGrass/Views/TouchGrassModeRefactored.swift */,
+				70B179B93FB54F9FB0C53269 /* Managers/ActivityTracker.swift */,
+				B2EAF51DED38476390E916A9 /* Managers/CalendarManager.swift */,
+				710F0FEBF32D491D8771CA1A /* Views/CustomizationView.swift */,
+				9CA7B53ACD134163B7C04E24 /* Views/CustomizationWindowController.swift */,
+				AFB3B0E52CCA4B5CB2423C58 /* Models/Exercise.swift */,
+				CF05E7D3B0CC48C5A1A91100 /* Views/ExerciseSelectionView.swift */,
+				BF2BD545B00140FDAF4B2FCE /* Views/ExerciseView.swift */,
+				815B8462CE8F4E8E8676A8AA /* Views/ExerciseWindowController.swift */,
+				79311D2091E54488B94FFADC /* Views/GrassIcon.swift */,
+				EC0BA99FC5F74770988AD0D2 /* Models/Messages.swift */,
+				62A89115D30340428D810C63 /* Views/OnboardingCustomizationView.swift */,
+				FEF78D7D40114727A453DB81 /* Views/OnboardingHeaderView.swift */,
+				C617EE0264CF46AFA3EA084D /* Managers/OnboardingManager.swift */,
+				8A9A84660C7543CFBEB28545 /* Views/OnboardingWindow.swift */,
+				024C45B060374A5BAEDAE1D3 /* Managers/ReminderManager.swift */,
+				D75514C88ECE4BF1A60DBB70 /* Views/SimpleOnboardingWindow.swift */,
+				C742A93C6D6241B186F0135E /* TouchGrassApp.swift */,
+				34360F1EF81742CDB0DD3EAE /* Views/TouchGrassOnboarding.swift */,
+				8002EDF1BCE94335BE811585 /* Views/TouchGrassOnboardingController.swift */,
+				53F5FC669419485A98B0C9B6 /* Managers/UpdateManager.swift */,
+				BC1BEDC2F808400987D69A8B /* Views/UpdateProgressView.swift */,
+				F914D9DC3AA54CAC900E757B /* Managers/WaterTracker.swift */,
+				D2F9EA36C93D449D837FC0C3 /* Managers/WindowHelper.swift */,
+				A88E3131787846B3ABDBF43F /* Managers/WorkHoursManager.swift */,
+				123BA605807E42D08D35BEE7 /* Views/WorkHoursSettingsView.swift */,
+				C7A37EE6B8C1432D81699E7A /* Views/TouchGrassMode.swift */,
+				DCFD3A05466E47FBBE9C0C95 /* Views/TouchGrassModeController.swift */,
+				C1B49700923E42A4A45984EF /* Managers/TimerService.swift */,
+				D08BCD7E197648CE8D8693F1 /* Managers/PreferencesStore.swift */,
+				ABCDEF1234567890ABCDEF12 /* AppIcon.icns */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		B71234471234567812345678 = {
 			isa = PBXGroup;
 			children = (
-				B71234521234567812345678 /* TouchGrass */,
+				B71234521234567812345678 /* . */,
 				B71234511234567812345678 /* Products */,
+				89F263EB2E50BDBA00B968BA /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -159,20 +163,9 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		B71234521234567812345678 /* TouchGrass */ = {
+		B71234521234567812345678 /* . */ = {
 			isa = PBXGroup;
 			children = (
-
-
-
-
-
-
-
-
-
-
-
 				B712345F1234567812345678 /* Info.plist */,
 			);
 			path = .;
@@ -206,7 +199,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1430;
-				LastUpgradeCheck = 1430;
+				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					B712344F1234567812345678 = {
 						CreatedOnToolsVersion = 14.3;
@@ -236,8 +229,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-			
-				ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */,);
+				ABCDEF1234567890ABCDEF13 /* AppIcon.icns in Resources */,
+			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
@@ -247,43 +240,43 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				11FB02CDEB764C8D81C3435F /* DesignSystem.swift in Sources */,
-				0087A2362AFB4092A9E95CAD /* ActivitySelectionView.swift in Sources */,
-				F8904461C0264384BDD06013 /* CalendarContextView.swift in Sources */,
-				744C689D67104C6A9A484C40 /* CompletionView.swift in Sources */,
-				5F3E90ABF93F4D83ACB779F1 /* ExerciseMenuView.swift in Sources */,
-				4760E2AFB6D64BCF879DFC19 /* InteractiveButton.swift in Sources */,
-				D5C3F3FD50984AB296610C02 /* WaterTrackingBar.swift in Sources */,
-				41A2192D1D0D42748C8F753A /* TouchGrassModeRefactored.swift in Sources */,
-				9C480DBAE43448B5BFB43FFD /* ActivityTracker.swift in Sources */,
-				CC56EFB4CEEE48C584FDFAFE /* CalendarManager.swift in Sources */,
-				796A4CB6894D43BB94D9855D /* CustomizationView.swift in Sources */,
-				8F499EC6B4504C8EB94B9A3F /* CustomizationWindowController.swift in Sources */,
-				54842E0254CB4DA88C7F462F /* Exercise.swift in Sources */,
-				2D4E54316B97414AB2FBF380 /* ExerciseSelectionView.swift in Sources */,
-				B8EED555A2DB4FEAB87BB097 /* ExerciseView.swift in Sources */,
-				5AE4088CAC6E40A7AC3AA5BE /* ExerciseWindowController.swift in Sources */,
-				FB153C3101AF42149B138B11 /* GrassIcon.swift in Sources */,
-				F5E7A6A3785E4868A5EE0642 /* Messages.swift in Sources */,
-				B4941CBB31C54967854067F0 /* OnboardingCustomizationView.swift in Sources */,
-				86D04943CD3D49248FFD5455 /* OnboardingHeaderView.swift in Sources */,
-				4CD53CDB484747DBB4CEEF7E /* OnboardingManager.swift in Sources */,
-				3BF844C33B444B79A3949A0B /* OnboardingWindow.swift in Sources */,
-				1C0C9630E9EB4ACD87389865 /* ReminderManager.swift in Sources */,
-				0803800793D440489E35501A /* SimpleOnboardingWindow.swift in Sources */,
+				11FB02CDEB764C8D81C3435F /* TouchGrass/Design/DesignSystem.swift in Sources */,
+				0087A2362AFB4092A9E95CAD /* TouchGrass/Views/Components/ActivitySelectionView.swift in Sources */,
+				F8904461C0264384BDD06013 /* TouchGrass/Views/Components/CalendarContextView.swift in Sources */,
+				744C689D67104C6A9A484C40 /* TouchGrass/Views/Components/CompletionView.swift in Sources */,
+				5F3E90ABF93F4D83ACB779F1 /* TouchGrass/Views/Components/ExerciseMenuView.swift in Sources */,
+				4760E2AFB6D64BCF879DFC19 /* TouchGrass/Views/Components/InteractiveButton.swift in Sources */,
+				D5C3F3FD50984AB296610C02 /* TouchGrass/Views/Components/WaterTrackingBar.swift in Sources */,
+				41A2192D1D0D42748C8F753A /* TouchGrass/Views/TouchGrassModeRefactored.swift in Sources */,
+				9C480DBAE43448B5BFB43FFD /* Managers/ActivityTracker.swift in Sources */,
+				CC56EFB4CEEE48C584FDFAFE /* Managers/CalendarManager.swift in Sources */,
+				796A4CB6894D43BB94D9855D /* Views/CustomizationView.swift in Sources */,
+				8F499EC6B4504C8EB94B9A3F /* Views/CustomizationWindowController.swift in Sources */,
+				54842E0254CB4DA88C7F462F /* Models/Exercise.swift in Sources */,
+				2D4E54316B97414AB2FBF380 /* Views/ExerciseSelectionView.swift in Sources */,
+				B8EED555A2DB4FEAB87BB097 /* Views/ExerciseView.swift in Sources */,
+				5AE4088CAC6E40A7AC3AA5BE /* Views/ExerciseWindowController.swift in Sources */,
+				FB153C3101AF42149B138B11 /* Views/GrassIcon.swift in Sources */,
+				F5E7A6A3785E4868A5EE0642 /* Models/Messages.swift in Sources */,
+				B4941CBB31C54967854067F0 /* Views/OnboardingCustomizationView.swift in Sources */,
+				86D04943CD3D49248FFD5455 /* Views/OnboardingHeaderView.swift in Sources */,
+				4CD53CDB484747DBB4CEEF7E /* Managers/OnboardingManager.swift in Sources */,
+				3BF844C33B444B79A3949A0B /* Views/OnboardingWindow.swift in Sources */,
+				1C0C9630E9EB4ACD87389865 /* Managers/ReminderManager.swift in Sources */,
+				0803800793D440489E35501A /* Views/SimpleOnboardingWindow.swift in Sources */,
 				4BA1A292C86F4F6390467DF1 /* TouchGrassApp.swift in Sources */,
-				7C0590FAADF9492EA6C0155D /* TouchGrassOnboarding.swift in Sources */,
-				D4747A4349DA4A7E86C444A5 /* TouchGrassOnboardingController.swift in Sources */,
-				863A5337B76A42858F620258 /* UpdateManager.swift in Sources */,
-				C4A5E53AF7CD47F9AF897CDE /* UpdateProgressView.swift in Sources */,
-				C8639872E55F40CFB23151A5 /* WaterTracker.swift in Sources */,
-				00F926DE94574A7FA1226241 /* WindowHelper.swift in Sources */,
-				845281A875484FA7871191A1 /* WorkHoursManager.swift in Sources */,
-				300DC90AEDB14F26A1F4FC87 /* WorkHoursSettingsView.swift in Sources */,
-				A469E57921BB4799A8B8FFB1 /* TouchGrassMode.swift in Sources */,
-				1E73424E605A42A5953234CC /* TouchGrassModeController.swift in Sources */,
-				FD50686FBCC94C46A5BCC653 /* TimerService.swift in Sources */,
-				CAC1C9608FA74B14AF9B0DD4 /* PreferencesStore.swift in Sources */,
+				7C0590FAADF9492EA6C0155D /* Views/TouchGrassOnboarding.swift in Sources */,
+				D4747A4349DA4A7E86C444A5 /* Views/TouchGrassOnboardingController.swift in Sources */,
+				863A5337B76A42858F620258 /* Managers/UpdateManager.swift in Sources */,
+				C4A5E53AF7CD47F9AF897CDE /* Views/UpdateProgressView.swift in Sources */,
+				C8639872E55F40CFB23151A5 /* Managers/WaterTracker.swift in Sources */,
+				00F926DE94574A7FA1226241 /* Managers/WindowHelper.swift in Sources */,
+				845281A875484FA7871191A1 /* Managers/WorkHoursManager.swift in Sources */,
+				300DC90AEDB14F26A1F4FC87 /* Views/WorkHoursSettingsView.swift in Sources */,
+				A469E57921BB4799A8B8FFB1 /* Views/TouchGrassMode.swift in Sources */,
+				1E73424E605A42A5953234CC /* Views/TouchGrassModeController.swift in Sources */,
+				FD50686FBCC94C46A5BCC653 /* Managers/TimerService.swift in Sources */,
+				CAC1C9608FA74B14AF9B0DD4 /* Managers/PreferencesStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,9 +316,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -383,9 +378,11 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -405,18 +402,25 @@
 		};
 		B71234641234567812345678 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {				CODE_SIGN_STYLE = Automatic;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = PG5D259899;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass;
 				PRODUCT_NAME = "Touch Grass";
@@ -427,18 +431,25 @@
 		};
 		B71234651234567812345678 /* Release */ = {
 			isa = XCBuildConfiguration;
-			buildSettings = {				CODE_SIGN_STYLE = Automatic;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
+				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_TEAM = PG5D259899;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 15.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass;
 				PRODUCT_NAME = "Touch Grass";

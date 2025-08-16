@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1640"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B71234501234567812345678"
+               BlueprintIdentifier = "B712344F1234567812345678"
                BuildableName = "Touch Grass.app"
                BlueprintName = "TouchGrass"
                ReferencedContainer = "container:TouchGrass.xcodeproj">
@@ -69,7 +69,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B71234501234567812345678"
+            BlueprintIdentifier = "B712344F1234567812345678"
             BuildableName = "Touch Grass.app"
             BlueprintName = "TouchGrass"
             ReferencedContainer = "container:TouchGrass.xcodeproj">
@@ -86,7 +86,7 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B71234501234567812345678"
+            BlueprintIdentifier = "B712344F1234567812345678"
             BuildableName = "Touch Grass.app"
             BlueprintName = "TouchGrass"
             ReferencedContainer = "container:TouchGrass.xcodeproj">
