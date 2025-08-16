@@ -61,13 +61,11 @@ lint-fix:
 
 # Run tests
 test:
-	@echo "🧪 Running tests..."
-	@xcodebuild -project TouchGrass.xcodeproj \
-		-scheme TouchGrass \
-		-destination 'platform=macOS' \
-		test 2>&1 | grep -q "Test bundle" || true
-	@echo "ℹ️  No tests configured yet"
-	@echo "    Tests will be added in future updates"
+	@scripts/test.sh
+
+# Run tests verbosely
+test-verbose:
+	@scripts/test.sh --verbose
 
 # Create a release
 release:
