@@ -139,7 +139,7 @@ struct MenuView: View {
                             }
                             .padding(.horizontal, 12)
                             .padding(.bottom, 8)
-                        } else if let _ = calManager.nextEvent,
+                        } else if calManager.nextEvent != nil,
                                   let timeUntil = calManager.timeUntilNextEvent {
                             // Free time between meetings
                             HStack(spacing: 6) {
@@ -392,4 +392,3 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         completionHandler()
     }
 }
-

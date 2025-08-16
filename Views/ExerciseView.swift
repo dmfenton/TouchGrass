@@ -27,7 +27,7 @@ class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate {
         
         // Construct the file path
         guard let audioURL = Bundle.main.url(forResource: fileName, withExtension: "mp3") else {
-            print("Audio file not found: \(fileName).mp3")
+            NSLog("Audio file not found: \(fileName).mp3")
             // Fallback: call completion immediately
             DispatchQueue.main.async {
                 completion()
@@ -46,7 +46,7 @@ class AudioController: NSObject, ObservableObject, AVAudioPlayerDelegate {
             isPlaying = true
             isPaused = false
         } catch {
-            print("Error playing audio file: \(error)")
+            NSLog("Error playing audio file: \(error)")
             // Fallback: call completion immediately
             DispatchQueue.main.async {
                 completion()

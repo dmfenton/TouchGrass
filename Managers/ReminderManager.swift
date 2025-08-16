@@ -4,13 +4,13 @@ import UserNotifications
 import AppKit
 import ServiceManagement
 
-final class ReminderManager: ObservableObject {
+final class ReminderManager: ObservableObject, TimerServiceDelegate {
     @Published var isPaused = false
     @Published var calendarManager: CalendarManager?
     @Published var intervalMinutes: Double = 45 { 
         didSet { 
             saveSettings()
-            scheduleNextTick() 
+            timerService.updateInterval(intervalMinutes)
         } 
     }
     @Published var startsAtLogin: Bool = false {
@@ -20,7 +20,6 @@ final class ReminderManager: ObservableObject {
             }
         }
     }
-    @Published var timeUntilNextReminder: TimeInterval = 0
     @Published var activityTracker = ActivityTracker()
     @Published var adaptiveIntervalEnabled: Bool = true { didSet { saveSettings() } }
     @Published var hasActiveReminder = false  // New: indicates a reminder is waiting
@@ -31,12 +30,12 @@ final class ReminderManager: ObservableObject {
     // Water tracking
     @Published var waterTracker = WaterTracker()
     
-    private var timerCancellable: AnyCancellable?
-    private var countdownCancellable: AnyCancellable?
     private var meetingMonitorCancellable: AnyCancellable?
     private let exerciseWindow = ExerciseWindowController()
-    private var nextFireDate = Date().addingTimeInterval(45 * 60)
     private var wasInMeeting = false
+    
+    // Timer service for handling all timer-related functionality
+    private let timerService = TimerService()
     
     // Work hours manager
     private let workHoursManager = WorkHoursManager()
@@ -76,17 +75,17 @@ final class ReminderManager: ObservableObject {
     // MARK: - Public actions
     func pause() { 
         isPaused = true
-        timeUntilNextReminder = 0
+        timerService.pause()
     }
     
     func resume() { 
         isPaused = false
-        scheduleNextTick()
+        timerService.resume()
     }
     
     func snooze(minutes: Int) { 
         isPaused = false
-        schedule(at: Date().addingTimeInterval(Double(minutes) * 60))
+        timerService.snooze(minutes: minutes)
     }
     
     func showTouchGrassMode() {
@@ -115,7 +114,7 @@ final class ReminderManager: ObservableObject {
         hasActiveReminder = false
         isTouchGrassModeActive = false
         activityTracker.completeBreak()
-        scheduleNextTick()
+        timerService.scheduleNextTick()
     }
     
     // Computed properties for backward compatibility
@@ -183,15 +182,10 @@ final class ReminderManager: ObservableObject {
         
         // Reschedule if needed
         if !workHoursManager.isWithinWorkHours() && !isPaused {
-            scheduleNextWorkHourReminder()
+            timerService.scheduleNextTick()
         }
     }
     
-    private func scheduleNextWorkHourReminder() {
-        if let nextWorkDate = workHoursManager.nextWorkHourDate() {
-            schedule(at: nextWorkDate)
-        }
-    }
 
     // MARK: - Init
     init() {
@@ -201,9 +195,16 @@ final class ReminderManager: ObservableObject {
         
         loadSettings()
         checkLoginItemStatus()
-        scheduleAtFixedInterval()
-        startCountdownTimer()
         requestNotificationPermissions()
+        
+        // Set up timer service
+        timerService.delegate = self
+        timerService.updateInterval(intervalMinutes)
+        
+        // Sync pause state
+        if isPaused {
+            timerService.pause()
+        }
         
         // Always initialize calendar manager to preserve settings
         self.calendarManager = CalendarManager()
@@ -336,7 +337,7 @@ final class ReminderManager: ObservableObject {
         guard !hasActiveReminder else { return }
         
         // Check if enough time has passed since last reminder
-        let timeSinceLastReminder = Date().timeIntervalSince(nextFireDate.addingTimeInterval(-intervalMinutes * 60))
+        let timeSinceLastReminder = Date().timeIntervalSince(timerService.getNextFireDate().addingTimeInterval(-intervalMinutes * 60))
         guard timeSinceLastReminder >= 900 else { return } // At least 15 minutes since last reminder
         
         // Set the active reminder flag and notify
@@ -358,7 +359,7 @@ final class ReminderManager: ObservableObject {
         UNUserNotificationCenter.current().add(request) { _ in }
         
         // Reset the regular schedule
-        scheduleNextTick()
+        timerService.scheduleNextTick()
     }
 
     // MARK: - Settings Persistence
@@ -421,71 +422,30 @@ final class ReminderManager: ObservableObject {
         }
     }
 
-    // MARK: - Scheduling
-    private func scheduleAtFixedInterval() {
-        // Calculate next fire time based on fixed interval from start of hour
-        let now = Date()
-        let calendar = Calendar.current
-        let components = calendar.dateComponents([.minute, .second], from: now)
-        let minutesSinceHour = Double(components.minute ?? 0)
-        let secondsSinceHour = Double(components.second ?? 0)
-        let totalSecondsSinceHour = minutesSinceHour * 60 + secondsSinceHour
-        
-        let intervalSecs = intervalMinutes * 60
-        let secondsUntilNext = intervalSecs - totalSecondsSinceHour.truncatingRemainder(dividingBy: intervalSecs)
-        
-        schedule(at: now.addingTimeInterval(secondsUntilNext))
+    // MARK: - TimerServiceDelegate
+    func timerDidFire() {
+        presentReminder()
+    }
+    
+    func shouldScheduleWithinWorkHours() -> Bool {
+        return workHoursManager.isWithinWorkHours()
+    }
+    
+    func getNextWorkHourDate() -> Date? {
+        return workHoursManager.nextWorkHourDate()
+    }
+    
+    // MARK: - Public timer interface for backward compatibility
+    var timeUntilNextReminder: TimeInterval {
+        timerService.timeUntilNextReminder
     }
     
     func scheduleNextTick() {
-        scheduleAtFixedInterval()
-    }
-
-    private var intervalSeconds: TimeInterval { intervalMinutes * 60 }
-
-    private func schedule(at date: Date) {
-        nextFireDate = date
-        timerCancellable?.cancel()
-
-        let publisher = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-        timerCancellable = publisher.sink { [weak self] _ in
-            guard let self else { return }
-            if !self.isPaused, Date() >= self.nextFireDate {
-                self.presentReminder()
-                self.scheduleAtFixedInterval()
-            }
-        }
-    }
-    
-    private func startCountdownTimer() {
-        // Update immediately
-        if !self.isPaused {
-            self.timeUntilNextReminder = max(0, self.nextFireDate.timeIntervalSinceNow)
-        } else {
-            self.timeUntilNextReminder = 0
-        }
-        
-        // Then update every 60 seconds for minute-level precision
-        let publisher = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-        countdownCancellable = publisher.sink { [weak self] _ in
-            guard let self else { return }
-            if !self.isPaused {
-                self.timeUntilNextReminder = max(0, self.nextFireDate.timeIntervalSinceNow)
-            } else {
-                self.timeUntilNextReminder = 0
-            }
-        }
+        timerService.scheduleNextTick()
     }
 
     // MARK: - Present
     private func presentReminder() {
-        // Check if we're within work hours
-        guard workHoursManager.isWithinWorkHours() else {
-            // Schedule for next work hour
-            scheduleNextWorkHourReminder()
-            return
-        }
-        
         // Update calendar info for awareness but don't pause
         if let calManager = calendarManager {
             calManager.updateCurrentAndNextEvents()
@@ -583,7 +543,7 @@ final class ReminderManager: ObservableObject {
                     try appService.unregister()
                 }
             } catch {
-                print("Failed to update login item status: \(error)")
+                NSLog("Failed to update login item status: \(error)")
                 // Revert the toggle on failure
                 startsAtLogin.toggle()
             }

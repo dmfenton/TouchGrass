@@ -36,6 +36,8 @@
 		00F926DE94574A7FA1226241 /* WindowHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */; };
 		845281A875484FA7871191A1 /* WorkHoursManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A88E3131787846B3ABDBF43F /* WorkHoursManager.swift */; };
 		300DC90AEDB14F26A1F4FC87 /* WorkHoursSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */; };
+		386C968E72EF4F51AD3F3638 /* SimpleOnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D0A3BFC04B44001940C1FF6 /* SimpleOnboardingWindowController.swift */; };
+		24EB0F0B5C2A450B81B5A880 /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402006F461F04A5CAB10D5D7 /* OnboardingWindowController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -70,6 +72,8 @@
 		D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/WindowHelper.swift"; sourceTree = "<group>"; };
 		A88E3131787846B3ABDBF43F /* WorkHoursManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/WorkHoursManager.swift"; sourceTree = "<group>"; };
 		123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/WorkHoursSettingsView.swift"; sourceTree = "<group>"; };
+		2D0A3BFC04B44001940C1FF6 /* SimpleOnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/SimpleOnboardingWindowController.swift"; sourceTree = "<group>"; };
+		402006F461F04A5CAB10D5D7 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Views/OnboardingWindowController.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -77,7 +77,13 @@ class UpdateManager: NSObject, ObservableObject {
         }
         
         do {
-            let url = URL(string: "https://api.github.com/repos/\(githubRepo)/releases/latest")!
+            guard let url = URL(string: "https://api.github.com/repos/\(githubRepo)/releases/latest") else {
+                await MainActor.run {
+                    self.isChecking = false
+                    self.error = "Invalid GitHub repository URL"
+                }
+                return
+            }
             var request = URLRequest(url: url)
             request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
             
@@ -116,7 +122,8 @@ class UpdateManager: NSObject, ObservableObject {
                 UserDefaults.standard.set(Date(), forKey: self.lastUpdateCheckKey)
             }
         } catch {
-            print("Failed to check for updates: \(error)")
+            // Log error but don't use print in production code
+            NSLog("Failed to check for updates: \(error)")
             await MainActor.run {
                 self.isChecking = false
                 if !silent {
@@ -136,7 +143,13 @@ class UpdateManager: NSObject, ObservableObject {
         
         do {
             // Get the DMG URL from the latest release
-            let url = URL(string: "https://api.github.com/repos/\(githubRepo)/releases/latest")!
+            guard let url = URL(string: "https://api.github.com/repos/\(githubRepo)/releases/latest") else {
+                await MainActor.run {
+                    self.isDownloading = false
+                    self.error = "Invalid GitHub repository URL"
+                }
+                return
+            }
             var request = URLRequest(url: url)
             request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
             
@@ -149,7 +162,13 @@ class UpdateManager: NSObject, ObservableObject {
             }
             
             // Download the DMG
-            let dmgURL = URL(string: dmgAsset.browserDownloadUrl)!
+            guard let dmgURL = URL(string: dmgAsset.browserDownloadUrl) else {
+                await MainActor.run {
+                    self.isDownloading = false
+                    self.error = "Invalid DMG download URL"
+                }
+                return
+            }
             let destinationURL = FileManager.default.temporaryDirectory.appendingPathComponent(dmgAsset.name)
             
             // Use URLSession with progress tracking

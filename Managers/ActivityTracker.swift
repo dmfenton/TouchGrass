@@ -173,7 +173,11 @@ class ActivityTracker: ObservableObject {
         }
         
         // Keep only last 90 days of history
-        let cutoffDate = calendar.date(byAdding: .day, value: -90, to: Date())!
+        guard let cutoffDate = calendar.date(byAdding: .day, value: -90, to: Date()) else {
+            // If we can't calculate cutoff date, just save current data
+            defaults.set(history, forKey: activityHistoryKey)
+            return
+        }
         history = history.filter { key, _ in
             if let date = formatter.date(from: key) {
                 return date > cutoffDate
