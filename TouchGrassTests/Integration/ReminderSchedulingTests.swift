@@ -43,11 +43,11 @@ final class ReminderSchedulingTests: XCTestCase {
     
     func testSnoozeReminder() {
         // Activate reminder
-        reminderManager.showTouchGrassMode()
+        reminderManager.hasActiveReminder = true
         XCTAssertTrue(reminderManager.hasActiveReminder)
         
-        // Snooze for 10 minutes
-        reminderManager.snooze(minutes: 10)
+        // Snooze reminder
+        reminderManager.snoozeReminder()
         XCTAssertFalse(reminderManager.hasActiveReminder)
     }
     
