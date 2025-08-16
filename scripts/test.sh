@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Touch Grass Integration Test Runner
-# Runs all integration tests
+# Touch Grass Test Runner
+# Uses standard xcodebuild test command
 
 set -e
 
@@ -11,7 +11,7 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-echo "🧪 Running Touch Grass Integration Tests"
+echo "🧪 Running Touch Grass Tests"
 echo "========================================"
 
 # Check if we're in the right directory
@@ -42,15 +42,25 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# Run the test suite
+# Run tests using xcodebuild
 if [ "$VERBOSE" = true ]; then
-    swift TouchGrassTests/TestRunner.swift
+    xcodebuild test \
+        -project TouchGrass.xcodeproj \
+        -scheme TouchGrassTests \
+        -destination 'platform=macOS' \
+        -resultBundlePath build/test-results \
+        | xcpretty --test --color || true
 else
-    swift TouchGrassTests/TestRunner.swift 2>&1 | grep -E "(Running|Test Results|passed|failed|Total)" || swift TouchGrassTests/TestRunner.swift
+    xcodebuild test \
+        -project TouchGrass.xcodeproj \
+        -scheme TouchGrassTests \
+        -destination 'platform=macOS' \
+        -quiet \
+        -resultBundlePath build/test-results
 fi
 
 # Check test results
-if [ $? -eq 0 ]; then
+if [ ${PIPESTATUS[0]} -eq 0 ]; then
     echo -e "${GREEN}✅ All tests passed!${NC}"
 else
     echo -e "${RED}❌ Tests failed!${NC}"

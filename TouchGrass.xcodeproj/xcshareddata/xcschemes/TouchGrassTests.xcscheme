@@ -28,7 +28,7 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TEST1234567890ABCDEF12"
+               BlueprintIdentifier = "C3A1F9AE4F81CC4EB3688D56"
                BuildableName = "TouchGrassTests.xctest"
                BlueprintName = "TouchGrassTests"
                ReferencedContainer = "container:TouchGrass.xcodeproj">
@@ -47,7 +47,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "TEST1234567890ABCDEF12"
+               BlueprintIdentifier = "C3A1F9AE4F81CC4EB3688D56"
                BuildableName = "TouchGrassTests.xctest"
                BlueprintName = "TouchGrassTests"
                ReferencedContainer = "container:TouchGrass.xcodeproj">

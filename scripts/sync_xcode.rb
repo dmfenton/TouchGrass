@@ -64,8 +64,14 @@ class XcodeProjectSync
     # Create Controllers subgroups
     @controllers_onboarding_group = find_or_create_group(@controllers_group, 'Onboarding')
 
+    # Create test groups
+    @tests_group = find_or_create_group(@main_group, 'TouchGrassTests')
+    @tests_integration_group = find_or_create_group(@tests_group, 'Integration')
+    @tests_mocks_group = find_or_create_group(@tests_group, 'Mocks')
+    @tests_helpers_group = find_or_create_group(@tests_group, 'Helpers')
+
     # Ensure groups don't have problematic paths that cause duplication
-    [@managers_group, @models_group, @views_group, @controllers_group, @resources_group, @views_onboarding_group, @controllers_onboarding_group, @components_group].each do |group|
+    [@managers_group, @models_group, @views_group, @controllers_group, @resources_group, @views_onboarding_group, @controllers_onboarding_group, @components_group, @tests_integration_group, @tests_mocks_group, @tests_helpers_group].each do |group|
       group.path = nil if group
     end
   end
@@ -84,7 +90,14 @@ class XcodeProjectSync
     
     # Determine target based on file name and path
     case file_name
-    when /Manager\.swift$/, 'ActivityTracker.swift', 'TimerService.swift', 'PreferencesStore.swift', 'WaterTracker.swift', 'WindowHelper.swift'
+    when /Manager\.swift$/
+      # Check if it's a mock manager
+      if file_path.include?('Mock') || file_path.include?('TouchGrassTests/')
+        @tests_mocks_group
+      else
+        @managers_group
+      end
+    when 'ActivityTracker.swift', 'TimerService.swift', 'PreferencesStore.swift', 'WaterTracker.swift', 'WindowHelper.swift'
       @managers_group
     when 'Exercise.swift', 'Messages.swift'
       @models_group
@@ -111,6 +124,19 @@ class XcodeProjectSync
       # Regular views and windows
       elsif file_path.include?('Views/') || file_name.include?('View') || file_name.include?('Window')
         @views_group
+      # Test files
+      elsif file_path.include?('TouchGrassTests/')
+        if file_path.include?('Integration/')
+          @tests_integration_group
+        elsif file_path.include?('Mocks/')
+          @tests_mocks_group
+        elsif file_path.include?('Helpers/')
+          @tests_helpers_group
+        elsif file_name == 'TestRunner.swift'
+          @tests_group
+        else
+          @tests_group
+        end
       else
         # Keep in source group for root files like TouchGrassApp.swift, Info.plist
         @source_group
@@ -142,9 +168,9 @@ class XcodeProjectSync
       # Set the correct path for the file reference
       file_ref.path = file_path
       
-      # Add to main target's sources build phase
+      # Add to main target's sources build phase (but not test files)
       main_target = @project.targets.first
-      if file_path.end_with?('.swift')
+      if file_path.end_with?('.swift') && !file_path.include?('TouchGrassTests/')
         main_target.add_file_references([file_ref])
       end
       
@@ -208,7 +234,7 @@ class XcodeProjectSync
     puts ""
     
     puts "Current groups:"
-    [@managers_group, @models_group, @views_group, @views_onboarding_group, @components_group, @controllers_group, @controllers_onboarding_group, @resources_group].each do |group|
+    [@managers_group, @models_group, @views_group, @views_onboarding_group, @components_group, @controllers_group, @controllers_onboarding_group, @resources_group, @tests_group, @tests_integration_group, @tests_mocks_group, @tests_helpers_group].each do |group|
       next unless group
       file_count = group.files.count
       group_path = group.parent && group.parent != @main_group ? "#{group.parent.name}/#{group.name}" : group.name
