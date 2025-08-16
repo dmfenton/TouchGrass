@@ -51,22 +51,22 @@
 		024C45B060374A5BAEDAE1D3 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReminderManager.swift; path = Managers/ReminderManager.swift; sourceTree = "<group>"; };
 		123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkHoursSettingsView.swift; path = Views/WorkHoursSettingsView.swift; sourceTree = "<group>"; };
 		34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassOnboarding.swift; path = Views/TouchGrassOnboarding.swift; sourceTree = "<group>"; };
-		3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseMenuView.swift; path = TouchGrass/Views/Components/ExerciseMenuView.swift; sourceTree = "<group>"; };
-		435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaterTrackingBar.swift; path = TouchGrass/Views/Components/WaterTrackingBar.swift; sourceTree = "<group>"; };
+		3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseMenuView.swift; path = Views/Components/ExerciseMenuView.swift; sourceTree = "<group>"; };
+		435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaterTrackingBar.swift; path = Views/Components/WaterTrackingBar.swift; sourceTree = "<group>"; };
 		53F5FC669419485A98B0C9B6 /* UpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UpdateManager.swift; path = Managers/UpdateManager.swift; sourceTree = "<group>"; };
-		608665F88B9243F88CD4156D /* ActivitySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivitySelectionView.swift; path = TouchGrass/Views/Components/ActivitySelectionView.swift; sourceTree = "<group>"; };
+		608665F88B9243F88CD4156D /* ActivitySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivitySelectionView.swift; path = Views/Components/ActivitySelectionView.swift; sourceTree = "<group>"; };
 		62A89115D30340428D810C63 /* OnboardingCustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingCustomizationView.swift; path = Views/OnboardingCustomizationView.swift; sourceTree = "<group>"; };
 		70B179B93FB54F9FB0C53269 /* ActivityTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityTracker.swift; path = Managers/ActivityTracker.swift; sourceTree = "<group>"; };
 		710F0FEBF32D491D8771CA1A /* CustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomizationView.swift; path = Views/CustomizationView.swift; sourceTree = "<group>"; };
 		79311D2091E54488B94FFADC /* GrassIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GrassIcon.swift; path = Views/GrassIcon.swift; sourceTree = "<group>"; };
-		8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassOnboardingController.swift; path = Views/TouchGrassOnboardingController.swift; sourceTree = "<group>"; };
-		815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseWindowController.swift; path = Views/ExerciseWindowController.swift; sourceTree = "<group>"; };
+		8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassOnboardingController.swift; path = Controllers/Onboarding/TouchGrassOnboardingController.swift; sourceTree = "<group>"; };
+		815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseWindowController.swift; path = Controllers/ExerciseWindowController.swift; sourceTree = "<group>"; };
 		8A9A84660C7543CFBEB28545 /* OnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingWindow.swift; path = Views/OnboardingWindow.swift; sourceTree = "<group>"; };
-		961799C784264550B437C006 /* CalendarContextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CalendarContextView.swift; path = TouchGrass/Views/Components/CalendarContextView.swift; sourceTree = "<group>"; };
-		9CA7B53ACD134163B7C04E24 /* CustomizationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomizationWindowController.swift; path = Views/CustomizationWindowController.swift; sourceTree = "<group>"; };
+		961799C784264550B437C006 /* CalendarContextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CalendarContextView.swift; path = Views/Components/CalendarContextView.swift; sourceTree = "<group>"; };
+		9CA7B53ACD134163B7C04E24 /* CustomizationWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomizationWindowController.swift; path = Controllers/CustomizationWindowController.swift; sourceTree = "<group>"; };
 		A88E3131787846B3ABDBF43F /* WorkHoursManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkHoursManager.swift; path = Managers/WorkHoursManager.swift; sourceTree = "<group>"; };
 		ABCDEF1234567890ABCDEF12 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
-		ADE492424B2249349A6FE13F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompletionView.swift; path = TouchGrass/Views/Components/CompletionView.swift; sourceTree = "<group>"; };
+		ADE492424B2249349A6FE13F /* CompletionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CompletionView.swift; path = Views/Components/CompletionView.swift; sourceTree = "<group>"; };
 		AFB3B0E52CCA4B5CB2423C58 /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Exercise.swift; path = Models/Exercise.swift; sourceTree = "<group>"; };
 		B2EAF51DED38476390E916A9 /* CalendarManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CalendarManager.swift; path = Managers/CalendarManager.swift; sourceTree = "<group>"; };
 		B71234501234567812345678 /* Touch Grass.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Touch Grass.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -74,18 +74,18 @@
 		BC1BEDC2F808400987D69A8B /* UpdateProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = UpdateProgressView.swift; path = Views/UpdateProgressView.swift; sourceTree = "<group>"; };
 		BF2BD545B00140FDAF4B2FCE /* ExerciseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseView.swift; path = Views/ExerciseView.swift; sourceTree = "<group>"; };
 		C1B49700923E42A4A45984EF /* TimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TimerService.swift; path = Managers/TimerService.swift; sourceTree = "<group>"; };
-		C35470E4EB9F4DD482B5C344 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DesignSystem.swift; path = TouchGrass/Design/DesignSystem.swift; sourceTree = "<group>"; };
+		C35470E4EB9F4DD482B5C344 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = DesignSystem.swift; path = Resources/DesignSystem.swift; sourceTree = "<group>"; };
 		C617EE0264CF46AFA3EA084D /* OnboardingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingManager.swift; path = Managers/OnboardingManager.swift; sourceTree = "<group>"; };
 		C742A93C6D6241B186F0135E /* TouchGrassApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassApp.swift; sourceTree = "<group>"; };
 		C7A37EE6B8C1432D81699E7A /* TouchGrassMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassMode.swift; path = Views/TouchGrassMode.swift; sourceTree = "<group>"; };
-		C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassModeRefactored.swift; path = TouchGrass/Views/TouchGrassModeRefactored.swift; sourceTree = "<group>"; };
+		C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassModeRefactored.swift; path = Views/TouchGrassModeRefactored.swift; sourceTree = "<group>"; };
 		CF05E7D3B0CC48C5A1A91100 /* ExerciseSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseSelectionView.swift; path = Views/ExerciseSelectionView.swift; sourceTree = "<group>"; };
 		D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreferencesStore.swift; path = Managers/PreferencesStore.swift; sourceTree = "<group>"; };
 		D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WindowHelper.swift; path = Managers/WindowHelper.swift; sourceTree = "<group>"; };
 		D75514C88ECE4BF1A60DBB70 /* SimpleOnboardingWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = SimpleOnboardingWindow.swift; path = Views/SimpleOnboardingWindow.swift; sourceTree = "<group>"; };
-		DCFD3A05466E47FBBE9C0C95 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassModeController.swift; path = Views/TouchGrassModeController.swift; sourceTree = "<group>"; };
+		DCFD3A05466E47FBBE9C0C95 /* TouchGrassModeController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassModeController.swift; path = Controllers/TouchGrassModeController.swift; sourceTree = "<group>"; };
 		EC0BA99FC5F74770988AD0D2 /* Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Messages.swift; path = Models/Messages.swift; sourceTree = "<group>"; };
-		F190DD70BB63445099922513 /* InteractiveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InteractiveButton.swift; path = TouchGrass/Views/Components/InteractiveButton.swift; sourceTree = "<group>"; };
+		F190DD70BB63445099922513 /* InteractiveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = InteractiveButton.swift; path = Views/Components/InteractiveButton.swift; sourceTree = "<group>"; };
 		F914D9DC3AA54CAC900E757B /* WaterTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WaterTracker.swift; path = Managers/WaterTracker.swift; sourceTree = "<group>"; };
 		FEF78D7D40114727A453DB81 /* OnboardingHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingHeaderView.swift; path = Views/OnboardingHeaderView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -112,12 +112,6 @@
 		34681C3AE33484B960CD3332 /* Components */ = {
 			isa = PBXGroup;
 			children = (
-				608665F88B9243F88CD4156D /* ActivitySelectionView.swift */,
-				961799C784264550B437C006 /* CalendarContextView.swift */,
-				ADE492424B2249349A6FE13F /* CompletionView.swift */,
-				3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */,
-				F190DD70BB63445099922513 /* InteractiveButton.swift */,
-				435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */,
 			);
 			name = Components;
 			sourceTree = "<group>";
@@ -131,12 +125,19 @@
 			name = Models;
 			sourceTree = "<group>";
 		};
+		47EFE53B89DF8329DBDEAAC5 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C35470E4EB9F4DD482B5C344 /* DesignSystem.swift */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		5801F16888EAD17046CED222 /* TouchGrass */ = {
 			isa = PBXGroup;
 			children = (
 				DE537B7F0A2C0FBC864BF369 /* Design */,
 				34681C3AE33484B960CD3332 /* Components */,
-				C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */,
 			);
 			name = TouchGrass;
 			sourceTree = "<group>";
@@ -152,6 +153,8 @@
 				123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */,
 				C7A37EE6B8C1432D81699E7A /* TouchGrassMode.swift */,
 				6F7BF4189653BB275EDB094B /* Onboarding */,
+				FE7ED6D135003B73C0D10C1F /* Components */,
+				C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -189,6 +192,7 @@
 				5B00D992D328A98543218C69 /* Views */,
 				5801F16888EAD17046CED222 /* TouchGrass */,
 				9A0D029C68B1827390B75064 /* Controllers */,
+				47EFE53B89DF8329DBDEAAC5 /* Resources */,
 			);
 			sourceTree = "<group>";
 		};
@@ -230,9 +234,21 @@
 		DE537B7F0A2C0FBC864BF369 /* Design */ = {
 			isa = PBXGroup;
 			children = (
-				C35470E4EB9F4DD482B5C344 /* DesignSystem.swift */,
 			);
 			name = Design;
+			sourceTree = "<group>";
+		};
+		FE7ED6D135003B73C0D10C1F /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				608665F88B9243F88CD4156D /* ActivitySelectionView.swift */,
+				961799C784264550B437C006 /* CalendarContextView.swift */,
+				ADE492424B2249349A6FE13F /* CompletionView.swift */,
+				3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */,
+				F190DD70BB63445099922513 /* InteractiveButton.swift */,
+				435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */,
+			);
+			name = Components;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

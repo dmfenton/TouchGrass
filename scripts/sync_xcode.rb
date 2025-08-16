@@ -50,25 +50,22 @@ class XcodeProjectSync
   end
 
   def ensure_groups_exist
-    # Find or create groups at the main level (MVC structure)
+    # Find or create groups at the main level (standard macOS structure)
     @managers_group = find_or_create_group(@main_group, 'Managers')
     @models_group = find_or_create_group(@main_group, 'Models')
     @views_group = find_or_create_group(@main_group, 'Views')
     @controllers_group = find_or_create_group(@main_group, 'Controllers')
-    @touchgrass_group = find_or_create_group(@main_group, 'TouchGrass')
+    @resources_group = find_or_create_group(@main_group, 'Resources')
 
     # Create Views subgroups
     @views_onboarding_group = find_or_create_group(@views_group, 'Onboarding')
+    @components_group = find_or_create_group(@views_group, 'Components')
 
     # Create Controllers subgroups
     @controllers_onboarding_group = find_or_create_group(@controllers_group, 'Onboarding')
 
-    # Create TouchGrass subgroups
-    @design_group = find_or_create_group(@touchgrass_group, 'Design')
-    @components_group = find_or_create_group(@touchgrass_group, 'Components', 'Views/Components')
-
     # Ensure groups don't have problematic paths that cause duplication
-    [@managers_group, @models_group, @views_group, @controllers_group, @touchgrass_group, @design_group, @views_onboarding_group, @controllers_onboarding_group].each do |group|
+    [@managers_group, @models_group, @views_group, @controllers_group, @resources_group, @views_onboarding_group, @controllers_onboarding_group, @components_group].each do |group|
       group.path = nil if group
     end
   end
@@ -92,9 +89,9 @@ class XcodeProjectSync
     when 'Exercise.swift', 'Messages.swift'
       @models_group
     when 'DesignSystem.swift'
-      @design_group
+      @resources_group
     when 'TouchGrassModeRefactored.swift'
-      @touchgrass_group
+      @views_group
     else
       # Check for controllers first (MVC separation)
       if file_name.include?('Controller')
@@ -106,7 +103,7 @@ class XcodeProjectSync
       # Check for onboarding views (not controllers)
       elsif file_name.include?('Onboarding') && (file_name.include?('View') || file_name.include?('Window') || file_name == 'TouchGrassOnboarding.swift')
         @views_onboarding_group
-      # Check path-based classification for components
+      # Check for components (reusable UI)
       elsif file_path.include?('Views/Components/') || 
          ['ActivitySelectionView.swift', 'CalendarContextView.swift', 'CompletionView.swift',
           'ExerciseMenuView.swift', 'InteractiveButton.swift', 'WaterTrackingBar.swift'].include?(file_name)
@@ -142,6 +139,8 @@ class XcodeProjectSync
       
       # Add file reference to the appropriate group
       file_ref = target_group.new_file(file_path)
+      # Set the correct path for the file reference
+      file_ref.path = file_path
       
       # Add to main target's sources build phase
       main_target = @project.targets.first
@@ -164,7 +163,12 @@ class XcodeProjectSync
     root_files = ['Info.plist', 'TouchGrassApp.swift', 'AppIcon.icns']
     
     # Process all file references in ALL groups, not just source group
-    all_groups = [@source_group, @managers_group, @models_group, @views_group, @controllers_group, @touchgrass_group, @design_group, @components_group, @views_onboarding_group, @controllers_onboarding_group].compact
+    # Include old TouchGrass group to migrate files out of it
+    old_touchgrass_group = @main_group.groups.find { |g| g.name == 'TouchGrass' }
+    old_design_group = old_touchgrass_group&.groups&.find { |g| g.name == 'Design' }
+    old_components_group = old_touchgrass_group&.groups&.find { |g| g.name == 'Components' }
+    
+    all_groups = [@source_group, @managers_group, @models_group, @views_group, @controllers_group, @resources_group, @components_group, @views_onboarding_group, @controllers_onboarding_group, old_touchgrass_group, old_design_group, old_components_group].compact
     
     all_groups.each do |group|
       files_to_move = group.files.dup
@@ -204,7 +208,7 @@ class XcodeProjectSync
     puts ""
     
     puts "Current groups:"
-    [@managers_group, @models_group, @views_group, @views_onboarding_group, @controllers_group, @controllers_onboarding_group, @design_group, @components_group].each do |group|
+    [@managers_group, @models_group, @views_group, @views_onboarding_group, @components_group, @controllers_group, @controllers_onboarding_group, @resources_group].each do |group|
       next unless group
       file_count = group.files.count
       group_path = group.parent && group.parent != @main_group ? "#{group.parent.name}/#{group.name}" : group.name
