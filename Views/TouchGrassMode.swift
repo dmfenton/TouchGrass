@@ -120,7 +120,7 @@ struct TouchGrassMode: View {
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
                                 .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
                         )
                     } else {
@@ -135,7 +135,7 @@ struct TouchGrassMode: View {
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
                         .background(
-                            RoundedRectangle(cornerRadius: 8)
+                            RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
                                 .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
                         )
                     }
@@ -198,11 +198,11 @@ struct TouchGrassMode: View {
                             .padding(12)
                             .frame(maxWidth: .infinity)
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .fill(Color.secondary.opacity(0.05))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
@@ -237,11 +237,11 @@ struct TouchGrassMode: View {
                             .padding(12)
                             .frame(maxWidth: .infinity)
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .fill(Color.secondary.opacity(0.05))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
@@ -276,11 +276,11 @@ struct TouchGrassMode: View {
                             .padding(12)
                             .frame(maxWidth: .infinity)
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .fill(Color.secondary.opacity(0.05))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
@@ -315,11 +315,11 @@ struct TouchGrassMode: View {
                             .padding(12)
                             .frame(maxWidth: .infinity)
                             .background(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .fill(Color.secondary.opacity(0.05))
                             )
                             .overlay(
-                                RoundedRectangle(cornerRadius: 10)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
                                     .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                             )
                         }
@@ -381,11 +381,11 @@ struct TouchGrassMode: View {
                                 .frame(maxWidth: .infinity)
                                 .frame(height: 80)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large)
                                         .fill(Color.secondary.opacity(0.05))
                                 )
                                 .overlay(
-                                    RoundedRectangle(cornerRadius: 12)
+                                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.large)
                                         .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
                                 )
                             }
@@ -423,7 +423,7 @@ struct TouchGrassMode: View {
                             .padding(.horizontal, 12)
                             .padding(.vertical, 6)
                             .background(
-                                RoundedRectangle(cornerRadius: 6)
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
                                     .fill(Color(red: 0.0, green: 0.5, blue: 1.0))
                             )
                     }

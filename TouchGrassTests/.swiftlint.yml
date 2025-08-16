@@ -1,0 +1,26 @@
+# SwiftLint Configuration Override for Tests
+# This overrides the parent configuration for test files
+
+# Disable rules that are too strict for test code
+disabled_rules:
+  - force_unwrapping # Common and acceptable in test code
+  - implicitly_unwrapped_optional # Standard pattern for setUp properties
+  - force_cast # Often needed in tests
+  - function_body_length # Test functions can be long
+  - type_body_length # Test classes can be large
+  - multiline_arguments # Test assertions can have multiple lines
+  - vertical_parameter_alignment_on_call # Test assertions alignment
+  
+# Override custom rules to disable them for tests
+custom_rules:
+  force_unwrap_warning:
+    name: "Force Unwrap Warning"
+    regex: 'DISABLE_THIS_RULE_IN_TESTS'
+    message: "This rule is disabled in tests"
+    severity: warning
+    
+  print_statement:
+    name: "Print Statement"
+    regex: 'DISABLE_THIS_RULE_IN_TESTS'
+    message: "This rule is disabled in tests"
+    severity: warning

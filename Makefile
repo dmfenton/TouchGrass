@@ -53,11 +53,16 @@ clean:
 
 # Run linting
 lint:
-	@scripts/lint.sh
+	@echo "🧹 Running SwiftLint..."
+	@swiftlint lint --quiet || (echo "❌ Lint failed. Run 'make lint-fix' to auto-fix some violations" && exit 1)
+	@echo "✅ Lint passed!"
 
 # Fix lint violations
 lint-fix:
-	@scripts/lint.sh --fix
+	@echo "🔧 Auto-fixing SwiftLint violations..."
+	@swiftlint --fix
+	@echo "✅ Fixed what could be auto-fixed. Running lint check..."
+	@swiftlint lint --quiet || echo "⚠️  Some violations remain that need manual fixing"
 
 # Run tests
 test:

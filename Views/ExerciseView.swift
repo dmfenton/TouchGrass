@@ -133,17 +133,18 @@ struct InstructionRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             Text("\(index + 1).")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.secondary)
+                .font(DesignSystem.Typography.bodyRegular)
+                .fontWeight(.medium)
+                .foregroundColor(DesignSystem.Colors.textSecondary)
                 .frame(width: 20, alignment: .trailing)
             
             Text(instruction)
-                .font(.system(size: 14))
-                .foregroundColor(.primary)
+                .font(DesignSystem.Typography.bodyRegular)
+                .foregroundColor(DesignSystem.Colors.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(.vertical, 2)
-        .padding(.horizontal, 6)
+        .padding(.vertical, DesignSystem.Spacing.xxSmall)
+        .padding(.horizontal, DesignSystem.Spacing.small)
         .background(
             RoundedRectangle(cornerRadius: 4)
                 .fill(isHighlighted ? Color.blue.opacity(0.1) : Color.clear)
@@ -179,7 +180,7 @@ struct ExerciseView: View {
                 ZStack {
                     // Static title that never changes
                     Text(exercise.name)
-                        .font(.title2)
+                        .font(DesignSystem.Typography.title2)
                         .fontWeight(.semibold)
                         .frame(maxWidth: .infinity)
                     
@@ -196,17 +197,17 @@ struct ExerciseView: View {
                 HStack(spacing: 20) {
                     Text(timeString)
                         .font(.system(size: 32, weight: .medium, design: .monospaced))
-                        .foregroundColor(isCountingDown ? .blue : .primary)
+                        .foregroundColor(isCountingDown ? DesignSystem.Colors.primaryGreen : DesignSystem.Colors.textPrimary)
                         .id("timer-\(timeRemaining)") // Force update only this text
                     
                     VStack(alignment: .leading, spacing: 2) {
                         Label(exercise.category.rawValue, systemImage: categoryIcon)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                            .font(DesignSystem.Typography.caption)
+                            .foregroundColor(DesignSystem.Colors.textSecondary)
                         
                         Label("\(exercise.duration)s", systemImage: "clock")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                            .font(DesignSystem.Typography.caption)
+                            .foregroundColor(DesignSystem.Colors.textSecondary)
                     }
                 }
             }
@@ -216,10 +217,10 @@ struct ExerciseView: View {
             // All instructions visible at once - reduced spacing
             VStack(alignment: .leading, spacing: 8) {
                 Text("Instructions")
-                    .font(.subheadline)
+                    .font(DesignSystem.Typography.callout)
                     .fontWeight(.medium)
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal)
+                    .foregroundColor(DesignSystem.Colors.textSecondary)
+                    .padding(.horizontal, DesignSystem.Spacing.large)
                 
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
@@ -230,7 +231,7 @@ struct ExerciseView: View {
                         )
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, DesignSystem.Spacing.large)
             }
             
             Spacer(minLength: 10)
@@ -248,7 +249,7 @@ struct ExerciseView: View {
                     .foregroundColor(.secondary)
                     .lineLimit(2)
             }
-            .padding(.horizontal)
+            .padding(.horizontal, DesignSystem.Spacing.large)
             
             // Control buttons
             HStack(spacing: 16) {
@@ -272,7 +273,7 @@ struct ExerciseView: View {
                 }
             }
         }
-        .padding(.vertical, 16)
+        .padding(.vertical, DesignSystem.Spacing.large)
         .frame(width: 500, height: 520)
         .onDisappear {
             stopTimer()
@@ -435,7 +436,7 @@ struct ExerciseSetView: View {
                 
                 VStack(spacing: 6) {
                     Text(exerciseSet.name)
-                        .font(.title2)
+                        .font(DesignSystem.Typography.title2)
                         .fontWeight(.semibold)
                     
                     Text(exerciseSet.description)
@@ -469,8 +470,8 @@ struct ExerciseSetView: View {
                     // Progress indicator
                     HStack {
                         Text("Exercise \(currentExerciseIndex + 1) of \(exerciseSet.exercises.count)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
+                            .font(DesignSystem.Typography.caption)
+                            .foregroundColor(DesignSystem.Colors.textSecondary)
                         
                         Spacer()
                         
@@ -496,7 +497,7 @@ struct ExerciseSetView: View {
                             }
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, DesignSystem.Spacing.large)
                     
                     ExerciseView(
                         exercise: exerciseSet.exercises[currentExerciseIndex],
@@ -546,7 +547,7 @@ struct ExerciseSetView: View {
                             .buttonStyle(.borderedProminent)
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, DesignSystem.Spacing.large)
                 }
             } else {
                 // Exercise overview list
@@ -625,7 +626,7 @@ struct ExerciseSetView: View {
                         }
                         .padding(.top, 8)
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, DesignSystem.Spacing.large)
                 }
                 .frame(maxHeight: 500)
                 

@@ -14,6 +14,8 @@ struct CustomizationView: View {
     @State private var waterTrackingEnabled = true
     @State private var dailyWaterGoal = 8
     @State private var waterUnit: WaterUnit = .glasses
+    @State private var isLoadingCalendars = false
+    @State private var calendarError: String? = nil
     
     private var calendarManager: CalendarManager? {
         reminderManager.calendarManager
@@ -25,11 +27,11 @@ struct CustomizationView: View {
             HStack(spacing: 12) {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 24))
-                    .foregroundColor(.green)
+                    .foregroundColor(DesignSystem.Colors.primaryGreen)
                 
                 Text("Customize Your Experience")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.primary)
+                    .foregroundColor(DesignSystem.Colors.textPrimary)
                 
                 Spacer()
             }
@@ -52,12 +54,12 @@ struct CustomizationView: View {
                         HStack {
                             Text("15m")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(DesignSystem.Colors.textSecondary)
                             Slider(value: $reminderInterval, in: 15...90, step: 15)
-                                .tint(.green)
+                                .tint(DesignSystem.Colors.primaryGreen)
                             Text("90m")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(DesignSystem.Colors.textSecondary)
                         }
                         
                         Text("\(Int(reminderInterval)) minutes between breaks")
@@ -65,8 +67,8 @@ struct CustomizationView: View {
                             .foregroundColor(.secondary)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 4)
-                            .background(Color.green.opacity(0.1))
-                            .cornerRadius(4)
+                            .background(DesignSystem.Colors.tertiaryGreen)
+                            .cornerRadius(DesignSystem.CornerRadius.small)
                     }
                 }
                 
@@ -79,7 +81,7 @@ struct CustomizationView: View {
                         VStack(alignment: .leading) {
                             Text("Start")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(DesignSystem.Colors.textSecondary)
                             Picker("", selection: $workStartHour) {
                                 ForEach(5..<13, id: \.self) { hour in
                                     Text(formatHour(hour)).tag(hour)
@@ -92,7 +94,7 @@ struct CustomizationView: View {
                         VStack(alignment: .leading) {
                             Text("End")
                                 .font(.caption)
-                                .foregroundColor(.secondary)
+                                .foregroundColor(DesignSystem.Colors.textSecondary)
                             Picker("", selection: $workEndHour) {
                                 ForEach(14..<22, id: \.self) { hour in
                                     Text(formatHour(hour)).tag(hour)
@@ -121,7 +123,7 @@ struct CustomizationView: View {
                             if !(calendarManager?.selectedCalendarIdentifiers.isEmpty ?? true) {
                                 Text("\(calendarManager?.selectedCalendarIdentifiers.count ?? 0) calendar(s) selected")
                                     .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(DesignSystem.Colors.textSecondary)
                             }
                             
                             // Simple button that opens multi-select menu
@@ -156,9 +158,9 @@ struct CustomizationView: View {
                             .font(.system(size: 13))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 8)
-                            .background(Color.green.opacity(0.1))
-                            .foregroundColor(.green)
-                            .cornerRadius(6)
+                            .background(DesignSystem.Colors.tertiaryGreen)
+                            .foregroundColor(DesignSystem.Colors.primaryGreen)
+                            .cornerRadius(DesignSystem.CornerRadius.small)
                         }
                         .buttonStyle(.plain)
                     }
@@ -180,14 +182,14 @@ struct CustomizationView: View {
                             HStack {
                                 Text("Daily Goal:")
                                     .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(DesignSystem.Colors.textSecondary)
                                 Stepper(value: $dailyWaterGoal, in: 4...16) {
                                     Text("\(dailyWaterGoal) glasses")
                                         .font(.system(size: 12, weight: .medium))
                                         .padding(.horizontal, 8)
                                         .padding(.vertical, 2)
-                                        .background(Color.blue.opacity(0.1))
-                                        .cornerRadius(4)
+                                        .background(DesignSystem.Colors.tertiaryGreen)
+                                        .cornerRadius(DesignSystem.CornerRadius.small)
                                 }
                                 Spacer()
                             }
@@ -195,7 +197,7 @@ struct CustomizationView: View {
                             HStack {
                                 Text("Units:")
                                     .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
+                                    .foregroundColor(DesignSystem.Colors.textSecondary)
                                 Picker("", selection: $waterUnit) {
                                     ForEach(WaterUnit.allCases, id: \.self) { unit in
                                         Text(unit.displayName).tag(unit)
@@ -212,8 +214,8 @@ struct CustomizationView: View {
                 }
                 .padding(.vertical, 12)
                 .padding(.horizontal, 12)
-                .background(Color.blue.opacity(0.03))
-                .cornerRadius(8)
+                .background(DesignSystem.Colors.backgroundSecondary)
+                .cornerRadius(DesignSystem.CornerRadius.medium)
                 
                 // Toggles
                 VStack(spacing: 12) {
@@ -262,7 +264,7 @@ struct CustomizationView: View {
                         .padding(.vertical, 6)
                         .background(
                             LinearGradient(
-                                colors: [Color.green, Color.green.opacity(0.8)],
+                                colors: [DesignSystem.Colors.primaryGreen, DesignSystem.Colors.secondaryGreen],
                                 startPoint: .leading,
                                 endPoint: .trailing
                             )

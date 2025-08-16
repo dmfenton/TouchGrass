@@ -50,8 +50,20 @@ add_file() {
     echo "✓ Added $file_name"
 }
 
-# Add our Touch Grass Mode files
-add_file "Views/TouchGrassMode.swift"
-add_file "Views/TouchGrassModeController.swift"
+# Process command line arguments
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <file1.swift> [file2.swift ...]"
+    echo "Example: $0 Views/NewView.swift Models/NewModel.swift"
+    exit 1
+fi
+
+# Add each file passed as argument
+for file in "$@"; do
+    if [ -f "$file" ]; then
+        add_file "$file"
+    else
+        echo "Warning: File not found: $file"
+    fi
+done
 
 echo "Done!"

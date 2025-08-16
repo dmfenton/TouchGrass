@@ -80,7 +80,6 @@ class UpdateManager: NSObject, ObservableObject {
             guard let url = URL(string: "https://api.github.com/repos/\(githubRepo)/releases/latest") else {
                 await MainActor.run {
                     self.isChecking = false
-                    self.error = "Invalid GitHub repository URL"
                 }
                 return
             }
@@ -146,7 +145,7 @@ class UpdateManager: NSObject, ObservableObject {
             guard let url = URL(string: "https://api.github.com/repos/\(githubRepo)/releases/latest") else {
                 await MainActor.run {
                     self.isDownloading = false
-                    self.error = "Invalid GitHub repository URL"
+                    self.showUpdateCheckError(UpdateError.downloadFailed)
                 }
                 return
             }
@@ -165,7 +164,7 @@ class UpdateManager: NSObject, ObservableObject {
             guard let dmgURL = URL(string: dmgAsset.browserDownloadUrl) else {
                 await MainActor.run {
                     self.isDownloading = false
-                    self.error = "Invalid DMG download URL"
+                    self.showUpdateCheckError(UpdateError.downloadFailed)
                 }
                 return
             }

@@ -80,8 +80,8 @@ opt_in_rules:
 # Custom rule configurations
 force_cast: warning
 force_try: warning
-force_unwrapping: error # Critical - should be error
-implicitly_unwrapped_optional: error # Critical - should be error
+force_unwrapping: error # Critical - should be error in production code
+implicitly_unwrapped_optional: error # Critical - should be error in production code
 
 # Custom message for critical rules
 custom_rules:

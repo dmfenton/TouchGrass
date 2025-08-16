@@ -13,7 +13,7 @@ fi
 echo "Building Touch Grass..."
 
 xcodebuild -project TouchGrass.xcodeproj \
-    -scheme TouchGrass \
+    -target TouchGrass \
     -configuration Release \
     -xcconfig Local.xcconfig \
     build \

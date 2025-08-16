@@ -64,8 +64,6 @@
 		4760E2AFB6D64BCF879DFC19 /* InteractiveButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = F190DD70BB63445099922513 /* InteractiveButton.swift */; };
 		D5C3F3FD50984AB296610C02 /* WaterTrackingBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */; };
 		41A2192D1D0D42748C8F753A /* TouchGrassModeRefactored.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */; };
-		FD50686FBCC94C46A5BCC653 /* TimerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1B49700923E42A4A45984EF /* TimerService.swift */; };
-		CAC1C9608FA74B14AF9B0DD4 /* PreferencesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -128,8 +126,6 @@
 		F190DD70BB63445099922513 /* InteractiveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/InteractiveButton.swift"; sourceTree = "<group>"; };
 		435F6A81B40E4BB2B3517A4D /* WaterTrackingBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/Components/WaterTrackingBar.swift"; sourceTree = "<group>"; };
 		C7C29DD1ED114761A1E5FBE9 /* TouchGrassModeRefactored.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TouchGrass/Views/TouchGrassModeRefactored.swift"; sourceTree = "<group>"; };
-		C1B49700923E42A4A45984EF /* TimerService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/TimerService.swift"; sourceTree = "<group>"; };
-		D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Managers/PreferencesStore.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,43 +243,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				11FB02CDEB764C8D81C3435F /* DesignSystem.swift in Sources */,
-				0087A2362AFB4092A9E95CAD /* ActivitySelectionView.swift in Sources */,
-				F8904461C0264384BDD06013 /* CalendarContextView.swift in Sources */,
-				744C689D67104C6A9A484C40 /* CompletionView.swift in Sources */,
-				5F3E90ABF93F4D83ACB779F1 /* ExerciseMenuView.swift in Sources */,
-				4760E2AFB6D64BCF879DFC19 /* InteractiveButton.swift in Sources */,
-				D5C3F3FD50984AB296610C02 /* WaterTrackingBar.swift in Sources */,
-				41A2192D1D0D42748C8F753A /* TouchGrassModeRefactored.swift in Sources */,
-				9C480DBAE43448B5BFB43FFD /* ActivityTracker.swift in Sources */,
-				CC56EFB4CEEE48C584FDFAFE /* CalendarManager.swift in Sources */,
-				796A4CB6894D43BB94D9855D /* CustomizationView.swift in Sources */,
-				8F499EC6B4504C8EB94B9A3F /* CustomizationWindowController.swift in Sources */,
-				54842E0254CB4DA88C7F462F /* Exercise.swift in Sources */,
-				2D4E54316B97414AB2FBF380 /* ExerciseSelectionView.swift in Sources */,
-				B8EED555A2DB4FEAB87BB097 /* ExerciseView.swift in Sources */,
-				5AE4088CAC6E40A7AC3AA5BE /* ExerciseWindowController.swift in Sources */,
-				FB153C3101AF42149B138B11 /* GrassIcon.swift in Sources */,
-				F5E7A6A3785E4868A5EE0642 /* Messages.swift in Sources */,
-				B4941CBB31C54967854067F0 /* OnboardingCustomizationView.swift in Sources */,
-				86D04943CD3D49248FFD5455 /* OnboardingHeaderView.swift in Sources */,
-				4CD53CDB484747DBB4CEEF7E /* OnboardingManager.swift in Sources */,
-				3BF844C33B444B79A3949A0B /* OnboardingWindow.swift in Sources */,
-				1C0C9630E9EB4ACD87389865 /* ReminderManager.swift in Sources */,
-				0803800793D440489E35501A /* SimpleOnboardingWindow.swift in Sources */,
-				4BA1A292C86F4F6390467DF1 /* TouchGrassApp.swift in Sources */,
-				7C0590FAADF9492EA6C0155D /* TouchGrassOnboarding.swift in Sources */,
-				D4747A4349DA4A7E86C444A5 /* TouchGrassOnboardingController.swift in Sources */,
-				863A5337B76A42858F620258 /* UpdateManager.swift in Sources */,
-				C4A5E53AF7CD47F9AF897CDE /* UpdateProgressView.swift in Sources */,
-				C8639872E55F40CFB23151A5 /* WaterTracker.swift in Sources */,
-				00F926DE94574A7FA1226241 /* WindowHelper.swift in Sources */,
-				845281A875484FA7871191A1 /* WorkHoursManager.swift in Sources */,
-				300DC90AEDB14F26A1F4FC87 /* WorkHoursSettingsView.swift in Sources */,
-				A469E57921BB4799A8B8FFB1 /* TouchGrassMode.swift in Sources */,
-				1E73424E605A42A5953234CC /* TouchGrassModeController.swift in Sources */,
-				FD50686FBCC94C46A5BCC653 /* TimerService.swift in Sources */,
-				CAC1C9608FA74B14AF9B0DD4 /* PreferencesStore.swift in Sources */,
+
+
+
+
+
+
+
+
+
+
+
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

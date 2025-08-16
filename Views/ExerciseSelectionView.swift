@@ -26,8 +26,16 @@ struct ExerciseSelectionView: View {
             Divider()
             
             // Exercise options
-            VStack(spacing: 12) {
-                ForEach(exerciseOptions, id: \.set.id) { option in
+            if exerciseOptions.isEmpty {
+                EmptyStateView(
+                    title: "No Exercises Available",
+                    message: "Exercise routines are being loaded. Please try again in a moment.",
+                    systemImage: "figure.flexibility"
+                )
+                .frame(maxHeight: .infinity)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(exerciseOptions, id: \.set.id) { option in
                     Button(action: {
                         reminderManager.showExerciseSet(option.set)
                         dismiss()
@@ -73,9 +81,10 @@ struct ExerciseSelectionView: View {
                         )
                     }
                     .buttonStyle(.plain)
+                    }
                 }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
             
             Spacer()
             

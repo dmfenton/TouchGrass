@@ -82,7 +82,8 @@ struct MenuView: View {
                         GrassIcon(isActive: false, size: 16)
                             .foregroundColor(.white)
                         Text("Touch Grass")
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(DesignSystem.Typography.bodyLarge)
+                            .fontWeight(.semibold)
                             .foregroundColor(.white)
                     }
                     
@@ -91,9 +92,10 @@ struct MenuView: View {
                     if manager.currentStreak > 0 {
                         HStack(spacing: 4) {
                             Image(systemName: "flame.fill")
-                                .font(.system(size: 12))
+                                .font(DesignSystem.Typography.caption)
                             Text("\(manager.currentStreak)")
-                                .font(.system(size: 12, weight: .medium))
+                                .font(DesignSystem.Typography.caption)
+                                .fontWeight(.medium)
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, 8)
@@ -107,7 +109,7 @@ struct MenuView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 10)
                 .frame(maxWidth: .infinity)
-                .background(Color(red: 0.13, green: 0.37, blue: 0.13)) // Forest green
+                .background(DesignSystem.Colors.primaryGreen)
             }
             .buttonStyle(PlainButtonStyle())
             
@@ -120,8 +122,9 @@ struct MenuView: View {
                 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("CALENDAR")
-                        .font(.system(size: 10, weight: .medium))
-                        .foregroundColor(.secondary.opacity(0.7))
+                        .font(DesignSystem.Typography.caption2)
+                        .fontWeight(.medium)
+                        .foregroundColor(DesignSystem.Colors.textTertiary)
                         .padding(.horizontal, 12)
                         .padding(.top, 8)
                     
@@ -133,8 +136,8 @@ struct MenuView: View {
                                     .fill(Color.red)
                                     .frame(width: 5, height: 5)
                                 Text("In meeting until \(calManager.formatEventTime(currentEvent.endDate))")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
+                                    .font(DesignSystem.Typography.caption)
+                                    .foregroundColor(DesignSystem.Colors.textSecondary)
                             }
                             .padding(.horizontal, 12)
                             .padding(.bottom, 8)
@@ -146,8 +149,8 @@ struct MenuView: View {
                                     .fill(Color.green)
                                     .frame(width: 5, height: 5)
                                 Text("Free for \(calManager.formatTimeUntilEvent(timeUntil))")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
+                                    .font(DesignSystem.Typography.caption)
+                                    .foregroundColor(DesignSystem.Colors.textSecondary)
                             }
                             .padding(.horizontal, 12)
                             .padding(.bottom, 8)
