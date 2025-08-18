@@ -403,6 +403,94 @@ enum ExerciseData {
         targetArea: "Respiratory system and nervous system"
     )
     
+    static let childspose = Exercise(
+        id: "childs-pose",
+        name: "Child's Pose",
+        duration: 45,
+        category: .stretch,
+        instructions: [
+            "Start on your hands and knees on the floor",
+            "Sit your hips back toward your heels",
+            "Extend your arms forward and rest your forehead on the floor",
+            "Keep your shoulders relaxed and breathe deeply",
+            "Hold for 10-15 seconds",
+            "Repeat 2-3 times"
+        ],
+        benefits: "Gently stretch your spine and release back tension",
+        targetArea: "Spine, back muscles"
+    )
+    
+    static let catCow = Exercise(
+        id: "cat-cow",
+        name: "Cat-Cow",
+        duration: 50,
+        category: .stretch,
+        instructions: [
+            "Start on hands and knees, wrists under shoulders, knees under hips",
+            "Cat: Round your back upward, tucking chin to chest and tailbone under",
+            "Cow: Drop your belly down, lift your chest and tailbone, gaze slightly up",
+            "Move smoothly between Cat and Cow",
+            "Breathe naturally without holding your breath",
+            "Perform 8-10 slow reps"
+        ],
+        benefits: "Mobilize your spine and ease stiffness",
+        targetArea: "Entire spine"
+    )
+    
+    static let standingSideBends = Exercise(
+        id: "standing-side-bends",
+        name: "Standing/Seated Side Bends",
+        duration: 50,
+        category: .stretch,
+        instructions: [
+            "Stand tall or sit upright with feet hip-width apart",
+            "Place your right hand on your hip",
+            "Extend your left arm overhead",
+            "Gently bend your torso to the right",
+            "Feel a stretch along your left side",
+            "Hold briefly, keeping chest facing forward",
+            "Repeat 5 times per side"
+        ],
+        benefits: "Open up your sides and improve spinal flexibility",
+        targetArea: "Obliques, lateral spine"
+    )
+    
+    static let standingHipRotations = Exercise(
+        id: "standing-hip-rotations",
+        name: "Standing Hip Rotations",
+        duration: 50,
+        category: .mobilize,
+        instructions: [
+            "Stand tall with feet just inside your hips",
+            "Pull one hip back as you push the other hip forward",
+            "Keep your chest facing straight ahead",
+            "Avoid swaying side to side or twisting through the torso",
+            "Gently return to a neutral position",
+            "Repeat 5-10 times per side"
+        ],
+        benefits: "Loosen hips and support healthy spinal movement",
+        targetArea: "Hips, pelvis"
+    )
+    
+    static let spinalExtension = Exercise(
+        id: "spinal-extension",
+        name: "Spinal Extension",
+        duration: 45,
+        category: .strengthen,
+        instructions: [
+            "Stand tall with feet hip-width apart",
+            "Place hands lightly on your lower back or hips",
+            "Gently press hips forward",
+            "Lift your chest and look slightly upward",
+            "Keep your glutes engaged",
+            "Avoid overarching the lower back",
+            "Hold for 2-3 seconds, then return to neutral",
+            "Repeat for 6-8 reps"
+        ],
+        benefits: "Counteract slouching and strengthen your back",
+        targetArea: "Back extensors, thoracic spine"
+    )
+    
     // Exercise Sets for different time constraints
     static let quickReset = ExerciseSet(
         id: "quick-reset",
@@ -468,11 +556,20 @@ enum ExerciseData {
         description: "4.5-minute routine for ankle flexibility and foot health"
     )
     
+    static let backCoreRoutine = ExerciseSet(
+        id: "back-core",
+        name: "Back & Core Routine",
+        duration: 240,
+        exercises: [childspose, catCow, standingSideBends, standingHipRotations, spinalExtension],
+        description: "4-minute routine to mobilize spine and strengthen core"
+    )
+    
     static let allExerciseSets = [
         oneMinuteBreak,
         upperBodyRoutine,
         lowerBodyRoutine,
-        ankleFootRoutine
+        ankleFootRoutine,
+        backCoreRoutine
     ]
     
     static let coreExercises = [
