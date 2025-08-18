@@ -53,7 +53,7 @@ final class CalendarIntegrationTests: XCTestCase {
         // Calendar manager should be optional and initially nil or set
         // The actual CalendarManager requires EventKit permissions
         // so we just test the property exists
-        let _ = reminderManager.calendarManager
+        _ = reminderManager.calendarManager
         XCTAssertTrue(true) // Property exists and is accessible
     }
 }

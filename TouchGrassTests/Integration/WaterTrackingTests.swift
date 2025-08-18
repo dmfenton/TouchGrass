@@ -78,7 +78,7 @@ final class WaterTrackingTests: XCTestCase {
     
     func testStreakTracking() {
         // Test streak property exists
-        let _ = waterTracker.streak
+        _ = waterTracker.streak
         XCTAssertTrue(true) // Property exists
     }
     

@@ -10,8 +10,9 @@ excluded:
   - releases
   - TouchGrass.xcodeproj
   - .git
-  - generate_icon.swift # Generated file
-  - GrassIconPreview.swift # Preview/test file
+  - scripts/generate_icon.swift # Script file with force unwrapping
+  - scripts/GrassIconPreview.swift # Preview/test file
+  - scripts # Exclude all scripts from linting
 
 # Analyzer rules (require type checking, slower but more thorough)
 analyzer_rules:
