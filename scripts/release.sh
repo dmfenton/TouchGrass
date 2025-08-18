@@ -49,13 +49,13 @@ print_status "Starting release process for version $VERSION"
 
 # 1. Generate/update exercise audio files
 print_status "Checking exercise audio files..."
-if [ -f "./generate_exercise_audio.sh" ]; then
+if [ -f "./scripts/generate_exercise_audio.sh" ]; then
     if [ -n "$OPENAI_API_KEY" ]; then
         print_status "Generating/updating exercise audio files..."
-        ./generate_exercise_audio.sh --check
+        ./scripts/generate_exercise_audio.sh --check
         
         # Run generation if needed
-        if ./generate_exercise_audio.sh | grep -q "Updated:"; then
+        if ./scripts/generate_exercise_audio.sh | grep -q "Updated:"; then
             print_status "Audio files generated/updated"
         else
             print_status "Audio files up to date"
@@ -84,7 +84,7 @@ if [ -f "./generate_exercise_audio.sh" ]; then
         fi
     fi
 else
-    print_error "generate_exercise_audio.sh not found"
+    print_error "scripts/generate_exercise_audio.sh not found"
     exit 1
 fi
 
