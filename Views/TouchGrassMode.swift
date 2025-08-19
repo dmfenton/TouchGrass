@@ -528,6 +528,13 @@ struct TouchGrassMode: View {
                             .foregroundColor(.secondary)
                     }
                     .buttonStyle(.plain)
+                    
+                    Spacer()
+                    
+                    // Version info for debugging
+                    Text("Build: e92748f")
+                        .font(.system(size: 9))
+                        .foregroundColor(.secondary.opacity(0.5))
                 }
             }
         }

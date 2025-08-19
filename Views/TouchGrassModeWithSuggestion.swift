@@ -427,7 +427,7 @@ struct AllActivitiesView: View {
                     title: "Quick Stretches",
                     subtitle: "3 min desk stretches",
                     color: .blue,
-                    action: { onSelectActivity("Exercise", ExerciseData.deskYoga) }
+                    action: { onSelectActivity("Exercise", ExerciseData.quickReset) }
                 )
                 
                 SuggestionActivityButton(
@@ -435,7 +435,7 @@ struct AllActivitiesView: View {
                     title: "Meditation",
                     subtitle: "Breathing exercises",
                     color: .purple,
-                    action: { onSelectActivity("Meditation", Exercise.breathingExercise) }
+                    action: { onSelectActivity("Meditation", ExerciseData.breathingExercise) }
                 )
                 
                 if reminderManager.waterTrackingEnabled {
