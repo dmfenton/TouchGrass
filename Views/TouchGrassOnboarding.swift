@@ -1,6 +1,7 @@
 import SwiftUI
 import UserNotifications
 import EventKit
+import CoreLocation
 
 struct TouchGrassOnboarding: View {
     @ObservedObject var reminderManager: ReminderManager
@@ -9,7 +10,11 @@ struct TouchGrassOnboarding: View {
     @State private var customizationWindow: CustomizationWindowController?
     @State private var notificationStatus: UNAuthorizationStatus = .notDetermined
     @State private var hasRequestedCalendarAccess = false
+    @State private var hasRequestedLocationAccess = false
+    @State private var locationStatus: CLAuthorizationStatus = .notDetermined
     @State private var selectedCalendars: Set<String> = []
+    
+    private let locationManager = CLLocationManager()
     
     var body: some View {
         VStack(spacing: 0) {
@@ -47,6 +52,12 @@ struct TouchGrassOnboarding: View {
                     icon: "leaf.fill",
                     title: "Multiple break activities",
                     subtitle: "Touch grass, stretch, or meditate"
+                )
+                
+                FeatureRow(
+                    icon: "cloud.sun.fill",
+                    title: "Weather-aware suggestions",
+                    subtitle: "Smart recommendations based on conditions"
                 )
                 
                 FeatureRow(
@@ -157,6 +168,72 @@ struct TouchGrassOnboarding: View {
                 .padding(.top, 16)
             }
             
+            // Location Permission Section
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Image(systemName: "location.fill")
+                        .foregroundColor(.blue)
+                    Text("Enable Weather-Based Suggestions (Optional)")
+                        .font(.system(size: 13, weight: .semibold))
+                    Spacer()
+                }
+                
+                if locationStatus != .authorizedAlways && locationStatus != .authorizedWhenInUse && !hasRequestedLocationAccess {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Get smarter activity suggestions")
+                                .font(.system(size: 11))
+                            Text("We'll suggest outdoor breaks when it's nice outside")
+                                .font(.system(size: 10))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Button(action: requestLocationAccess) {
+                            HStack {
+                                Image(systemName: "location.circle")
+                                    .font(.system(size: 12))
+                                Text("Enable Location")
+                                    .font(.system(size: 12))
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .fill(Color.blue.opacity(0.1))
+                            )
+                            .foregroundColor(.blue)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                } else if locationStatus == .authorizedAlways || locationStatus == .authorizedWhenInUse {
+                    HStack {
+                        Image(systemName: "checkmark.circle.fill")
+                            .foregroundColor(.green)
+                            .font(.system(size: 12))
+                        Text("Location enabled - you'll get weather-aware suggestions")
+                            .font(.system(size: 11))
+                            .foregroundColor(.secondary)
+                    }
+                } else if locationStatus == .denied {
+                    Text("Location access denied. You can enable it later in System Settings.")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .padding(16)
+            .background(
+                RoundedRectangle(cornerRadius: 10)
+                    .fill(Color.blue.opacity(0.03))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.blue.opacity(0.1), lineWidth: 1)
+                    )
+            )
+            .padding(.horizontal, 30)
+            .padding(.top, 8)
+            
             Spacer()
             
             // Bottom section with two clear CTAs
@@ -206,10 +283,11 @@ struct TouchGrassOnboarding: View {
             }
             .padding(30)
         }
-        .frame(width: 520, height: 720)
+        .frame(width: 520, height: 780)
         .background(Color(NSColor.windowBackgroundColor))
         .onAppear {
             checkNotificationStatus()
+            checkLocationStatus()
             if let calManager = reminderManager.calendarManager {
                 selectedCalendars = calManager.selectedCalendarIdentifiers
             }
@@ -221,6 +299,20 @@ struct TouchGrassOnboarding: View {
             DispatchQueue.main.async {
                 notificationStatus = settings.authorizationStatus
             }
+        }
+    }
+    
+    private func checkLocationStatus() {
+        locationStatus = locationManager.authorizationStatus
+    }
+    
+    private func requestLocationAccess() {
+        hasRequestedLocationAccess = true
+        locationManager.requestWhenInUseAuthorization()
+        
+        // Check status after a delay (authorization happens asynchronously)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            locationStatus = locationManager.authorizationStatus
         }
     }
     
