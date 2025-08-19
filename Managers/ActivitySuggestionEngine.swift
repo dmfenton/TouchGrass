@@ -4,19 +4,19 @@ import SwiftUI
 // MARK: - Activity Suggestion Data Types
 
 enum ActivityCategory: String, CaseIterable {
-    case outdoor = "outdoor"
-    case physical = "physical"
-    case mental = "mental"
-    case posture = "posture"
-    case hydration = "hydration"
+    case outdoor
+    case physical
+    case mental
+    case posture
+    case hydration
 }
 
 enum TimeWindow: String {
-    case micro = "micro"           // <2 min
-    case quick = "quick"           // 2-5 min
-    case standard = "standard"     // 5-10 min
-    case extended = "extended"     // 10-15 min
-    case long = "long"             // >15 min
+    case micro           // <2 min
+    case quick           // 2-5 min
+    case standard        // 5-10 min
+    case extended        // 10-15 min
+    case long            // >15 min
     
     static func from(minutes: Int) -> TimeWindow {
         switch minutes {
@@ -173,7 +173,7 @@ class ActivitySuggestionEngine: ObservableObject {
         let todaysActivities = getTodaysActivities()
         
         // Calculate meeting density (simplified for now)
-        let meetingCount = 3  // TODO: Get actual meeting count from calendar
+        let meetingCount = 3  // TODO: (#100) Get actual meeting count from calendar
         let density: MeetingDensity = meetingCount < 3 ? .light : (meetingCount <= 5 ? .normal : .heavy)
         
         // Time since last break (calculate from activity tracker)
@@ -259,7 +259,7 @@ class ActivitySuggestionEngine: ObservableObject {
                 reason: "Give your eyes a break",
                 duration: 1,
                 category: .physical,
-                exerciseSet: nil  // TODO: Add eye rest exercise
+                exerciseSet: nil  // TODO: (#101) Add eye rest exercise
             ))
             
         case .quick:
@@ -270,7 +270,7 @@ class ActivitySuggestionEngine: ObservableObject {
                 reason: "Quick posture reset",
                 duration: 3,
                 category: .posture,
-                exerciseSet: nil  // TODO: Add desk stretch set
+                exerciseSet: nil  // TODO: (#102) Add desk stretch set
             ))
             activities.append(SuggestedActivity(
                 type: "water",

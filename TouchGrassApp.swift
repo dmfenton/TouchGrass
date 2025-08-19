@@ -421,7 +421,9 @@ struct MenuView: View {
         }
         
         let status = locationManager.authorizationStatus
-        print("Location permission status: \(status.rawValue)")
+        #if DEBUG
+        NSLog("Location permission status: \(status.rawValue)")
+        #endif
         return status == .authorizedAlways
     }
     

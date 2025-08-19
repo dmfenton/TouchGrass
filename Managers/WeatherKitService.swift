@@ -31,15 +31,15 @@ struct WeatherInfo: Codable {
 }
 
 enum WeatherCondition: String, Codable {
-    case sunny = "sunny"
-    case partlyCloudy = "partlyCloudy"
-    case cloudy = "cloudy"
-    case rainy = "rainy"
-    case heavyRain = "heavyRain"
-    case snowy = "snowy"
-    case foggy = "foggy"
-    case windy = "windy"
-    case unknown = "unknown"
+    case sunny
+    case partlyCloudy
+    case cloudy
+    case rainy
+    case heavyRain
+    case snowy
+    case foggy
+    case windy
+    case unknown
 }
 
 // MARK: - Protocol for Testing
@@ -87,7 +87,7 @@ class WeatherKitService: NSObject, WeatherServiceProtocol {
         
         // Get location
         guard let location = await getCurrentLocation() else {
-            print("⚠️ WeatherKit: No location available")
+            NSLog("⚠️ WeatherKit: No location available")
             return nil
         }
         
@@ -103,7 +103,7 @@ class WeatherKitService: NSObject, WeatherServiceProtocol {
             
             return weatherInfo
         } catch {
-            print("⚠️ WeatherKit error: \(error)")
+            NSLog("⚠️ WeatherKit error: \(error.localizedDescription)")
             return nil
         }
     }
@@ -218,7 +218,7 @@ extension WeatherKitService: CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        print("⚠️ Location error: \(error)")
+        NSLog("⚠️ Location error: \(error.localizedDescription)")
         // Use default location as fallback
         let defaultLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
         currentLocation = defaultLocation
@@ -231,7 +231,7 @@ extension WeatherKitService: CLLocationManagerDelegate {
         case .authorizedAlways:
             manager.requestLocation()
         case .denied, .restricted:
-            print("⚠️ Location access denied")
+            NSLog("⚠️ Location access denied")
             // Use default location
             let defaultLocation = CLLocation(latitude: 37.7749, longitude: -122.4194)
             currentLocation = defaultLocation
