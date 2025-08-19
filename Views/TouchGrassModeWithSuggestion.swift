@@ -260,10 +260,10 @@ struct TouchGrassModeWithSuggestion: View {
                 selectedExerciseSet = exerciseSet
             } else {
                 // Fallback to default exercise
-                selectedExerciseSet = Exercise.postureRoutine
+                selectedExerciseSet = ExerciseData.oneMinuteBreak
             }
         case "meditation", "breathing":
-            selectedExerciseSet = Exercise.breathingExercise
+            selectedExerciseSet = ExerciseData.breathingExercise
         default:
             completeActivity(suggestion.title)
         }
@@ -419,7 +419,7 @@ struct AllActivitiesView: View {
                     title: "Posture Reset",
                     subtitle: "5 min routine",
                     color: .blue,
-                    action: { onSelectActivity("Exercise", Exercise.postureRoutine) }
+                    action: { onSelectActivity("Exercise", ExerciseData.oneMinuteBreak) }
                 )
                 
                 SuggestionActivityButton(
@@ -427,7 +427,7 @@ struct AllActivitiesView: View {
                     title: "Quick Stretches",
                     subtitle: "3 min desk stretches",
                     color: .blue,
-                    action: { onSelectActivity("Exercise", Exercise.deskStretchSet) }
+                    action: { onSelectActivity("Exercise", ExerciseData.deskYoga) }
                 )
                 
                 SuggestionActivityButton(

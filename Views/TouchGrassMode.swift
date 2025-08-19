@@ -354,18 +354,21 @@ struct TouchGrassMode: View {
                             Button(action: {
                                 // Handle the suggested activity
                                 switch suggestion.type {
-                                case .touchGrass:
+                                case "touchGrass":
                                     handleActivityTap("Touch Grass", isGuided: false)
-                                case .posture:
+                                case "posture":
                                     handleActivityTap("1 Min Reset", isGuided: true)
-                                case .exercise:
+                                case "exercise":
                                     handleActivityTap("Exercises", isGuided: true)
-                                case .meditation:
+                                case "meditation":
                                     handleActivityTap("Meditation", isGuided: true)
-                                case .hydration:
+                                case "hydration":
                                     // Log water and show completion
                                     reminderManager.waterTracker.logWater(1)
                                     completeActivity("Hydration Break")
+                                default:
+                                    // Fallback for unknown types
+                                    handleActivityTap(suggestion.title, isGuided: false)
                                 }
                             }) {
                                 HStack {
@@ -373,11 +376,9 @@ struct TouchGrassMode: View {
                                         Text(suggestion.title)
                                             .font(.system(size: 14, weight: .medium))
                                             .foregroundColor(.primary)
-                                        if let reason = suggestion.reason {
-                                            Text(reason)
-                                                .font(.system(size: 12))
-                                                .foregroundColor(.secondary)
-                                        }
+                                        Text(suggestion.reason)
+                                            .font(.system(size: 12))
+                                            .foregroundColor(.secondary)
                                     }
                                     Spacer()
                                     Image(systemName: "arrow.right.circle.fill")
@@ -451,7 +452,7 @@ struct TouchGrassMode: View {
                         suggestion = engine.getSuggestionSync()
                         #if DEBUG
                         if let s = suggestion {
-                            NSLog("Loaded suggestion in main activities: \(s.title) - \(s.reason ?? "no reason")")
+                            NSLog("Loaded suggestion in main activities: \(s.title) - \(s.reason)")
                         } else {
                             NSLog("No suggestion loaded in main activities")
                         }
@@ -549,7 +550,7 @@ struct TouchGrassMode: View {
                 suggestion = engine.getSuggestionSync()
                 #if DEBUG
                 if let s = suggestion {
-                    NSLog("Loaded suggestion: \(s.title) - \(s.reason ?? "no reason")")
+                    NSLog("Loaded suggestion: \(s.title) - \(s.reason)")
                 } else {
                     NSLog("No suggestion loaded")
                 }
