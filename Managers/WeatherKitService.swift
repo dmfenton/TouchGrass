@@ -69,13 +69,11 @@ class WeatherKitService: NSObject, WeatherServiceProtocol {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyKilometer
         
-        // Request location permissions if needed
-        if locationManager.authorizationStatus == .notDetermined {
-            locationManager.requestAlwaysAuthorization()
+        // Don't automatically request permissions - let the UI handle it
+        // Only request location if we already have permission
+        if locationManager.authorizationStatus == .authorizedAlways {
+            locationManager.requestLocation()
         }
-        
-        // Get current location
-        locationManager.requestLocation()
     }
     
     // MARK: - Async Weather Fetching

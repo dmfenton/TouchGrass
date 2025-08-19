@@ -145,8 +145,8 @@ struct MenuView: View {
             
             Divider()
             
-            // Location Permission Alert - automatically hides when permission is granted
-            if !hasLocationPermission() {
+            // Location Permission Alert - only show if permission is not determined
+            if shouldShowLocationAlert() {
                 Button(action: requestLocationPermission) {
                     HStack(spacing: 8) {
                         Image(systemName: "location.slash.fill")
@@ -417,17 +417,21 @@ struct MenuView: View {
         }
     }
     
-    private func hasLocationPermission() -> Bool {
-        // Only show alert if not dismissed and permission not granted
+    private func shouldShowLocationAlert() -> Bool {
+        // Don't show if user has dismissed it
         if locationAlertDismissed {
-            return true // Hide the alert if user dismissed it
+            return false
         }
         
         let status = locationManager.authorizationStatus
         #if DEBUG
         NSLog("Location permission status: \(status.rawValue)")
         #endif
-        return status == .authorizedAlways
+        
+        // Only show alert if permission hasn't been determined yet
+        // Don't show for denied/restricted (user made their choice)
+        // Don't show for authorized (already have permission)
+        return status == .notDetermined
     }
     
     private func requestLocationPermission() {

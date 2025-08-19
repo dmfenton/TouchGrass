@@ -337,30 +337,73 @@ struct TouchGrassMode: View {
             } else {
                 // Main activities Section
                 VStack(alignment: .leading, spacing: 12) {
+                    // Suggested activity from the engine
+                    if let suggestion = reminderManager.suggestionEngine?.getSuggestion() {
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Image(systemName: "sparkles")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.orange)
+                                Text("Suggested for you")
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.primary)
+                                Spacer()
+                            }
+                            
+                            Button(action: {
+                                // Handle the suggested activity
+                                switch suggestion.type {
+                                case .touchGrass:
+                                    handleActivityTap("Touch Grass", isGuided: false)
+                                case .posture:
+                                    handleActivityTap("1 Min Reset", isGuided: true)
+                                case .exercise:
+                                    handleActivityTap("Exercises", isGuided: true)
+                                case .meditation:
+                                    handleActivityTap("Meditation", isGuided: true)
+                                case .hydration:
+                                    // Log water and show completion
+                                    reminderManager.waterTracker.logWater(1)
+                                    completeActivity("Hydration Break")
+                                }
+                            }) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(suggestion.title)
+                                            .font(.system(size: 14, weight: .medium))
+                                            .foregroundColor(.primary)
+                                        if let reason = suggestion.reason {
+                                            Text(reason)
+                                                .font(.system(size: 12))
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    Spacer()
+                                    Image(systemName: "arrow.right.circle.fill")
+                                        .font(.system(size: 20))
+                                        .foregroundColor(.orange)
+                                }
+                                .padding(12)
+                                .background(
+                                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
+                                        .fill(Color.orange.opacity(0.08))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.medium)
+                                        .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .padding(.bottom, 8)
+                    }
+                    
                     HStack {
-                        Text("What would you like to do?")
+                        Text("Or choose an activity:")
                             .font(.headline)
                             .foregroundColor(.secondary)
                         
                         Spacer()
-                        
-                        // Smart suggestion based on time available
-                        if let calManager = reminderManager.calendarManager,
-                           let timeUntil = calManager.timeUntilNextEvent {
-                            if timeUntil >= 900 {  // 15+ minutes
-                                Label("Perfect for a walk!", systemImage: "figure.walk")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
-                            } else if timeUntil >= 300 {  // 5-15 minutes
-                                Label("Quick stretch time", systemImage: "figure.flexibility")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
-                            } else {  // Less than 5 minutes
-                                Label("Try breathing", systemImage: "lungs")
-                                    .font(.system(size: 11))
-                                    .foregroundColor(.secondary)
-                            }
-                        }
                     }
                     
                     // Activity buttons in a 2x2 grid

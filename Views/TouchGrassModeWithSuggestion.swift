@@ -406,7 +406,7 @@ struct AllActivitiesView: View {
             
             // Activity grid
             VStack(spacing: 8) {
-                ActivityButton(
+                SuggestionActivityButton(
                     icon: "leaf.circle",
                     title: "Touch Grass",
                     subtitle: "Go outside",
@@ -414,7 +414,7 @@ struct AllActivitiesView: View {
                     action: { onSelectActivity("Touch Grass", nil) }
                 )
                 
-                ActivityButton(
+                SuggestionActivityButton(
                     icon: "figure.flexibility",
                     title: "Posture Reset",
                     subtitle: "5 min routine",
@@ -422,7 +422,7 @@ struct AllActivitiesView: View {
                     action: { onSelectActivity("Exercise", Exercise.postureRoutine) }
                 )
                 
-                ActivityButton(
+                SuggestionActivityButton(
                     icon: "figure.walk",
                     title: "Quick Stretches",
                     subtitle: "3 min desk stretches",
@@ -430,7 +430,7 @@ struct AllActivitiesView: View {
                     action: { onSelectActivity("Exercise", Exercise.deskStretchSet) }
                 )
                 
-                ActivityButton(
+                SuggestionActivityButton(
                     icon: "brain.head.profile",
                     title: "Meditation",
                     subtitle: "Breathing exercises",
@@ -439,7 +439,7 @@ struct AllActivitiesView: View {
                 )
                 
                 if reminderManager.waterTrackingEnabled {
-                    ActivityButton(
+                    SuggestionActivityButton(
                         icon: "drop.fill",
                         title: "Water Break",
                         subtitle: "Stay hydrated",
@@ -458,7 +458,7 @@ struct AllActivitiesView: View {
     }
 }
 
-struct ActivityButton: View {
+struct SuggestionActivityButton: View {
     let icon: String
     let title: String
     let subtitle: String
