@@ -338,7 +338,7 @@ struct TouchGrassMode: View {
             } else {
                 // Main activities Section
                 VStack(alignment: .leading, spacing: 12) {
-                    // Suggested activity from the engine
+                    // Suggested activity from the engine  
                     if let suggestion = suggestion {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
@@ -443,6 +443,19 @@ struct TouchGrassMode: View {
                                 }
                             }
                         }
+                    }
+                }
+                .onAppear {
+                    // Load suggestion when main activities view appears
+                    if suggestion == nil, let engine = reminderManager.suggestionEngine {
+                        suggestion = engine.getSuggestionSync()
+                        #if DEBUG
+                        if let s = suggestion {
+                            NSLog("Loaded suggestion in main activities: \(s.title) - \(s.reason ?? "no reason")")
+                        } else {
+                            NSLog("No suggestion loaded in main activities")
+                        }
+                        #endif
                     }
                 }
             
