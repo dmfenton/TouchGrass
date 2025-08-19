@@ -7,6 +7,7 @@ struct TouchGrassMode: View {
     @State private var completedActivity: String? = nil
     @State private var showExerciseMenu = false
     @State private var selectedExerciseSet: ExerciseSet? = nil
+    @State private var suggestion: SuggestedActivity? = nil
     
     private func closeMenuBar() {
         NSApplication.shared.keyWindow?.close()
@@ -338,7 +339,7 @@ struct TouchGrassMode: View {
                 // Main activities Section
                 VStack(alignment: .leading, spacing: 12) {
                     // Suggested activity from the engine
-                    if let suggestion = reminderManager.suggestionEngine?.getSuggestion() {
+                    if let suggestion = suggestion {
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Image(systemName: "sparkles")
@@ -528,6 +529,22 @@ struct TouchGrassMode: View {
             // Reset active reminder state when Touch Grass window opens
             if reminderManager.hasActiveReminder {
                 reminderManager.hasActiveReminder = false
+            }
+            
+            // Load activity suggestion
+            if let engine = reminderManager.suggestionEngine {
+                suggestion = engine.getSuggestionSync()
+                #if DEBUG
+                if let s = suggestion {
+                    NSLog("Loaded suggestion: \(s.title) - \(s.reason ?? "no reason")")
+                } else {
+                    NSLog("No suggestion loaded")
+                }
+                #endif
+            } else {
+                #if DEBUG
+                NSLog("No suggestion engine available")
+                #endif
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showExerciseMenu)
