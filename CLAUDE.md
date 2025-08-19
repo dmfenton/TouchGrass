@@ -40,6 +40,12 @@ make all        # Run full validation suite
 make clean      # Clean build artifacts
 make rebuild    # Clean, build, and run
 
+# Testing
+make test       # Run all tests
+make test-only TEST=ActivitySuggestionEngineTests  # Run specific test class
+make test-list  # List all available test files
+make test-verbose  # Run tests with detailed output
+
 # Code Quality
 make lint       # Run SwiftLint checks
 make lint-fix   # Auto-fix SwiftLint violations
@@ -93,6 +99,65 @@ killall "Touch Grass" 2>/dev/null || true && open "build/Release/Touch Grass.app
 ```
 
 Note: With proper code signing via `Local.xcconfig`, calendar permissions will persist across rebuilds.
+
+## Testing Guidelines
+
+### Test Organization
+
+Tests are located in `TouchGrassTests/` with the following structure:
+
+```
+TouchGrassTests/
+├── Integration/          # Integration tests
+│   ├── CalendarIntegrationTests.swift
+│   ├── ActivitySuggestionEngineTests.swift
+│   └── ...
+├── Mocks/               # Mock objects for testing
+│   └── MockReminderManager.swift
+└── Helpers/             # Test utilities
+    └── TestHelpers.swift
+```
+
+### Writing Tests
+
+1. **Location**: Place new test files in the appropriate subdirectory:
+   - `Integration/` for tests that verify multiple components working together
+   - `Mocks/` for mock implementations
+   - `Helpers/` for shared test utilities
+
+2. **Naming**: Test files should end with `Tests.swift` (e.g., `ActivitySuggestionEngineTests.swift`)
+
+3. **Adding to Project**: After creating a test file:
+   ```bash
+   scripts/sync_xcode.rb add TouchGrassTests/Integration/YourNewTests.swift
+   ```
+
+4. **Running Tests**:
+   ```bash
+   make test                                    # Run all tests
+   make test-only TEST=YourNewTests           # Run specific test class
+   make test-verbose                           # See detailed output
+   ```
+
+5. **Test Structure**: Follow XCTest conventions:
+   ```swift
+   import XCTest
+   @testable import Touch_Grass
+   
+   class YourFeatureTests: XCTestCase {
+       override func setUp() {
+           super.setUp()
+           // Setup code
+       }
+       
+       func testSpecificBehavior() {
+           // Given
+           // When
+           // Then
+           XCTAssert...
+       }
+   }
+   ```
 
 ## Xcode Project Management
 

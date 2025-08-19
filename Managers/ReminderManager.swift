@@ -30,6 +30,9 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
     // Water tracking
     @Published var waterTracker = WaterTracker()
     
+    // Activity suggestion
+    @Published var suggestionEngine: ActivitySuggestionEngine?
+    
     private var meetingMonitorCancellable: AnyCancellable?
     private var waterTrackerCancellable: AnyCancellable?
     private let exerciseWindow = ExerciseWindowController()
@@ -191,6 +194,9 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
         // Initialize trackers with same UserDefaults suite
         waterTracker = WaterTracker(userDefaults: defaults)
         activityTracker = ActivityTracker(userDefaults: defaults)
+        
+        // Initialize suggestion engine
+        suggestionEngine = ActivitySuggestionEngine(reminderManager: self)
         
         // Forward water tracker changes to trigger UI updates
         waterTrackerCancellable = waterTracker.objectWillChange

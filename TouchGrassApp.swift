@@ -1,5 +1,30 @@
 import SwiftUI
 import UserNotifications
+import CoreLocation
+
+// MARK: - Location Permission Manager
+class LocationPermissionManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+    static let shared = LocationPermissionManager()
+    
+    private let locationManager = CLLocationManager()
+    @Published var authorizationStatus: CLAuthorizationStatus
+    
+    override init() {
+        self.authorizationStatus = locationManager.authorizationStatus
+        super.init()
+        locationManager.delegate = self
+    }
+    
+    func requestAlwaysAuthorization() {
+        locationManager.requestAlwaysAuthorization()
+    }
+    
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        DispatchQueue.main.async {
+            self.authorizationStatus = manager.authorizationStatus
+        }
+    }
+}
 
 @main
 struct TouchGrassApp: App {
@@ -36,8 +61,10 @@ struct TouchGrassApp: App {
 
 struct MenuView: View {
     @ObservedObject var manager: ReminderManager
+    @StateObject private var locationManager = LocationPermissionManager.shared
     @State private var hoveredItem: String? = nil
     @State private var customizationWindow: CustomizationWindowController?
+    @State private var locationAlertDismissed = UserDefaults.standard.bool(forKey: "TouchGrass.locationAlertDismissed")
     
     var nextReminderText: String {
         let totalSeconds = Int(manager.timeUntilNextReminder)
@@ -114,6 +141,56 @@ struct MenuView: View {
             .buttonStyle(PlainButtonStyle())
             
             Divider()
+            
+            // Location Permission Alert - automatically hides when permission is granted
+            if !hasLocationPermission() {
+                Button(action: requestLocationPermission) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "location.slash.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(.orange)
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Enable weather suggestions")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.primary)
+                            Text("Click to allow location access")
+                                .font(.system(size: 11))
+                                .foregroundColor(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "location.circle.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(.orange)
+                    }
+                    .padding(10)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6)
+                            .fill(Color.orange.opacity(0.08))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 6)
+                                    .stroke(Color.orange.opacity(0.2), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .overlay(alignment: .topTrailing) {
+                    Button(action: dismissLocationAlert) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary.opacity(0.6))
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(6)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                
+                Divider()
+            }
                 
             // Calendar Status (if connected) - Simplified
             if let calManager = manager.calendarManager,
@@ -335,6 +412,44 @@ struct MenuView: View {
         Task {
             await UpdateManager.shared.checkForUpdates(silent: false)
         }
+    }
+    
+    private func hasLocationPermission() -> Bool {
+        // Only show alert if not dismissed and permission not granted
+        if locationAlertDismissed {
+            return true // Hide the alert if user dismissed it
+        }
+        
+        let status = locationManager.authorizationStatus
+        print("Location permission status: \(status.rawValue)")
+        return status == .authorizedAlways
+    }
+    
+    private func requestLocationPermission() {
+        let status = locationManager.authorizationStatus
+        
+        if status == .notDetermined {
+            // Request permission - this will show the system dialog
+            locationManager.requestAlwaysAuthorization()
+            // The LocationPermissionManager will automatically update authorizationStatus
+            // which will trigger a re-render and hide the alert if permission is granted
+        } else if status == .denied || status == .restricted {
+            // If already denied, we have to send them to Settings
+            openLocationSettings()
+        }
+    }
+    
+    private func openLocationSettings() {
+        // Open System Settings to the Location Services pane
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices") {
+            NSWorkspace.shared.open(url)
+        }
+    }
+    
+    private func dismissLocationAlert() {
+        locationAlertDismissed = true
+        // Save dismissal preference
+        UserDefaults.standard.set(true, forKey: "TouchGrass.locationAlertDismissed")
     }
 }
 

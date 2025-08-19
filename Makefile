@@ -12,7 +12,8 @@ help:
 	@echo "  make build      - Build the app"
 	@echo "  make run        - Build and run the app"
 	@echo "  make lint       - Check code style"
-	@echo "  make test       - Run tests"
+	@echo "  make test       - Run all tests"
+	@echo "  make test-only TEST=ClassName - Run specific test"
 	@echo ""
 	@echo "All Targets:"
 	@echo "  make all        - Run lint, build, and test"
@@ -20,7 +21,10 @@ help:
 	@echo "  make clean      - Clean build artifacts"
 	@echo "  make lint       - Run SwiftLint checks"
 	@echo "  make lint-fix   - Auto-fix SwiftLint violations"
-	@echo "  make test       - Run tests"
+	@echo "  make test       - Run all tests"
+	@echo "  make test-only  - Run specific test (TEST=ClassName)"
+	@echo "  make test-list  - List all available test files"
+	@echo "  make test-verbose - Run tests with detailed output"
 	@echo "  make release    - Create a release (VERSION=x.y.z)"
 	@echo "  make run        - Build and run the app"
 	@echo "  make install    - Install dependencies (SwiftLint, etc.)"
@@ -77,6 +81,28 @@ test:
 # Run tests verbosely
 test-verbose:
 	@scripts/test.sh --verbose
+
+# Run a specific test file or class
+# Usage: make test-only TEST=ActivitySuggestionEngineTests
+test-only:
+	@if [ -z "$(TEST)" ]; then \
+		echo "❌ TEST required"; \
+		echo "Usage: make test-only TEST=TestClassName"; \
+		echo "Example: make test-only TEST=ActivitySuggestionEngineTests"; \
+		exit 1; \
+	fi
+	@echo "🧪 Running $(TEST)..."
+	@xcodebuild test \
+		-project TouchGrass.xcodeproj \
+		-scheme TouchGrassTests \
+		-only-testing:TouchGrassTests/$(TEST) \
+		-quiet \
+		2>&1 | grep -E "Test Case|passed|failed" || echo "✅ Tests completed"
+
+# List all test files
+test-list:
+	@echo "📋 Available test files:"
+	@find TouchGrassTests -name "*.swift" -type f | sed 's|TouchGrassTests/||' | sort
 
 # Create a release
 release:

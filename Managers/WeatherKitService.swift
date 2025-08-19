@@ -71,7 +71,7 @@ class WeatherKitService: NSObject, WeatherServiceProtocol {
         
         // Request location permissions if needed
         if locationManager.authorizationStatus == .notDetermined {
-            locationManager.requestWhenInUseAuthorization()
+            locationManager.requestAlwaysAuthorization()
         }
         
         // Get current location
@@ -152,7 +152,7 @@ class WeatherKitService: NSObject, WeatherServiceProtocol {
         let condition = mapWeatherCondition(current.condition)
         
         // Check if daylight
-        let isDaylight = current.isDaylight ?? true
+        let isDaylight = current.isDaylight
         
         // Get feels like temperature
         let feelsLikeF = current.apparentTemperature.converted(to: .fahrenheit).value
@@ -181,7 +181,7 @@ class WeatherKitService: NSObject, WeatherServiceProtocol {
             return .heavyRain
         case .snow, .sleet, .hail:
             return .snowy
-        case .fog, .haze, .smoky:
+        case .foggy, .haze, .smoky:
             return .foggy
         case .windy, .breezy:
             return .windy
@@ -228,7 +228,7 @@ extension WeatherKitService: CLLocationManagerDelegate {
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         switch manager.authorizationStatus {
-        case .authorizedAlways, .authorizedWhenInUse:
+        case .authorizedAlways:
             manager.requestLocation()
         case .denied, .restricted:
             print("⚠️ Location access denied")

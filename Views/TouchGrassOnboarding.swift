@@ -178,7 +178,7 @@ struct TouchGrassOnboarding: View {
                     Spacer()
                 }
                 
-                if locationStatus != .authorizedAlways && locationStatus != .authorizedWhenInUse && !hasRequestedLocationAccess {
+                if locationStatus != .authorizedAlways && !hasRequestedLocationAccess {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Get smarter activity suggestions")
@@ -207,7 +207,7 @@ struct TouchGrassOnboarding: View {
                         }
                         .buttonStyle(.plain)
                     }
-                } else if locationStatus == .authorizedAlways || locationStatus == .authorizedWhenInUse {
+                } else if locationStatus == .authorizedAlways {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundColor(.green)
@@ -308,7 +308,7 @@ struct TouchGrassOnboarding: View {
     
     private func requestLocationAccess() {
         hasRequestedLocationAccess = true
-        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestAlwaysAuthorization()
         
         // Check status after a delay (authorization happens asynchronously)
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
