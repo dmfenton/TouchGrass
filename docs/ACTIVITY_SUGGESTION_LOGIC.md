@@ -1,5 +1,7 @@
 # Activity Suggestion Decision Tree
 
+> **Status: ✅ IMPLEMENTED** - This document describes the decision tree logic that has been implemented in `Managers/ActivitySuggestionEngine.swift`. The test scenarios are covered in `TouchGrassTests/Integration/ActivitySuggestionEngineTests.swift`.
+
 ## Goal
 Reduce decision fatigue by suggesting ONE optimal activity based on context, while maintaining user agency to choose alternatives. The system should be aware of the user's entire day schedule and adapt suggestions accordingly.
 
