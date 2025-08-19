@@ -1,7 +1,7 @@
 # Activity Suggestion Decision Tree
 
 ## Goal
-Reduce decision fatigue by suggesting ONE optimal activity based on context, while maintaining user agency to choose alternatives.
+Reduce decision fatigue by suggesting ONE optimal activity based on context, while maintaining user agency to choose alternatives. The system should be aware of the user's entire day schedule and adapt suggestions accordingly.
 
 ## Input Factors
 
@@ -22,11 +22,31 @@ Reduce decision fatigue by suggesting ONE optimal activity based on context, whi
   - Early Afternoon (1-3pm): Post-lunch dip
   - Late Afternoon (3-5pm): Second wind
   - Evening (5-7pm): Wind down
-- **Available Time**
-  - Quick (<3 min): Micro-breaks
-  - Short (3-5 min): Single activities  
-  - Medium (5-10 min): Full routines
-  - Long (>10 min): Extended activities
+
+- **Available Time Windows**
+  - **Immediate**: Time until next calendar event
+  - **Break Categories**:
+    - Micro (<2 min): Eye rest, breathing, quick stretch
+    - Quick (2-5 min): Single focused exercise
+    - Standard (5-10 min): Full routine or walk
+    - Extended (10-15 min): Outdoor time or multi-exercise set
+    - Long (>15 min): Full outdoor break or meditation session
+  - **Smart Sizing**: Never suggest activities longer than available time
+
+- **Day Schedule Context**
+  - **Meeting Density**: 
+    - Light day (<3 meetings): Can afford longer breaks
+    - Normal day (3-5 meetings): Standard breaks
+    - Heavy day (>5 meetings): Prioritize quick, high-impact breaks
+  - **Break Distribution**:
+    - Morning breaks so far
+    - Afternoon breaks planned
+    - Time since last substantial break (>5 min)
+    - Remaining break opportunities today
+  - **Energy Management**:
+    - Front-load energizing activities on heavy days
+    - Save relaxation for end of meeting-heavy periods
+    - Balance throughout the day
 
 ### 3. User History
 - **Today's Activities**
@@ -52,13 +72,40 @@ Reduce decision fatigue by suggesting ONE optimal activity based on context, whi
 
 ### Priority Order (first match wins):
 
-1. **Weather Window of Opportunity**
+1. **Time Constraint Filter (ALWAYS FIRST)**
    ```
-   IF (weather is "perfect") AND (haven't done outdoor today) AND (daylight)
+   available_time = min(time_until_next_meeting, max_break_duration)
+   
+   IF (available_time < 2 minutes)
+   → FILTER: Only micro activities (breathing, eye rest)
+   
+   IF (available_time < 5 minutes) 
+   → FILTER: Exclude routines, outdoor walks
+   
+   IF (available_time < 10 minutes)
+   → FILTER: Exclude extended routines
+   ```
+
+2. **Critical Time Windows**
+   ```
+   IF (next_meeting in 3-7 minutes) AND (been sitting 90+ min)
+   → SUGGEST: Quick energizing activity to prep for meeting
+   
+   IF (just finished 2+ hour meeting block)
+   → SUGGEST: Extended break if possible (walk, full routine)
+   
+   IF (last substantial break >3 hours ago)
+   → SUGGEST: Prioritize any movement activity that fits
+   ```
+
+3. **Weather Window of Opportunity**
+   ```
+   IF (weather is "perfect") AND (haven't done outdoor today) 
+      AND (daylight) AND (have 10+ minutes)
    → SUGGEST: Touch Grass (with enthusiasm: "Beautiful day outside!")
    ```
 
-2. **Critical Physical Needs**
+4. **Critical Physical Needs**
    ```
    IF (sitting > 2 hours continuously)
    → SUGGEST: Movement activity (walk, hip rotations, standing stretches)
@@ -67,7 +114,22 @@ Reduce decision fatigue by suggesting ONE optimal activity based on context, whi
    → SUGGEST: Posture correction (chin tucks, back extension)
    ```
 
-3. **Time-of-Day Optimization**
+5. **Day Schedule Awareness**
+   ```
+   meeting_density = count_meetings_today()
+   breaks_taken = count_substantial_breaks_today()
+   
+   IF (meeting_density > 5) AND (breaks_taken < 2)
+   → SUGGEST: High-impact quick break (maximize limited time)
+   
+   IF (afternoon) AND (only had micro-breaks so far)
+   → SUGGEST: Substantial movement break if time allows
+   
+   IF (end of day approaching) AND (outdoors not done) AND (weather good)
+   → SUGGEST: Last chance for outdoor time
+   ```
+
+6. **Time-of-Day Optimization**
    ```
    IF (time is 1-3pm) AND (energy likely low)
    → SUGGEST: Energizing activity (walk, standing exercises, fresh air)
@@ -79,7 +141,7 @@ Reduce decision fatigue by suggesting ONE optimal activity based on context, whi
    → SUGGEST: Calming activity (breathing, meditation, gentle stretches)
    ```
 
-4. **Variety & Balance**
+7. **Variety & Balance**
    ```
    activities_today = get_completed_activities_today()
    
@@ -93,7 +155,7 @@ Reduce decision fatigue by suggesting ONE optimal activity based on context, whi
    → SUGGEST: Touch grass/outdoor walk
    ```
 
-5. **Smart Defaults by Context**
+8. **Smart Defaults by Context**
    ```
    IF (available_time < 3 min)
    → SUGGEST: Quick reset (breathing, eye rest, neck rolls)
