@@ -86,6 +86,10 @@ class WaterTracker: ObservableObject {
     }
     
     // MARK: - Public Methods
+    func checkForNewDay() {
+        resetIfNewDay()
+    }
+    
     func logWater(_ glasses: Int = 1) {
         currentIntake += glasses
         

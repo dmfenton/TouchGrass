@@ -85,6 +85,9 @@ struct MenuView: View {
                 // Refresh calendar data whenever menu is opened
                 manager.calendarManager?.updateCurrentAndNextEvents()
                 
+                // Check if it's a new day for water tracking
+                manager.waterTracker.checkForNewDay()
+                
                 // Reset active reminder state when menu is opened
                 if manager.hasActiveReminder {
                     manager.hasActiveReminder = false
