@@ -14,6 +14,31 @@ struct TouchGrassMode: View {
         NSApplication.shared.keyWindow?.close()
     }
     
+    private func weatherIcon(for condition: WeatherCondition?) -> String {
+        guard let condition = condition else { return "cloud" }
+        
+        switch condition {
+        case .sunny:
+            return "sun.max"
+        case .partlyCloudy:
+            return "cloud.sun"
+        case .cloudy:
+            return "cloud"
+        case .rainy:
+            return "cloud.rain"
+        case .heavyRain:
+            return "cloud.heavyrain"
+        case .snowy:
+            return "snow"
+        case .foggy:
+            return "cloud.fog"
+        case .windy:
+            return "wind"
+        case .unknown:
+            return "cloud"
+        }
+    }
+    
     // Simplified to 4 main options with minimal colors
     let activities: [(icon: String, name: String, color: Color, isGuided: Bool)] = [
         ("clock", "1 Min Reset", Color.primary, true),
@@ -281,6 +306,7 @@ struct TouchGrassMode: View {
             } else {
                 // Main activities Section
                 VStack(alignment: .leading, spacing: 12) {
+                    
                     // Calendar context
                     if let calManager = reminderManager.calendarManager,
                        calManager.hasCalendarAccess,
@@ -339,33 +365,30 @@ struct TouchGrassMode: View {
                         .frame(maxWidth: .infinity)
                     }
                     
-                    // Weather context
-                    if let weather = weather {
-                        HStack(spacing: 12) {
-                            HStack(spacing: 6) {
-                                Image(systemName: weather.condition == .sunny ? "sun.max" : 
-                                      weather.condition == .rainy ? "cloud.rain" : "cloud")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
-                                Text("\(Int(weather.temperature))°F")
-                                    .font(.system(size: 12, weight: .medium))
-                                    .foregroundColor(.primary)
-                                Text("•")
-                                    .foregroundColor(.secondary)
-                                Text(weather.isIdealForOutdoor ? "Perfect for outdoors!" : 
-                                     weather.isGoodForOutdoor ? "Good for a walk" : "Indoor activities recommended")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 6)
-                            .background(
-                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
-                                    .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
-                            )
+                    // Weather context - always show something
+                    HStack(spacing: 12) {
+                        HStack(spacing: 6) {
+                            Image(systemName: weatherIcon(for: weather?.condition))
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
+                            Text(weather != nil ? "Current temp is \(Int(weather?.temperature ?? 0))°F" : "Loading weather...")
+                                .font(.system(size: 12, weight: .medium))
+                                .foregroundColor(.primary)
+                            Text("•")
+                                .foregroundColor(.secondary)
+                            Text(weather?.isIdealForOutdoor == true ? "Perfect for outdoors!" : 
+                                 weather?.isGoodForOutdoor == true ? "Good for a walk" : "Nice day for activity")
+                                .font(.system(size: 12))
+                                .foregroundColor(.secondary)
                         }
-                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(
+                            RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                                .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
+                        )
                     }
+                    .frame(maxWidth: .infinity)
                     
                     // Suggested activity from the engine  
                     if let suggestion = suggestion {
@@ -477,28 +500,57 @@ struct TouchGrassMode: View {
                 }
                 .onAppear {
                     // Load suggestion when main activities view appears
-                    NSLog("⚡ Main activities onAppear triggered")
+                    NSLog("🔍 [TouchGrassMode] Main activities onAppear START")
+                    
+                    // Log calendar state
+                    if let calManager = reminderManager.calendarManager {
+                        NSLog("🔍 [Calendar] Manager exists")
+                        NSLog("🔍 [Calendar] hasCalendarAccess: \(calManager.hasCalendarAccess)")
+                        NSLog("🔍 [Calendar] selectedCalendarIdentifiers count: \(calManager.selectedCalendarIdentifiers.count)")
+                        NSLog("🔍 [Calendar] selectedCalendarIdentifiers: \(calManager.selectedCalendarIdentifiers)")
+                        NSLog("🔍 [Calendar] isInMeeting: \(calManager.isInMeeting)")
+                        NSLog("🔍 [Calendar] currentEvent: \(calManager.currentEvent?.title ?? "nil")")
+                        NSLog("🔍 [Calendar] nextEvent: \(calManager.nextEvent?.title ?? "nil")")
+                    } else {
+                        NSLog("🔍 [Calendar] Manager is NIL")
+                    }
+                    
+                    // Log suggestion engine state
                     if suggestion == nil, let engine = reminderManager.suggestionEngine {
-                        NSLog("⚡ Loading suggestion from engine...")
+                        NSLog("🔍 [Suggestion] Engine exists, loading suggestion...")
+                        
+                        // Refresh weather cache before getting suggestion
+                        engine.refreshWeatherCache()
+                        
                         suggestion = engine.getSuggestionSync()
                         if let s = suggestion {
-                            NSLog("⚡ Loaded suggestion: \(s.title) - \(s.reason)")
+                            NSLog("🔍 [Suggestion] Loaded: \(s.title) - \(s.reason)")
                         } else {
-                            NSLog("⚡ No suggestion returned from engine")
+                            NSLog("🔍 [Suggestion] getSuggestionSync returned NIL")
                         }
                         
-                        // Also load weather
-                        weather = engine.weather.getCurrentWeatherSync()
-                        if let w = weather {
-                            NSLog("⚡ Loaded weather: \(Int(w.temperature))°F, \(w.condition)")
-                        } else {
-                            NSLog("⚡ No weather data available")
+                        // Load weather with detailed logging
+                        NSLog("🔍 [Weather] Attempting to load weather...")
+                        NSLog("🔍 [Weather] WeatherService type: \(type(of: engine.weather))")
+                        
+                        // Try loading weather after a small delay to allow cache refresh
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                            weather = engine.weather.getCurrentWeatherSync()
+                            if let w = weather {
+                                NSLog("🔍 [Weather] SUCCESS: \(Int(w.temperature))°F, \(w.condition)")
+                                NSLog("🔍 [Weather] isIdealForOutdoor: \(w.isIdealForOutdoor)")
+                                NSLog("🔍 [Weather] isGoodForOutdoor: \(w.isGoodForOutdoor)")
+                            } else {
+                                NSLog("🔍 [Weather] getCurrentWeatherSync returned NIL even after refresh")
+                            }
                         }
                     } else if let existingSuggestion = suggestion {
-                        NSLog("⚡ Suggestion already exists: \(existingSuggestion.title)")
+                        NSLog("🔍 [Suggestion] Already exists: \(existingSuggestion.title)")
                     } else {
-                        NSLog("⚡ No suggestion engine available")
+                        NSLog("🔍 [Suggestion] Engine is NIL")
                     }
+                    
+                    NSLog("🔍 [TouchGrassMode] Main activities onAppear END")
                 }
             
                 Divider()

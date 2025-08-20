@@ -131,9 +131,21 @@ class ActivitySuggestionEngine: ObservableObject {
     // Public getter for weather service
     var weather: WeatherServiceProtocol { weatherService }
     
+    // Method to refresh weather cache
+    func refreshWeatherCache() {
+        Task {
+            _ = await weatherService.getCurrentWeather()
+        }
+    }
+    
     init(reminderManager: ReminderManager) {
         self.reminderManager = reminderManager
         self.weatherService = WeatherServiceFactory.create()
+        
+        // Pre-cache weather data on initialization
+        Task {
+            _ = await weatherService.getCurrentWeather()
+        }
     }
     
     // MARK: - Public Interface
@@ -166,9 +178,12 @@ class ActivitySuggestionEngine: ObservableObject {
         
         // Calculate available time
         var availableMinutes = Int(reminderManager.intervalMinutes)
-        if let nextEvent = reminderManager.calendarManager?.nextEvent {
-            let timeUntilEvent = nextEvent.startDate.timeIntervalSince(now) / 60
-            availableMinutes = min(availableMinutes, Int(timeUntilEvent))
+        
+        if let calManager = reminderManager.calendarManager {
+            if let nextEvent = calManager.nextEvent {
+                let timeUntilEvent = nextEvent.startDate.timeIntervalSince(now) / 60
+                availableMinutes = min(availableMinutes, Int(timeUntilEvent))
+            }
         }
         availableMinutes = max(1, availableMinutes)  // At least 1 minute
         
