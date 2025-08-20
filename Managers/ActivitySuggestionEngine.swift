@@ -128,6 +128,9 @@ class ActivitySuggestionEngine: ObservableObject {
     private let reminderManager: ReminderManager
     private let weatherService: WeatherServiceProtocol
     
+    // Public getter for weather service
+    var weather: WeatherServiceProtocol { weatherService }
+    
     init(reminderManager: ReminderManager) {
         self.reminderManager = reminderManager
         self.weatherService = WeatherServiceFactory.create()

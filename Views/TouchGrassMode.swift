@@ -8,6 +8,7 @@ struct TouchGrassMode: View {
     @State private var showExerciseMenu = false
     @State private var selectedExerciseSet: ExerciseSet? = nil
     @State private var suggestion: SuggestedActivity? = nil
+    @State private var weather: WeatherInfo? = nil
     
     private func closeMenuBar() {
         NSApplication.shared.keyWindow?.close()
@@ -140,6 +141,34 @@ struct TouchGrassMode: View {
                                 .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
                         )
                     }
+                }
+                .frame(maxWidth: .infinity)
+            }
+            
+            // Weather context
+            if let weather = weather {
+                HStack(spacing: 12) {
+                    HStack(spacing: 6) {
+                        Image(systemName: weather.condition == .sunny ? "sun.max" : 
+                              weather.condition == .rainy ? "cloud.rain" : "cloud")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                        Text("\(Int(weather.temperature))°F")
+                            .font(.system(size: 12, weight: .medium))
+                            .foregroundColor(.primary)
+                        Text("•")
+                            .foregroundColor(.secondary)
+                        Text(weather.isIdealForOutdoor ? "Perfect for outdoors!" : 
+                             weather.isGoodForOutdoor ? "Good for a walk" : "Indoor activities recommended")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                            .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
+                    )
                 }
                 .frame(maxWidth: .infinity)
             }
@@ -448,15 +477,27 @@ struct TouchGrassMode: View {
                 }
                 .onAppear {
                     // Load suggestion when main activities view appears
+                    NSLog("⚡ Main activities onAppear triggered")
                     if suggestion == nil, let engine = reminderManager.suggestionEngine {
+                        NSLog("⚡ Loading suggestion from engine...")
                         suggestion = engine.getSuggestionSync()
-                        #if DEBUG
                         if let s = suggestion {
-                            NSLog("Loaded suggestion in main activities: \(s.title) - \(s.reason)")
+                            NSLog("⚡ Loaded suggestion: \(s.title) - \(s.reason)")
                         } else {
-                            NSLog("No suggestion loaded in main activities")
+                            NSLog("⚡ No suggestion returned from engine")
                         }
-                        #endif
+                        
+                        // Also load weather
+                        weather = engine.weather.getCurrentWeatherSync()
+                        if let w = weather {
+                            NSLog("⚡ Loaded weather: \(Int(w.temperature))°F, \(w.condition)")
+                        } else {
+                            NSLog("⚡ No weather data available")
+                        }
+                    } else if let existingSuggestion = suggestion {
+                        NSLog("⚡ Suggestion already exists: \(existingSuggestion.title)")
+                    } else {
+                        NSLog("⚡ No suggestion engine available")
                     }
                 }
             
@@ -554,18 +595,15 @@ struct TouchGrassMode: View {
             
             // Load activity suggestion
             if let engine = reminderManager.suggestionEngine {
+                NSLog("⚡ Loading suggestion from main onAppear...")
                 suggestion = engine.getSuggestionSync()
-                #if DEBUG
-                if let s = suggestion {
-                    NSLog("Loaded suggestion: \(s.title) - \(s.reason)")
-                } else {
-                    NSLog("No suggestion loaded")
-                }
-                #endif
+                NSLog("⚡ Suggestion loaded: \(suggestion?.title ?? "nil")")
+                
+                // Also load weather
+                weather = engine.weather.getCurrentWeatherSync() 
+                NSLog("⚡ Weather loaded: \(weather?.temperature ?? -999)")
             } else {
-                #if DEBUG
-                NSLog("No suggestion engine available")
-                #endif
+                NSLog("⚡ No suggestion engine available")
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showExerciseMenu)
