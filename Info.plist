@@ -32,5 +32,7 @@
 	<string>Touch Grass sends notifications to remind you to take breaks and maintain good posture.</string>
 	<key>NSLocationUsageDescription</key>
 	<string>Touch Grass uses your location to provide weather-based activity suggestions, helping you take advantage of nice days to go outside.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Touch Grass uses your location to provide weather-based activity suggestions, helping you take advantage of nice days to go outside.</string>
 </dict>
 </plist>
