@@ -327,8 +327,50 @@ Touch Grass is a SwiftUI-based macOS menu bar application with a clear separatio
 To test reminder functionality without waiting:
 1. Click "Touch Grass Now" in menu bar to trigger the reminder interface
 2. Temporarily set `intervalMinutes` to 1 in ReminderManager initialization for frequent testing
-3. Use Console.app to monitor smart scheduling and meeting detection logs
+3. Use debug log file to monitor all components (see Debug Logging section below)
 4. Test calendar integration by creating test events within work hours
+
+## Debug Logging
+
+For easier debugging, Touch Grass uses file-based logging to `/tmp/touchgrass_debug.log`:
+
+```bash
+# View live debug logs
+tail -f /tmp/touchgrass_debug.log
+
+# View recent logs
+tail -100 /tmp/touchgrass_debug.log
+
+# Search for specific components
+grep "WorkHours" /tmp/touchgrass_debug.log
+grep "NWSWeather" /tmp/touchgrass_debug.log
+grep "MenuBar Icon" /tmp/touchgrass_debug.log
+```
+
+To add debug logging to any component:
+
+```swift
+private func logToFile(_ message: String) {
+    let formatter = DateFormatter()
+    formatter.dateFormat = "HH:mm:ss.SSS"
+    let timestamp = formatter.string(from: Date())
+    let logMessage = "[\(timestamp)] \(message)\n"
+    
+    let logURL = URL(fileURLWithPath: "/tmp/touchgrass_debug.log")
+    
+    if let data = logMessage.data(using: .utf8) {
+        if FileManager.default.fileExists(atPath: logURL.path) {
+            if let fileHandle = try? FileHandle(forWritingTo: logURL) {
+                fileHandle.seekToEndOfFile()
+                fileHandle.write(data)
+                fileHandle.closeFile()
+            }
+        } else {
+            try? data.write(to: logURL)
+        }
+    }
+}
+```
 
 ## Release Process
 
