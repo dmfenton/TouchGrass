@@ -76,6 +76,7 @@
 		024C45B060374A5BAEDAE1D3 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReminderManager.swift; path = Managers/ReminderManager.swift; sourceTree = "<group>"; };
 		04E567C3E89F54ED538D0AC4 /* EndToEndFlowTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EndToEndFlowTests.swift; path = TouchGrassTests/Integration/EndToEndFlowTests.swift; sourceTree = "<group>"; };
 		123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkHoursSettingsView.swift; path = Views/WorkHoursSettingsView.swift; sourceTree = "<group>"; };
+		23B89137A67E55F54977A151 /* MenuBarIconTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MenuBarIconTests.swift; path = TouchGrassTests/Integration/MenuBarIconTests.swift; sourceTree = "<group>"; };
 		34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassOnboarding.swift; path = Views/TouchGrassOnboarding.swift; sourceTree = "<group>"; };
 		377575A395C6E35DB808B46A /* TouchGrassModeIntegrationTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TouchGrassModeIntegrationTests.swift; path = TouchGrassTests/Integration/TouchGrassModeIntegrationTests.swift; sourceTree = "<group>"; };
 		3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseMenuView.swift; path = Views/Components/ExerciseMenuView.swift; sourceTree = "<group>"; };
@@ -349,6 +350,7 @@
 				815D3F2D783A138A7B88C4FE /* ReminderSchedulingTests.swift */,
 				FAF1B9E059508BB23AAC46E6 /* ActivitySuggestionEngineTests.swift */,
 				377575A395C6E35DB808B46A /* TouchGrassModeIntegrationTests.swift */,
+				23B89137A67E55F54977A151 /* MenuBarIconTests.swift */,
 			);
 			name = Integration;
 			sourceTree = "<group>";
