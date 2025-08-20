@@ -6,6 +6,27 @@ public enum WorkDay: String, CaseIterable {
 
 /// Manages work hours configuration and scheduling
 final class WorkHoursManager {
+    // Debug logging to file
+    private func logToFile(_ message: String) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        let timestamp = formatter.string(from: Date())
+        let logMessage = "[\(timestamp)] \(message)\n"
+        
+        let logURL = URL(fileURLWithPath: "/tmp/touchgrass_debug.log")
+        
+        if let data = logMessage.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: logURL.path) {
+                if let fileHandle = try? FileHandle(forWritingTo: logURL) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                }
+            } else {
+                try? data.write(to: logURL)
+            }
+        }
+    }
     // Work hours configuration
     private var workStartHour = 9
     private var workStartMinute = 0
@@ -48,6 +69,7 @@ final class WorkHoursManager {
         // Check if today is a work day
         let todayWorkDay = workDayFromWeekday(currentWeekday)
         guard let todayWorkDay = todayWorkDay, workDays.contains(todayWorkDay) else {
+            logToFile("🕐 [WorkHours] Not a work day: \(todayWorkDay?.rawValue ?? "nil")")
             return false
         }
         
@@ -56,7 +78,10 @@ final class WorkHoursManager {
         let workStartInMinutes = workStartHour * 60 + workStartMinute
         let workEndInMinutes = workEndHour * 60 + workEndMinute
         
-        return currentTimeInMinutes >= workStartInMinutes && currentTimeInMinutes < workEndInMinutes
+        let isWithin = currentTimeInMinutes >= workStartInMinutes && currentTimeInMinutes < workEndInMinutes
+        logToFile("🕐 [WorkHours] Current: \(currentHour):\(String(format: "%02d", currentMinute)) (\(currentTimeInMinutes) min), Work: \(workStartHour):\(String(format: "%02d", workStartMinute))-\(workEndHour):\(String(format: "%02d", workEndMinute)) (\(workStartInMinutes)-\(workEndInMinutes) min), IsWithin: \(isWithin)")
+        
+        return isWithin
     }
     
     func nextWorkHourDate() -> Date? {

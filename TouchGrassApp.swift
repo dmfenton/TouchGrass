@@ -12,14 +12,17 @@ class LocationPermissionManager: NSObject, ObservableObject, CLLocationManagerDe
     override init() {
         self.authorizationStatus = locationManager.authorizationStatus
         super.init()
+        NSLog("🔍 [LocationPermissionManager] init - status: \(authorizationStatus.rawValue)")
         locationManager.delegate = self
     }
     
     func requestAlwaysAuthorization() {
+        NSLog("🔍 [LocationPermissionManager] Requesting always authorization...")
         locationManager.requestAlwaysAuthorization()
     }
     
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        NSLog("🔍 [LocationPermissionManager] Authorization changed to: \(manager.authorizationStatus.rawValue)")
         DispatchQueue.main.async {
             self.authorizationStatus = manager.authorizationStatus
         }
@@ -32,6 +35,28 @@ struct TouchGrassApp: App {
     @StateObject private var manager = TouchGrassApp.sharedManager
     private var onboardingWindow: TouchGrassOnboardingController?
     @State private var touchGrassController = TouchGrassModeController()
+    
+    // Debug logging to file
+    private func logToFile(_ message: String) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        let timestamp = formatter.string(from: Date())
+        let logMessage = "[\(timestamp)] \(message)\n"
+        
+        let logURL = URL(fileURLWithPath: "/tmp/touchgrass_debug.log")
+        
+        if let data = logMessage.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: logURL.path) {
+                if let fileHandle = try? FileHandle(forWritingTo: logURL) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                }
+            } else {
+                try? data.write(to: logURL)
+            }
+        }
+    }
 
     init() {
         // Set up notification delegate with the shared manager
@@ -51,7 +76,11 @@ struct TouchGrassApp: App {
         MenuBarExtra {
             MenuView(manager: manager)
         } label: {
-            GrassIcon(isActive: manager.hasActiveReminder, size: 20)
+            let isWithinHours = manager.shouldScheduleWithinWorkHours()
+            let hasReminder = manager.hasActiveReminder
+            let isActive = hasReminder || isWithinHours
+            logToFile("🕐 [MenuBar Icon] hasActiveReminder: \(hasReminder), isWithinWorkHours: \(isWithinHours), icon isActive: \(isActive)")
+            return GrassIcon(isActive: isActive, size: 20)
         }
         .menuBarExtraStyle(.window)
         // No longer automatically open window when reminder triggers
