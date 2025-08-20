@@ -87,92 +87,6 @@ struct TouchGrassMode: View {
                     .fontWeight(.medium)
             }
             
-            // Calendar context
-            if let calManager = reminderManager.calendarManager,
-               calManager.hasCalendarAccess,
-               !calManager.selectedCalendarIdentifiers.isEmpty {
-                
-                HStack(spacing: 12) {
-                    // Current meeting status
-                    if calManager.isInMeeting, let currentEvent = calManager.currentEvent {
-                        HStack(spacing: 6) {
-                            Circle()
-                                .fill(Color.primary.opacity(0.4))
-                                .frame(width: 8, height: 8)
-                            Text("In meeting until \(calManager.formatEventTime(currentEvent.endDate))")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                        }
-                    } else if let nextEvent = calManager.nextEvent,
-                              let timeUntil = calManager.timeUntilNextEvent {
-                        HStack(spacing: 6) {
-                            Image(systemName: "clock")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                            Text("Next meeting in \(calManager.formatTimeUntilEvent(timeUntil))")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.primary)
-                            Text("•")
-                                .foregroundColor(.secondary)
-                            Text(nextEvent.title ?? "Event")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                                .lineLimit(1)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
-                                .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
-                        )
-                    } else {
-                        HStack(spacing: 6) {
-                            Image(systemName: "checkmark.circle")
-                                .font(.system(size: 12))
-                                .foregroundColor(.secondary)
-                            Text("No upcoming meetings - enjoy your break!")
-                                .font(.system(size: 12, weight: .medium))
-                                .foregroundColor(.primary)
-                        }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
-                        .background(
-                            RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
-                                .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
-                        )
-                    }
-                }
-                .frame(maxWidth: .infinity)
-            }
-            
-            // Weather context
-            if let weather = weather {
-                HStack(spacing: 12) {
-                    HStack(spacing: 6) {
-                        Image(systemName: weather.condition == .sunny ? "sun.max" : 
-                              weather.condition == .rainy ? "cloud.rain" : "cloud")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                        Text("\(Int(weather.temperature))°F")
-                            .font(.system(size: 12, weight: .medium))
-                            .foregroundColor(.primary)
-                        Text("•")
-                            .foregroundColor(.secondary)
-                        Text(weather.isIdealForOutdoor ? "Perfect for outdoors!" : 
-                             weather.isGoodForOutdoor ? "Good for a walk" : "Indoor activities recommended")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
-                            .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
-                    )
-                }
-                .frame(maxWidth: .infinity)
-            }
-            
             Divider()
             
             if showingCompletion {
@@ -367,6 +281,92 @@ struct TouchGrassMode: View {
             } else {
                 // Main activities Section
                 VStack(alignment: .leading, spacing: 12) {
+                    // Calendar context
+                    if let calManager = reminderManager.calendarManager,
+                       calManager.hasCalendarAccess,
+                       !calManager.selectedCalendarIdentifiers.isEmpty {
+                        
+                        HStack(spacing: 12) {
+                            // Current meeting status
+                            if calManager.isInMeeting, let currentEvent = calManager.currentEvent {
+                                HStack(spacing: 6) {
+                                    Circle()
+                                        .fill(Color.primary.opacity(0.4))
+                                        .frame(width: 8, height: 8)
+                                    Text("In meeting until \(calManager.formatEventTime(currentEvent.endDate))")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                }
+                            } else if let nextEvent = calManager.nextEvent,
+                                      let timeUntil = calManager.timeUntilNextEvent {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "clock")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    Text("Next meeting in \(calManager.formatTimeUntilEvent(timeUntil))")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.primary)
+                                    Text("•")
+                                        .foregroundColor(.secondary)
+                                    Text(nextEvent.title ?? "Event")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(1)
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                                        .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
+                                )
+                            } else {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "calendar")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(.secondary)
+                                    Text("No upcoming meetings - enjoy your break!")
+                                        .font(.system(size: 12, weight: .medium))
+                                        .foregroundColor(.primary)
+                                }
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                                        .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
+                                )
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    
+                    // Weather context
+                    if let weather = weather {
+                        HStack(spacing: 12) {
+                            HStack(spacing: 6) {
+                                Image(systemName: weather.condition == .sunny ? "sun.max" : 
+                                      weather.condition == .rainy ? "cloud.rain" : "cloud")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                                Text("\(Int(weather.temperature))°F")
+                                    .font(.system(size: 12, weight: .medium))
+                                    .foregroundColor(.primary)
+                                Text("•")
+                                    .foregroundColor(.secondary)
+                                Text(weather.isIdealForOutdoor ? "Perfect for outdoors!" : 
+                                     weather.isGoodForOutdoor ? "Good for a walk" : "Indoor activities recommended")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                                    .fill(Color(NSColor.controlBackgroundColor).opacity(0.8))
+                            )
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    
                     // Suggested activity from the engine  
                     if let suggestion = suggestion {
                         VStack(alignment: .leading, spacing: 8) {
