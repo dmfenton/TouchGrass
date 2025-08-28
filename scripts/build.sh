@@ -19,6 +19,7 @@ xcodebuild -project TouchGrass.xcodeproj \
     build \
     SYMROOT=build \
     CODE_SIGN_ENTITLEMENTS=TouchGrass.entitlements \
+    -allowProvisioningUpdates \
     -quiet
 
 if [ $? -eq 0 ]; then

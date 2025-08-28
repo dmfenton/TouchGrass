@@ -7,10 +7,27 @@ struct TouchGrassMode: View {
     @State private var completedActivity: String? = nil
     @State private var showExerciseMenu = false
     @State private var selectedExerciseSet: ExerciseSet? = nil
-    @State private var suggestion: SuggestedActivity? = nil
+    @State private var recommendations: ActivityRecommendations? = nil
+    
+    // Computed properties for easier access
+    private var suggestion: SuggestedActivity? {
+        recommendations?.activitySuggestion
+    }
+    
+    private var hydrationReminder: HydrationReminder? {
+        recommendations?.hydrationReminder
+    }
     @State private var weather: WeatherInfo? = nil
     
     private func closeMenuBar() {
+        // Close the Touch Grass panel window
+        for window in NSApplication.shared.windows {
+            if window.title == "Touch Grass" && window is NSPanel {
+                window.close()
+                break
+            }
+        }
+        // Also try to close key window as fallback
         NSApplication.shared.keyWindow?.close()
     }
     
@@ -515,18 +532,23 @@ struct TouchGrassMode: View {
                         NSLog("🔍 [Calendar] Manager is NIL")
                     }
                     
-                    // Log suggestion engine state
-                    if suggestion == nil, let engine = reminderManager.suggestionEngine {
-                        NSLog("🔍 [Suggestion] Engine exists, loading suggestion...")
+                    // Log recommendation engine state
+                    if recommendations == nil, let engine = reminderManager.suggestionEngine {
+                        NSLog("🔍 [Recommendations] Engine exists, loading recommendations...")
                         
-                        // Refresh weather cache before getting suggestion
+                        // Refresh weather cache before getting recommendations
                         engine.refreshWeatherCache()
                         
-                        suggestion = engine.getSuggestionSync()
-                        if let s = suggestion {
-                            NSLog("🔍 [Suggestion] Loaded: \(s.title) - \(s.reason)")
+                        recommendations = engine.getRecommendationsSync()
+                        if let recs = recommendations {
+                            NSLog("🔍 [Activity] Loaded: \(recs.activitySuggestion.title) - \(recs.activitySuggestion.reason)")
+                            if let hydration = recs.hydrationReminder {
+                                NSLog("🔍 [Hydration] \(hydration.message) (urgency: \(hydration.urgency))")
+                            } else {
+                                NSLog("🔍 [Hydration] No reminder needed")
+                            }
                         } else {
-                            NSLog("🔍 [Suggestion] getSuggestionSync returned NIL")
+                            NSLog("🔍 [Recommendations] getRecommendationsSync returned NIL")
                         }
                         
                         // Load weather with detailed logging
@@ -544,16 +566,61 @@ struct TouchGrassMode: View {
                                 NSLog("🔍 [Weather] getCurrentWeatherSync returned NIL even after refresh")
                             }
                         }
-                    } else if let existingSuggestion = suggestion {
-                        NSLog("🔍 [Suggestion] Already exists: \(existingSuggestion.title)")
+                    } else if let existingRecommendations = recommendations {
+                        NSLog("🔍 [Recommendations] Already exists: \(existingRecommendations.activitySuggestion.title)")
                     } else {
-                        NSLog("🔍 [Suggestion] Engine is NIL")
+                        NSLog("🔍 [Recommendations] Engine is NIL")
                     }
                     
                     NSLog("🔍 [TouchGrassMode] Main activities onAppear END")
                 }
             
                 Divider()
+                
+                // Hydration Reminder Section
+                if let hydrationReminder = hydrationReminder, hydrationReminder.shouldRemind {
+                    HStack {
+                        Image(systemName: "drop.circle.fill")
+                            .font(.system(size: 14))
+                            .foregroundColor(hydrationReminder.urgency > 0.7 ? .orange : Color(red: 0.0, green: 0.5, blue: 1.0))
+                        
+                        Text(hydrationReminder.message)
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundColor(.primary)
+                        
+                        Spacer()
+                        
+                        Button(action: { 
+                            reminderManager.logWater(1) 
+                        }) {
+                            HStack(spacing: 4) {
+                                Image(systemName: "plus.circle.fill")
+                                    .font(.system(size: 12))
+                                Text("Drink Water")
+                                    .font(.system(size: 12, weight: .medium))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(
+                                RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                                    .fill(hydrationReminder.urgency > 0.7 ? .orange : Color(red: 0.0, green: 0.5, blue: 1.0))
+                            )
+                        }
+                        .buttonStyle(.plain)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                            .fill(Color.blue.opacity(0.05))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: DesignSystem.CornerRadius.small)
+                            .stroke(Color.blue.opacity(0.2), lineWidth: 1)
+                    )
+                    .padding(.bottom, 8)
+                }
                 
                 // Water Tracking Section - consistent with main menu
                 HStack {
@@ -645,17 +712,18 @@ struct TouchGrassMode: View {
                 reminderManager.hasActiveReminder = false
             }
             
-            // Load activity suggestion
+            // Load activity recommendations
             if let engine = reminderManager.suggestionEngine {
-                NSLog("⚡ Loading suggestion from main onAppear...")
-                suggestion = engine.getSuggestionSync()
-                NSLog("⚡ Suggestion loaded: \(suggestion?.title ?? "nil")")
+                NSLog("⚡ Loading recommendations from main onAppear...")
+                recommendations = engine.getRecommendationsSync()
+                NSLog("⚡ Activity suggestion loaded: \(suggestion?.title ?? "nil")")
+                NSLog("⚡ Hydration reminder loaded: \(hydrationReminder?.message ?? "none")")
                 
                 // Also load weather
                 weather = engine.weather.getCurrentWeatherSync() 
                 NSLog("⚡ Weather loaded: \(weather?.temperature ?? -999)")
             } else {
-                NSLog("⚡ No suggestion engine available")
+                NSLog("⚡ No recommendation engine available")
             }
         }
         .animation(.easeInOut(duration: 0.2), value: showExerciseMenu)

@@ -32,6 +32,7 @@
 		5AE4088CAC6E40A7AC3AA5BE /* ExerciseWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */; };
 		5F3E90ABF93F4D83ACB779F1 /* ExerciseMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A8AD738AC814AF790A94260 /* ExerciseMenuView.swift */; };
 		744C689D67104C6A9A484C40 /* CompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADE492424B2249349A6FE13F /* CompletionView.swift */; };
+		76A7D10D0EAA7CAC2B76C721 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099B70BE8B9FC284AF5A70E1 /* StorageManager.swift */; };
 		796A4CB6894D43BB94D9855D /* CustomizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710F0FEBF32D491D8771CA1A /* CustomizationView.swift */; };
 		7C0590FAADF9492EA6C0155D /* TouchGrassOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */; };
 		7DBABD68CC57A73D9EF9CA8D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D121FB09A6584E914E4F677 /* Cocoa.framework */; };
@@ -75,6 +76,7 @@
 /* Begin PBXFileReference section */
 		024C45B060374A5BAEDAE1D3 /* ReminderManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ReminderManager.swift; path = Managers/ReminderManager.swift; sourceTree = "<group>"; };
 		04E567C3E89F54ED538D0AC4 /* EndToEndFlowTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EndToEndFlowTests.swift; path = TouchGrassTests/Integration/EndToEndFlowTests.swift; sourceTree = "<group>"; };
+		099B70BE8B9FC284AF5A70E1 /* StorageManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StorageManager.swift; path = Managers/StorageManager.swift; sourceTree = "<group>"; };
 		123BA605807E42D08D35BEE7 /* WorkHoursSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = WorkHoursSettingsView.swift; path = Views/WorkHoursSettingsView.swift; sourceTree = "<group>"; };
 		23B89137A67E55F54977A151 /* MenuBarIconTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MenuBarIconTests.swift; path = TouchGrassTests/Integration/MenuBarIconTests.swift; sourceTree = "<group>"; };
 		34360F1EF81742CDB0DD3EAE /* TouchGrassOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassOnboarding.swift; path = Views/TouchGrassOnboarding.swift; sourceTree = "<group>"; };
@@ -328,6 +330,7 @@
 				D08BCD7E197648CE8D8693F1 /* PreferencesStore.swift */,
 				F914D9DC3AA54CAC900E757B /* WaterTracker.swift */,
 				D2F9EA36C93D449D837FC0C3 /* WindowHelper.swift */,
+				099B70BE8B9FC284AF5A70E1 /* StorageManager.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -521,6 +524,7 @@
 				4F7587425D7E20AC6D699121 /* WeatherKitService.swift in Sources */,
 				4024B2A50D65E29B4DB326F1 /* ActivitySuggestionEngine.swift in Sources */,
 				E627ABBDE1FF7078955AEEFD /* TouchGrassModeWithSuggestion.swift in Sources */,
+				76A7D10D0EAA7CAC2B76C721 /* StorageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -93,6 +93,7 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
     }
     
     func showTouchGrassMode() {
+        hasActiveReminder = false  // Reset the reminder flag when manually triggered
         let touchGrassController = TouchGrassModeController()
         touchGrassController.show(manager: self)
     }
@@ -191,8 +192,8 @@ final class ReminderManager: ObservableObject, TimerServiceDelegate {
     
     // MARK: - Init
     init() {
-        // Initialize trackers with same UserDefaults suite
-        waterTracker = WaterTracker(userDefaults: defaults)
+        // Initialize trackers
+        waterTracker = WaterTracker()
         activityTracker = ActivityTracker(userDefaults: defaults)
         
         // Initialize suggestion engine
