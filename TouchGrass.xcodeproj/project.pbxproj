@@ -89,6 +89,7 @@
 		62A89115D30340428D810C63 /* OnboardingCustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = OnboardingCustomizationView.swift; path = Views/OnboardingCustomizationView.swift; sourceTree = "<group>"; };
 		70B179B93FB54F9FB0C53269 /* ActivityTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ActivityTracker.swift; path = Managers/ActivityTracker.swift; sourceTree = "<group>"; };
 		710F0FEBF32D491D8771CA1A /* CustomizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomizationView.swift; path = Views/CustomizationView.swift; sourceTree = "<group>"; };
+		74F1E75058F58DE7322DDCB7 /* StorageManagerTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StorageManagerTests.swift; path = TouchGrassTests/Integration/StorageManagerTests.swift; sourceTree = "<group>"; };
 		79311D2091E54488B94FFADC /* GrassIcon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GrassIcon.swift; path = Views/GrassIcon.swift; sourceTree = "<group>"; };
 		8002EDF1BCE94335BE811585 /* TouchGrassOnboardingController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TouchGrassOnboardingController.swift; path = Controllers/Onboarding/TouchGrassOnboardingController.swift; sourceTree = "<group>"; };
 		815B8462CE8F4E8E8676A8AA /* ExerciseWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ExerciseWindowController.swift; path = Controllers/ExerciseWindowController.swift; sourceTree = "<group>"; };
@@ -354,6 +355,7 @@
 				FAF1B9E059508BB23AAC46E6 /* ActivitySuggestionEngineTests.swift */,
 				377575A395C6E35DB808B46A /* TouchGrassModeIntegrationTests.swift */,
 				23B89137A67E55F54977A151 /* MenuBarIconTests.swift */,
+				74F1E75058F58DE7322DDCB7 /* StorageManagerTests.swift */,
 			);
 			name = Integration;
 			sourceTree = "<group>";
