@@ -34,10 +34,35 @@ class TouchGrassModeIntegrationTests: XCTestCase {
         XCTAssertFalse(suggestion.reason.isEmpty, "Suggestion reason should not be empty")
         XCTAssertNotNil(suggestion.type, "Suggestion should have a type")
         
-        // Verify type is one of expected values
-        let validTypes = ["touchGrass", "exercise", "posture", "meditation", "hydration", "water"]
+        // Verify type is one of expected values (hydration/water removed)
+        let validTypes = ["touchGrass", "exercise", "posture", "meditation", "breathing"]
         XCTAssertTrue(validTypes.contains(suggestion.type), 
                       "Suggestion type '\(suggestion.type)' should be valid")
+    }
+    
+    func testRecommendationsEngineReturnsRecommendations() {
+        guard let engine = reminderManager.suggestionEngine else {
+            XCTFail("Suggestion engine not available")
+            return
+        }
+        
+        let recommendations = engine.getRecommendationsSync()
+        
+        // Test activity suggestion
+        let suggestion = recommendations.activitySuggestion
+        XCTAssertNotNil(suggestion.title, "Activity suggestion should have a title")
+        XCTAssertFalse(suggestion.title.isEmpty, "Activity suggestion title should not be empty")
+        XCTAssertNotNil(suggestion.reason, "Activity suggestion should have a reason")
+        
+        // Test hydration reminder (may be nil if fully hydrated)
+        let hydrationReminder = recommendations.hydrationReminder
+        if let hydration = hydrationReminder {
+            XCTAssertNotNil(hydration.message, "Hydration reminder should have a message")
+            XCTAssertFalse(hydration.message.isEmpty, "Hydration message should not be empty")
+            XCTAssertGreaterThanOrEqual(hydration.urgency, 0.0, "Hydration urgency should be >= 0")
+            XCTAssertLessThanOrEqual(hydration.urgency, 1.0, "Hydration urgency should be <= 1")
+            XCTAssertGreaterThan(hydration.glassesNeeded, 0, "Should need at least 1 glass if reminding")
+        }
     }
     
     func testWeatherServiceIsAccessible() {
@@ -134,11 +159,7 @@ class TouchGrassModeIntegrationTests: XCTestCase {
         let suggestion = engine.getSuggestionSync()
         
         // Verify the suggestion makes sense based on the context
-        if suggestion.type == "hydration" {
-            XCTAssertTrue(suggestion.title.lowercased().contains("water") || 
-                         suggestion.title.lowercased().contains("hydrat"),
-                         "Hydration suggestion should mention water")
-        }
+        // Note: Hydration is now handled separately in HydrationReminder
         
         if suggestion.type == "touchGrass" {
             XCTAssertTrue(suggestion.title.lowercased().contains("outdoor") || 
@@ -169,5 +190,50 @@ class TouchGrassModeIntegrationTests: XCTestCase {
                 }
             }
         }
+    }
+    
+    // MARK: - Hydration Separation Tests
+    
+    func testHydrationSeparationFromActivitySuggestion() {
+        guard let engine = reminderManager.suggestionEngine else {
+            XCTFail("Suggestion engine not available")
+            return
+        }
+        
+        let recommendations = engine.getRecommendationsSync()
+        let activitySuggestion = recommendations.activitySuggestion
+        
+        // Activity suggestions should no longer include hydration types
+        let excludedTypes = ["hydration", "water"]
+        XCTAssertFalse(excludedTypes.contains(activitySuggestion.type), 
+                      "Activity suggestion should not be hydration type")
+        
+        // Activity suggestion should focus on movement/mental activities
+        let validActivityTypes = ["touchGrass", "exercise", "meditation", "breathing"]
+        XCTAssertTrue(validActivityTypes.contains(activitySuggestion.type), 
+                     "Activity suggestion should be a valid activity type")
+    }
+    
+    func testHydrationReminderLogic() {
+        guard let engine = reminderManager.suggestionEngine else {
+            XCTFail("Suggestion engine not available")
+            return
+        }
+        
+        let recommendations = engine.getRecommendationsSync()
+        
+        // Test that hydration reminder and activity suggestion are independent
+        XCTAssertNotNil(recommendations.activitySuggestion, "Should always have an activity suggestion")
+        
+        // Hydration reminder may or may not be present depending on water intake
+        let hydrationReminder = recommendations.hydrationReminder
+        if let hydration = hydrationReminder {
+            // If hydration reminder exists, validate its properties
+            XCTAssertGreaterThan(hydration.glassesNeeded, 0, "Should need glasses if reminding")
+            XCTAssertLessThan(hydration.currentIntake, hydration.dailyGoal, "Should be under goal if reminding")
+        }
+        
+        // Both can exist simultaneously - this is the key improvement
+        // User can be reminded to drink water AND do an exercise
     }
 }

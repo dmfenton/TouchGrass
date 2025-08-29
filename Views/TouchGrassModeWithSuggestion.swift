@@ -303,7 +303,7 @@ struct TouchGrassModeWithSuggestion: View {
         case .outdoor: return DesignSystem.Colors.primaryGreen
         case .physical, .posture: return .blue
         case .mental: return .purple
-        case .hydration: return Color(red: 0.0, green: 0.5, blue: 1.0)
+        // hydration category removed - now handled separately
         }
     }
     

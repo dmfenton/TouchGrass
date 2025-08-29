@@ -3,12 +3,27 @@ import SwiftUI
 
 // MARK: - Activity Suggestion Data Types
 
+// New: Separate hydration from activity suggestions
+struct ActivityRecommendations {
+    let hydrationReminder: HydrationReminder?
+    let activitySuggestion: SuggestedActivity
+}
+
+struct HydrationReminder {
+    let shouldRemind: Bool
+    let message: String
+    let urgency: Double  // 0-1 score
+    let glassesNeeded: Int
+    let currentIntake: Int
+    let dailyGoal: Int
+}
+
 enum ActivityCategory: String, CaseIterable {
     case outdoor
     case physical
     case mental
     case posture
-    case hydration
+    // Removed hydration - now handled separately
 }
 
 enum TimeWindow: String {
@@ -40,7 +55,7 @@ enum TimeWindow: String {
 }
 
 struct SuggestedActivity {
-    let type: String  // "touchGrass", "exercise", "water", "meditation"
+    let type: String  // "touchGrass", "exercise", "meditation", "breathing"
     let title: String
     let reason: String
     let duration: Int  // minutes
@@ -93,9 +108,7 @@ struct ActivityContext {
         return timeSinceLastBreak > 5400  // 90 minutes
     }
     
-    var needsHydration: Bool {
-        return waterIntake < (dailyWaterGoal * 2 / 3)  // Less than 2/3 of goal
-    }
+    // needsHydration removed - now handled in HydrationReminder
 }
 
 enum TimeOfDay {
@@ -128,6 +141,28 @@ class ActivitySuggestionEngine: ObservableObject {
     private let reminderManager: ReminderManager
     private let weatherService: WeatherServiceProtocol
     
+    // Simple file logging for debugging
+    private func logToFile(_ message: String) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm:ss.SSS"
+        let timestamp = formatter.string(from: Date())
+        let logMessage = "[\(timestamp)] \(message)\n"
+        
+        let logURL = URL(fileURLWithPath: "/tmp/touchgrass_debug.log")
+        
+        if let data = logMessage.data(using: .utf8) {
+            if FileManager.default.fileExists(atPath: logURL.path) {
+                if let fileHandle = try? FileHandle(forWritingTo: logURL) {
+                    fileHandle.seekToEndOfFile()
+                    fileHandle.write(data)
+                    fileHandle.closeFile()
+                }
+            } else {
+                try? data.write(to: logURL)
+            }
+        }
+    }
+    
     // Public getter for weather service
     var weather: WeatherServiceProtocol { weatherService }
     
@@ -150,14 +185,32 @@ class ActivitySuggestionEngine: ObservableObject {
     
     // MARK: - Public Interface
     
-    func getSuggestion() async -> SuggestedActivity {
+    // New: Get both hydration and activity recommendations
+    func getRecommendations() async -> ActivityRecommendations {
         let context = await buildContext()
-        return calculateBestActivity(for: context)
+        return ActivityRecommendations(
+            hydrationReminder: buildHydrationReminder(for: context),
+            activitySuggestion: calculateBestActivity(for: context)
+        )
+    }
+    
+    func getRecommendationsSync() -> ActivityRecommendations {
+        let context = buildContextSync()
+        return ActivityRecommendations(
+            hydrationReminder: buildHydrationReminder(for: context),
+            activitySuggestion: calculateBestActivity(for: context)
+        )
+    }
+    
+    // Legacy methods for backward compatibility
+    func getSuggestion() async -> SuggestedActivity {
+        let recommendations = await getRecommendations()
+        return recommendations.activitySuggestion
     }
     
     func getSuggestionSync() -> SuggestedActivity {
-        let context = buildContextSync()
-        return calculateBestActivity(for: context)
+        let recommendations = getRecommendationsSync()
+        return recommendations.activitySuggestion
     }
     
     // MARK: - Context Building
@@ -180,12 +233,27 @@ class ActivitySuggestionEngine: ObservableObject {
         var availableMinutes = Int(reminderManager.intervalMinutes)
         
         if let calManager = reminderManager.calendarManager {
-            if let nextEvent = calManager.nextEvent {
+            logToFile("🔍 [Calendar] Calendar manager exists")
+            logToFile("🔍 [Calendar] Has calendar access: \(calManager.hasCalendarAccess)")
+            logToFile("🔍 [Calendar] Is in meeting: \(calManager.isInMeeting)")
+            logToFile("🔍 [Calendar] Current event: \(calManager.currentEvent?.title ?? "none")")
+            logToFile("🔍 [Calendar] Next event: \(calManager.nextEvent?.title ?? "none")")
+            
+            // If currently in a meeting, suggest very short activities only
+            if calManager.isInMeeting {
+                availableMinutes = 2  // Max 2 minutes during meetings
+                logToFile("🔍 [Calendar] In meeting - limiting to 2 minutes")
+            } else if let nextEvent = calManager.nextEvent {
                 let timeUntilEvent = nextEvent.startDate.timeIntervalSince(now) / 60
                 availableMinutes = min(availableMinutes, Int(timeUntilEvent))
+                logToFile("🔍 [Calendar] Next meeting in \(Int(timeUntilEvent)) minutes")
             }
+        } else {
+            logToFile("🔍 [Calendar] No calendar manager - using conservative 5 minute limit")
+            availableMinutes = min(availableMinutes, 5)  // Conservative default when no calendar
         }
         availableMinutes = max(1, availableMinutes)  // At least 1 minute
+        logToFile("🔍 [Calendar] Final available minutes: \(availableMinutes)")
         
         // Get today's activities from activity tracker
         let todaysActivities = getTodaysActivities()
@@ -216,44 +284,105 @@ class ActivitySuggestionEngine: ObservableObject {
         return []
     }
     
+    // MARK: - Hydration Decision Logic
+    
+    private func buildHydrationReminder(for context: ActivityContext) -> HydrationReminder? {
+        let intake = context.waterIntake
+        let goal = context.dailyWaterGoal
+        
+        // Don't remind if already met goal
+        guard intake < goal else { return nil }
+        
+        let percentage = Double(intake) / Double(goal)
+        let glassesNeeded = goal - intake
+        
+        // Determine urgency and message based on progress
+        let (shouldRemind, message, urgency) = if percentage < 0.25 {
+            // Less than 25% of goal
+            (true, "Hydration low - you're at \(intake)/\(goal) glasses today", 0.9)
+        } else if percentage < 0.5 {
+            // Less than 50% of goal
+            (true, "Drink water - you're at \(intake)/\(goal) glasses today", 0.7)
+        } else if percentage < 0.75 {
+            // Less than 75% of goal
+            (true, "Keep hydrating - \(glassesNeeded) more glasses to go", 0.5)
+        } else {
+            // 75%+ of goal - gentle reminder only
+            (true, "Almost there - just \(glassesNeeded) more glass\(glassesNeeded == 1 ? "" : "es")", 0.3)
+        }
+        
+        return HydrationReminder(
+            shouldRemind: shouldRemind,
+            message: message,
+            urgency: urgency,
+            glassesNeeded: glassesNeeded,
+            currentIntake: intake,
+            dailyGoal: goal
+        )
+    }
+    
     // MARK: - Decision Tree Implementation
     
     func calculateBestActivity(for context: ActivityContext) -> SuggestedActivity {
+        // Debug logging for context
+        logToFile("🔍 [Recommendation] === CALCULATING BEST ACTIVITY ===")
+        logToFile("🔍 [Recommendation] Available minutes: \(context.availableMinutes)")
+        logToFile("🔍 [Recommendation] Time window: \(context.timeWindow)")
+        logToFile("🔍 [Recommendation] Weather: \(context.weather?.temperature ?? -999)°F, \(context.weather?.condition.rawValue ?? "none")")
+        logToFile("🔍 [Recommendation] Weather ideal for outdoor: \(context.weather?.isIdealForOutdoor ?? false)")
+        logToFile("🔍 [Recommendation] Next meeting: \(context.nextMeeting?.description ?? "none")")
+        logToFile("🔍 [Recommendation] Has been sitting long: \(context.hasBeenSittingLong)")
+        
         // 1. Time Constraint Filter - ALWAYS FIRST
         let availableActivities = filterByTimeConstraint(context: context)
+        logToFile("🔍 [Recommendation] Available activities after time filter: \(availableActivities.map { $0.title }.joined(separator: ", "))")
         
         // 2. Critical Time Windows
         if let critical = checkCriticalTimeWindows(context: context, activities: availableActivities) {
+            logToFile("🔍 [Recommendation] SELECTED: Critical Time Window - \(critical.title)")
             return critical
         }
+        logToFile("🔍 [Recommendation] No critical time windows detected")
         
         // 3. Weather Window of Opportunity
         if let weatherOptimal = checkWeatherOpportunity(context: context, activities: availableActivities) {
+            logToFile("🔍 [Recommendation] SELECTED: Weather Opportunity - \(weatherOptimal.title)")
             return weatherOptimal
         }
+        logToFile("🔍 [Recommendation] No weather opportunities")
         
         // 4. Critical Physical Needs
         if let physical = checkPhysicalNeeds(context: context, activities: availableActivities) {
+            logToFile("🔍 [Recommendation] SELECTED: Physical Needs - \(physical.title)")
             return physical
         }
+        logToFile("🔍 [Recommendation] No critical physical needs")
         
         // 5. Day Schedule Awareness
         if let scheduled = checkDaySchedule(context: context, activities: availableActivities) {
+            logToFile("🔍 [Recommendation] SELECTED: Day Schedule - \(scheduled.title)")
             return scheduled
         }
+        logToFile("🔍 [Recommendation] No day schedule priorities")
         
         // 6. Time-of-Day Optimization
         if let timeOptimal = checkTimeOfDay(context: context, activities: availableActivities) {
+            logToFile("🔍 [Recommendation] SELECTED: Time of Day - \(timeOptimal.title)")
             return timeOptimal
         }
+        logToFile("🔍 [Recommendation] No time-of-day optimizations")
         
         // 7. Variety & Balance
         if let balanced = checkVarietyBalance(context: context, activities: availableActivities) {
+            logToFile("🔍 [Recommendation] SELECTED: Variety Balance - \(balanced.title)")
             return balanced
         }
+        logToFile("🔍 [Recommendation] No variety balance needed")
         
         // 8. Smart Default
-        return getSmartDefault(context: context, activities: availableActivities)
+        let defaultActivity = getSmartDefault(context: context, activities: availableActivities)
+        logToFile("🔍 [Recommendation] SELECTED: Smart Default - \(defaultActivity.title)")
+        return defaultActivity
     }
     
     // MARK: - Decision Filters
@@ -281,7 +410,7 @@ class ActivitySuggestionEngine: ObservableObject {
             ))
             
         case .quick:
-            // Quick activities
+            // Quick activities (hydration removed - now handled separately)
             activities.append(SuggestedActivity(
                 type: "exercise",
                 title: "Desk Stretches",
@@ -291,11 +420,11 @@ class ActivitySuggestionEngine: ObservableObject {
                 exerciseSet: nil  // TODO: (#102) Add desk stretch set
             ))
             activities.append(SuggestedActivity(
-                type: "water",
-                title: "Hydration Break",
-                reason: "Stay hydrated",
+                type: "breathing",
+                title: "Deep Breathing",
+                reason: "Quick mental reset",
                 duration: 2,
-                category: .hydration
+                category: .mental
             ))
             
         case .standard:
@@ -423,17 +552,7 @@ class ActivitySuggestionEngine: ObservableObject {
             }
         }
         
-        // Hydration check
-        if context.needsHydration && context.timeWindow != .micro {
-            return SuggestedActivity(
-                type: "water",
-                title: "Hydration Break",
-                reason: "You're at \(context.waterIntake)/\(context.dailyWaterGoal) glasses today",
-                duration: 2,
-                category: .hydration,
-                urgency: 0.7
-            )
-        }
+        // Hydration is now handled separately in HydrationReminder
         
         return nil
     }
