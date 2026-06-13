@@ -7,6 +7,8 @@
 
 A smart macOS menu bar app that reminds you to take breaks, maintain good posture, stay hydrated, and literally touch grass. With calendar-aware scheduling and evidence-based exercises.
 
+Built by [Daniel Fenton](https://dmfenton.net). More projects and writing at [dmfenton.net](https://dmfenton.net).
+
 <img width="286" alt="Touch Grass Menu" src="https://github.com/user-attachments/assets/placeholder-menu.png">
 <img width="380" alt="Touch Grass Reminder" src="https://github.com/user-attachments/assets/placeholder-reminder.png">
 
