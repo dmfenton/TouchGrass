@@ -50,6 +50,7 @@ final class WellnessStore: ObservableObject {
     }
 
     func snooze(now: Date = Date()) {
+        pausedUntil = nil
         resumeAt = now.addingTimeInterval(600)
         persist()
         scheduleRefresh()
@@ -97,12 +98,14 @@ final class WellnessStore: ObservableObject {
     }
 
     func pauseToday(now: Date = Date(), calendar: Calendar = .current) {
+        resumeAt = nil
         pausedUntil = BreakPlan.nextDay(after: now, calendar: calendar)
         persist()
         scheduleRefresh()
     }
 
     func pause(minutes: Int?) {
+        resumeAt = nil
         pausedUntil = minutes.map { Date().addingTimeInterval(Double($0) * 60) }
         persist()
         scheduleRefresh()

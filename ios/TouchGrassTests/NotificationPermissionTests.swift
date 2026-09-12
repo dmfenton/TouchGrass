@@ -70,6 +70,29 @@ final class NotificationPermissionTests: XCTestCase {
         XCTAssertEqual(restored.today.breaks, 1)
     }
 
+    @MainActor
+    func testLatestDeferralChoiceReplacesPreviousChoice() async {
+        let name = UUID().uuidString
+        let defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        let store = WellnessStore(defaults: defaults, notifications: FakeNotifications())
+        store.pause(minutes: 60)
+        store.snooze()
+        XCTAssertNil(store.pausedUntil)
+        XCTAssertNotNil(store.resumeAt)
+        store.pause(minutes: nil)
+        XCTAssertNil(store.resumeAt)
+        XCTAssertNil(store.pausedUntil)
+        store.snooze()
+        store.pauseToday()
+        XCTAssertNil(store.resumeAt)
+        XCTAssertNotNil(store.pausedUntil)
+        await store.refresh()
+        let restored = WellnessStore(defaults: defaults, notifications: FakeNotifications())
+        XCTAssertNil(restored.resumeAt)
+        XCTAssertEqual(restored.pausedUntil, store.pausedUntil)
+    }
+
     func testPauseTodayUsesLocalMidnightAcrossDaylightSaving() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "America/New_York")!
