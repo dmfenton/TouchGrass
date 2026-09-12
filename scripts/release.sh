@@ -126,26 +126,12 @@ echo "$VERSION" > VERSION
 
 # 4. Build the app with code signing
 print_status "Building and signing the app..."
-if [ -f "Local.xcconfig" ]; then
-    # Build with local code signing configuration
-    xcodebuild -project TouchGrass.xcodeproj \
-               -scheme TouchGrass \
-               -configuration Release \
-               -xcconfig Local.xcconfig \
-               clean build \
-               SYMROOT=build \
-               -quiet
-    print_status "App built with code signing"
-else
-    print_warning "Local.xcconfig not found. Building without code signing."
-    print_warning "The app will not be properly signed for distribution."
-    xcodebuild -project TouchGrass.xcodeproj \
-               -scheme TouchGrass \
-               -configuration Release \
-               clean build \
-               SYMROOT=build \
-               -quiet
-fi
+# Fail closed: never produce an unsigned installable release.
+SIGNING_IDENTITY="Developer ID Application: Daniel Myer Fenton (PG5D259899)"
+security find-identity -v -p codesigning | grep -F "$SIGNING_IDENTITY" >/dev/null
+xcodebuild -project TouchGrass.xcodeproj -scheme TouchGrass -configuration Release \
+    clean build SYMROOT=build CODE_SIGN_IDENTITY="$SIGNING_IDENTITY" \
+    DEVELOPMENT_TEAM=PG5D259899 CODE_SIGN_STYLE=Manual -quiet
 
 # 5. Verify the app was built
 if [ ! -d "build/Release/Touch Grass.app" ]; then
@@ -170,6 +156,11 @@ else
     print_error "Audio files directory not found: Assets/Audio/Exercises"
     exit 1
 fi
+
+# Resource copies invalidate a prior seal; sign only after all resources are final.
+codesign --force --options runtime --timestamp --sign "$SIGNING_IDENTITY" \
+    --entitlements TouchGrass.entitlements "build/Release/Touch Grass.app"
+python3 scripts/verify_native_signature.py "build/Release/Touch Grass.app" --platform macos
 
 # 6. Create DMG installer
 print_status "Creating DMG installer..."

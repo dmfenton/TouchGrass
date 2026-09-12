@@ -1,0 +1,20 @@
+version = 1
+name = "touchgrass"
+
+[setup]
+script = "bash scripts/codex-worktree-setup.sh"
+
+[[actions]]
+name = "iOS Checks"
+icon = "check"
+command = "bash scripts/ios-check.sh"
+
+[[actions]]
+name = "Generate iOS Project"
+icon = "tool"
+command = "xcodegen generate --spec ios/project.yml"
+
+[[actions]]
+name = "Strict iOS Lint"
+icon = "check"
+command = "swiftlint lint --strict --no-cache --config ios/.swiftlint.yml --quiet"

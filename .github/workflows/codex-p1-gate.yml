@@ -1,0 +1,51 @@
+name: Codex review gate
+run-name: 'Codex review gate PR #${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || 0 }}'
+
+on:
+  schedule:
+    - cron: '17 * * * *'
+  push:
+    branches: [main]
+  pull_request_target:
+    types: [opened, reopened, synchronize, ready_for_review, edited, closed]
+  pull_request_review:
+    types: [submitted, edited, dismissed]
+  pull_request_review_comment:
+    types: [created, edited, deleted]
+  issue_comment:
+    types: [created, edited, deleted]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Pull request number to audit
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+  issues: read
+  pull-requests: read
+  statuses: write
+
+jobs:
+  enforce:
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request_target' &&
+        (github.event.action != 'edited' || github.event.changes.base.ref)) ||
+      (github.event_name == 'pull_request_review' &&
+        contains(fromJSON('["chatgpt-codex-connector","chatgpt-codex-connector[bot]"]'), github.event.review.user.login)) ||
+      (github.event_name == 'pull_request_review_comment' &&
+        contains(fromJSON('["chatgpt-codex-connector","chatgpt-codex-connector[bot]"]'), github.event.comment.user.login)) ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
+        (contains(fromJSON('["chatgpt-codex-connector","chatgpt-codex-connector[bot]"]'), github.event.comment.user.login) ||
+          (contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
+            (contains(github.event.comment.body, '@codex review') ||
+              contains(github.event.changes.body.from, '@codex review')))))
+    uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@92b9664657ea5cd0b01fc492f83f586ad34cd4c0
+    with:
+      pr_number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || '0' }}
+      runner_labels_json: '["ubuntu-latest"]'

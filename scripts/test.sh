@@ -3,7 +3,7 @@
 # Touch Grass Test Runner
 # Uses standard xcodebuild test command
 
-set -e
+set -euo pipefail
 
 # Colors for output
 RED='\033[0;31m'
@@ -48,13 +48,15 @@ if [ "$VERBOSE" = true ]; then
         -project TouchGrass.xcodeproj \
         -scheme TouchGrassTests \
         -destination 'platform=macOS' \
+        CODE_SIGNING_ALLOWED=NO \
         -resultBundlePath build/test-results \
-        | xcpretty --test --color || true
+        | xcpretty --test --color
 else
     xcodebuild test \
         -project TouchGrass.xcodeproj \
         -scheme TouchGrassTests \
         -destination 'platform=macOS' \
+        CODE_SIGNING_ALLOWED=NO \
         -quiet \
         -resultBundlePath build/test-results
 fi

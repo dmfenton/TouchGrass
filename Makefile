@@ -62,7 +62,7 @@ clean:
 	@echo "✅ Clean complete"
 
 # Run linting
-lint:
+lint: ios-lint
 	@echo "🧹 Running SwiftLint..."
 	@swiftlint lint --quiet || (echo "❌ Lint failed. Run 'make lint-fix' to auto-fix some violations" && exit 1)
 	@echo "✅ Lint passed!"
@@ -214,3 +214,12 @@ audio-check:
 	@scripts/generate_exercise_audio.sh --check
 
 .DEFAULT_GOAL := help
+.PHONY: ios-setup ios-check ios-lint
+ios-setup:
+	@bash scripts/codex-worktree-setup.sh
+
+ios-check:
+	@bash scripts/ios-check.sh
+
+ios-lint:
+	@swiftlint lint --strict --no-cache --config ios/.swiftlint.yml --quiet

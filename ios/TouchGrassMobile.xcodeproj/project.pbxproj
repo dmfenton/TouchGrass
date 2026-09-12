@@ -1,0 +1,610 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		024A4D4640D2A28A6B9FA3C7 /* FentonDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 32D23DB18DE674C9B6D278D1 /* FentonDesignSystem */; };
+		38DF5EAD2B95826716A6EAF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A6C83EF2F25218931F97BD2 /* Assets.xcassets */; };
+		6E4DF70B68AC11862A7EB16A /* BreakPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9097208F5FEC95CDDA4EF2B /* BreakPlan.swift */; };
+		77C26AC3ABA5C4EEA7791927 /* TouchGrassFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */; };
+		7DBA15BF8AC46265B2F45C6F /* OutdoorWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE96498E1064431EFA87171 /* OutdoorWeather.swift */; };
+		887B9C9B09A359154DAAFF38 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */; };
+		8998467677395D2987EEFBD3 /* WellnessStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FD834CF052CB38B562BE94 /* WellnessStore.swift */; };
+		9C65BE24D25B008AB363D2FD /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F41125CACB6A665714DEB0 /* PreferencesView.swift */; };
+		9DBEFC58CC028E40D6BBD58A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9C3675FD0806AC79807C135A /* PrivacyInfo.xcprivacy */; };
+		A84DAB782EB7F027FB7375FC /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467EAD5B587377BCE79334BD /* RootView.swift */; };
+		AF07C24C15D0B0FF81D882C8 /* ExerciseLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68369748C308600F8B295D40 /* ExerciseLibraryView.swift */; };
+		C08E7AB31AA27D052904C53A /* TouchGrassMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEAAF7D4A27BDEA8B0C52D6 /* TouchGrassMobileApp.swift */; };
+		CE658CC884D47434DE38112E /* NotificationPermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */; };
+		DCE2F5DB214190B424D30A34 /* BreakPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */; };
+		F50FAA02F71FE31C2BC0CA06 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B20618C7466726139EFC6D /* Exercise.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		370B3702C9BF847A510A40ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA1A6CD41D8EA25E3AA678E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CDFD2791E77E6FBF3887C32B;
+			remoteInfo = TouchGrassMobile;
+		};
+		FC73D981F00557AFF34279DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA1A6CD41D8EA25E3AA678E2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = CDFD2791E77E6FBF3887C32B;
+			remoteInfo = TouchGrassMobile;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		05B20618C7466726139EFC6D /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
+		0BEAAF7D4A27BDEA8B0C52D6 /* TouchGrassMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassMobileApp.swift; sourceTree = "<group>"; };
+		27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
+		3265C25191A0E12E9B3D4547 /* TouchGrassMobileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TouchGrassMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		467EAD5B587377BCE79334BD /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPlanTests.swift; sourceTree = "<group>"; };
+		68369748C308600F8B295D40 /* ExerciseLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseLibraryView.swift; sourceTree = "<group>"; };
+		6A6C83EF2F25218931F97BD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		8E7F6FC08735E70ECC37AFB9 /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = ../vendor/platform.dmfenton.net/swift; sourceTree = SOURCE_ROOT; };
+		94F7349397E6BE54090D426A /* TouchGrass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TouchGrass.entitlements; sourceTree = "<group>"; };
+		981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassFlowTests.swift; sourceTree = "<group>"; };
+		9C3675FD0806AC79807C135A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		A128CABECF0DD8F90E0A63E0 /* TouchGrassMobileUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TouchGrassMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A2FD834CF052CB38B562BE94 /* WellnessStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WellnessStore.swift; sourceTree = "<group>"; };
+		A9097208F5FEC95CDDA4EF2B /* BreakPlan.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPlan.swift; sourceTree = "<group>"; };
+		BCF21BB3CB69DC9C676AAFE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D9F41125CACB6A665714DEB0 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		DAE96498E1064431EFA87171 /* OutdoorWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdoorWeather.swift; sourceTree = "<group>"; };
+		EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionTests.swift; sourceTree = "<group>"; };
+		F9929AE872C75A67254D47CA /* TouchGrassMobile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TouchGrassMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		198EF1738B016EC3690CDF4C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				024A4D4640D2A28A6B9FA3C7 /* FentonDesignSystem in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		02877A113F4AD57D26386022 /* TouchGrass */ = {
+			isa = PBXGroup;
+			children = (
+				6A6C83EF2F25218931F97BD2 /* Assets.xcassets */,
+				A9097208F5FEC95CDDA4EF2B /* BreakPlan.swift */,
+				68369748C308600F8B295D40 /* ExerciseLibraryView.swift */,
+				BCF21BB3CB69DC9C676AAFE3 /* Info.plist */,
+				27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */,
+				DAE96498E1064431EFA87171 /* OutdoorWeather.swift */,
+				D9F41125CACB6A665714DEB0 /* PreferencesView.swift */,
+				9C3675FD0806AC79807C135A /* PrivacyInfo.xcprivacy */,
+				467EAD5B587377BCE79334BD /* RootView.swift */,
+				94F7349397E6BE54090D426A /* TouchGrass.entitlements */,
+				0BEAAF7D4A27BDEA8B0C52D6 /* TouchGrassMobileApp.swift */,
+				A2FD834CF052CB38B562BE94 /* WellnessStore.swift */,
+			);
+			path = TouchGrass;
+			sourceTree = "<group>";
+		};
+		612E0AE418DFE86951710AA1 = {
+			isa = PBXGroup;
+			children = (
+				F2D1076A1BE666C7AAD2F151 /* Models */,
+				6ABB7E172E2400F8F2E5FED0 /* Packages */,
+				02877A113F4AD57D26386022 /* TouchGrass */,
+				96484AC5F1AA023A3BFAB194 /* TouchGrassTests */,
+				93E504BF791567A837AD9571 /* TouchGrassUITests */,
+				EAE8B9EB1D4B99F69F51602E /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		6ABB7E172E2400F8F2E5FED0 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				8E7F6FC08735E70ECC37AFB9 /* swift */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		93E504BF791567A837AD9571 /* TouchGrassUITests */ = {
+			isa = PBXGroup;
+			children = (
+				981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */,
+			);
+			path = TouchGrassUITests;
+			sourceTree = "<group>";
+		};
+		96484AC5F1AA023A3BFAB194 /* TouchGrassTests */ = {
+			isa = PBXGroup;
+			children = (
+				4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */,
+				EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */,
+			);
+			path = TouchGrassTests;
+			sourceTree = "<group>";
+		};
+		EAE8B9EB1D4B99F69F51602E /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F9929AE872C75A67254D47CA /* TouchGrassMobile.app */,
+				3265C25191A0E12E9B3D4547 /* TouchGrassMobileTests.xctest */,
+				A128CABECF0DD8F90E0A63E0 /* TouchGrassMobileUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		F2D1076A1BE666C7AAD2F151 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				05B20618C7466726139EFC6D /* Exercise.swift */,
+			);
+			name = Models;
+			path = ../Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1287DD38FFE393FE88DC3967 /* TouchGrassMobileTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 06C2F64DD740BC9232CF132D /* Build configuration list for PBXNativeTarget "TouchGrassMobileTests" */;
+			buildPhases = (
+				C35D05B44876B568D628699D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6901F11BFF63C6A58BA6E89D /* PBXTargetDependency */,
+			);
+			name = TouchGrassMobileTests;
+			packageProductDependencies = (
+			);
+			productName = TouchGrassMobileTests;
+			productReference = 3265C25191A0E12E9B3D4547 /* TouchGrassMobileTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6F7738FE38EB4F8CC8B9B644 /* TouchGrassMobileUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 490B76489E088C55D805447A /* Build configuration list for PBXNativeTarget "TouchGrassMobileUITests" */;
+			buildPhases = (
+				7EF2384338131C89C54BFFAF /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				86DAF5FF189D592FBE55BE1D /* PBXTargetDependency */,
+			);
+			name = TouchGrassMobileUITests;
+			packageProductDependencies = (
+			);
+			productName = TouchGrassMobileUITests;
+			productReference = A128CABECF0DD8F90E0A63E0 /* TouchGrassMobileUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		CDFD2791E77E6FBF3887C32B /* TouchGrassMobile */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 039329A972072D9A771AA90E /* Build configuration list for PBXNativeTarget "TouchGrassMobile" */;
+			buildPhases = (
+				189D48641B3977D734FEA72B /* Sources */,
+				A66C9578E9282D0011E0C860 /* Resources */,
+				198EF1738B016EC3690CDF4C /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = TouchGrassMobile;
+			packageProductDependencies = (
+				32D23DB18DE674C9B6D278D1 /* FentonDesignSystem */,
+			);
+			productName = TouchGrassMobile;
+			productReference = F9929AE872C75A67254D47CA /* TouchGrassMobile.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		EA1A6CD41D8EA25E3AA678E2 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					1287DD38FFE393FE88DC3967 = {
+						DevelopmentTeam = PG5D259899;
+						ProvisioningStyle = Automatic;
+					};
+					6F7738FE38EB4F8CC8B9B644 = {
+						DevelopmentTeam = PG5D259899;
+						ProvisioningStyle = Automatic;
+						TestTargetID = CDFD2791E77E6FBF3887C32B;
+					};
+					CDFD2791E77E6FBF3887C32B = {
+						DevelopmentTeam = PG5D259899;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 815658F31A4795AD87AA0495 /* Build configuration list for PBXProject "TouchGrassMobile" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 612E0AE418DFE86951710AA1;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				F0E8E6ED52585EF48E09731D /* XCLocalSwiftPackageReference "../vendor/platform.dmfenton.net/swift" */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = EAE8B9EB1D4B99F69F51602E /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				CDFD2791E77E6FBF3887C32B /* TouchGrassMobile */,
+				1287DD38FFE393FE88DC3967 /* TouchGrassMobileTests */,
+				6F7738FE38EB4F8CC8B9B644 /* TouchGrassMobileUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A66C9578E9282D0011E0C860 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				38DF5EAD2B95826716A6EAF0 /* Assets.xcassets in Resources */,
+				9DBEFC58CC028E40D6BBD58A /* PrivacyInfo.xcprivacy in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		189D48641B3977D734FEA72B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6E4DF70B68AC11862A7EB16A /* BreakPlan.swift in Sources */,
+				F50FAA02F71FE31C2BC0CA06 /* Exercise.swift in Sources */,
+				AF07C24C15D0B0FF81D882C8 /* ExerciseLibraryView.swift in Sources */,
+				887B9C9B09A359154DAAFF38 /* NotificationScheduler.swift in Sources */,
+				7DBA15BF8AC46265B2F45C6F /* OutdoorWeather.swift in Sources */,
+				9C65BE24D25B008AB363D2FD /* PreferencesView.swift in Sources */,
+				A84DAB782EB7F027FB7375FC /* RootView.swift in Sources */,
+				C08E7AB31AA27D052904C53A /* TouchGrassMobileApp.swift in Sources */,
+				8998467677395D2987EEFBD3 /* WellnessStore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7EF2384338131C89C54BFFAF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				77C26AC3ABA5C4EEA7791927 /* TouchGrassFlowTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C35D05B44876B568D628699D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DCE2F5DB214190B424D30A34 /* BreakPlanTests.swift in Sources */,
+				CE658CC884D47434DE38112E /* NotificationPermissionTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6901F11BFF63C6A58BA6E89D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CDFD2791E77E6FBF3887C32B /* TouchGrassMobile */;
+			targetProxy = FC73D981F00557AFF34279DA /* PBXContainerItemProxy */;
+		};
+		86DAF5FF189D592FBE55BE1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = CDFD2791E77E6FBF3887C32B /* TouchGrassMobile */;
+			targetProxy = 370B3702C9BF847A510A40ED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		585776364DC7133ABDA8D350 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = PG5D259899;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 5.10;
+			};
+			name = Release;
+		};
+		5CB0A21B55DD739AC1816208 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TouchGrassMobile;
+			};
+			name = Release;
+		};
+		5CBB6501CD67208B54ECE713 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = TouchGrassMobile;
+			};
+			name = Debug;
+		};
+		8FFB582896856C92994659B8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TouchGrass/TouchGrass.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = TouchGrass/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9985E5B8FB7A6A1799333738 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = PG5D259899;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_TREAT_WARNINGS_AS_ERRORS = YES;
+				SWIFT_VERSION = 5.10;
+			};
+			name = Debug;
+		};
+		A342FE8E1DCA72DB5EA1C2DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = TouchGrass/TouchGrass.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				INFOPLIST_FILE = TouchGrass/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		E821C0407F5F01EDF07EC002 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TouchGrassMobile.app/TouchGrassMobile";
+			};
+			name = Debug;
+		};
+		F3BEC74EF9D49B09F887F2C3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.dmfenton.TouchGrass.tests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TouchGrassMobile.app/TouchGrassMobile";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		039329A972072D9A771AA90E /* Build configuration list for PBXNativeTarget "TouchGrassMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8FFB582896856C92994659B8 /* Debug */,
+				A342FE8E1DCA72DB5EA1C2DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		06C2F64DD740BC9232CF132D /* Build configuration list for PBXNativeTarget "TouchGrassMobileTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E821C0407F5F01EDF07EC002 /* Debug */,
+				F3BEC74EF9D49B09F887F2C3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		490B76489E088C55D805447A /* Build configuration list for PBXNativeTarget "TouchGrassMobileUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CBB6501CD67208B54ECE713 /* Debug */,
+				5CB0A21B55DD739AC1816208 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		815658F31A4795AD87AA0495 /* Build configuration list for PBXProject "TouchGrassMobile" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9985E5B8FB7A6A1799333738 /* Debug */,
+				585776364DC7133ABDA8D350 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		F0E8E6ED52585EF48E09731D /* XCLocalSwiftPackageReference "../vendor/platform.dmfenton.net/swift" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../vendor/platform.dmfenton.net/swift;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		32D23DB18DE674C9B6D278D1 /* FentonDesignSystem */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FentonDesignSystem;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = EA1A6CD41D8EA25E3AA678E2 /* Project object */;
+}

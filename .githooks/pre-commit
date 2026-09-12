@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+cd "$(git rev-parse --show-toplevel)"
+git diff --cached --check
+swiftlint lint --strict --quiet --no-cache
+swiftlint lint --strict --quiet --no-cache --config ios/.swiftlint.yml
+python3 scripts/check_native_signing.py
+if command -v actionlint >/dev/null; then
+  actionlint .github/workflows/*.yml
+fi
+# XcodeGen owns iOS membership. Never inject iOS source files into the Mac target.

@@ -10,6 +10,9 @@ if [ ! -f "Local.xcconfig" ]; then
     exit 1
 fi
 
+set -euo pipefail
+SIGNING_IDENTITY="Developer ID Application: Daniel Myer Fenton (PG5D259899)"
+security find-identity -v -p codesigning | grep -F "$SIGNING_IDENTITY" >/dev/null
 echo "Building Touch Grass..."
 
 xcodebuild -project TouchGrass.xcodeproj \
@@ -19,6 +22,7 @@ xcodebuild -project TouchGrass.xcodeproj \
     build \
     SYMROOT=build \
     CODE_SIGN_ENTITLEMENTS=TouchGrass.entitlements \
+    CODE_SIGN_IDENTITY="$SIGNING_IDENTITY" \
     -allowProvisioningUpdates \
     -quiet
 
@@ -40,7 +44,7 @@ if [ $? -eq 0 ]; then
                         # Create flattened name: exercise_audiofile.mp3
                         flat_name="${exercise_name}_${base_name}.mp3"
                         cp "$audio_file" "$APP_RESOURCES/$flat_name"
-                        ((AUDIO_COUNT++))
+                        AUDIO_COUNT=$((AUDIO_COUNT + 1))
                     fi
                 done
             fi
@@ -50,6 +54,10 @@ if [ $? -eq 0 ]; then
         echo "⚠️  No audio files found to copy"
     fi
     
+    codesign --force --options runtime --timestamp --sign "$SIGNING_IDENTITY" \
+        --entitlements TouchGrass.entitlements "build/Release/Touch Grass.app"
+    python3 scripts/verify_native_signature.py "build/Release/Touch Grass.app" --platform macos
+
     # Kill existing app if running
     killall "Touch Grass" 2>/dev/null || true
     
