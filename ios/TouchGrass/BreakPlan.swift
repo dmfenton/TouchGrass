@@ -16,6 +16,10 @@ struct BusyPeriod: Equatable {
 }
 
 enum BreakPlan {
+    static func nextDay(after date: Date, calendar: Calendar = .current) -> Date? {
+        calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: date))
+    }
+
     /// A bounded rolling schedule. Refresh on foreground and calendar changes.
     static func dates(
         after now: Date, preferences: BreakPreferences, busy: [BusyPeriod],

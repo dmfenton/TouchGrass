@@ -9,11 +9,13 @@ struct PreferencesView: View {
         NavigationStack {
             Form {
                 Section("Break reminders") {
-                    Toggle("Reminders enabled", isOn: $store.preferences.remindersEnabled)
+                    Toggle("Reminders enabled", isOn: Binding(
+                        get: { store.remindersActive },
+                        set: { enabled in Task { await store.setRemindersEnabled(enabled) } }
+                    ))
                     Picker("Every", selection: $store.preferences.intervalMinutes) {
                         ForEach([15, 30, 45, 60, 90], id: \.self) { Text("\($0) minutes").tag($0) }
                     }
-                    Button("Allow notifications") { Task { await store.enableNotifications() } }
                     if store.notificationStatus == .denied {
                         Button("Open notification settings") {
                             if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }

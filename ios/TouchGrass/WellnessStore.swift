@@ -13,10 +13,11 @@ final class WellnessStore: ObservableObject {
     @Published var pausedUntil: Date?
     private let defaults: UserDefaults
     private let events = EKEventStore()
-    private let notifications = UNUserNotificationCenter.current()
+    private let notifications: NotificationScheduling
     private var refreshTask: Task<Void, Never>?
 
-    init(defaults: UserDefaults = .standard) {
+    init(defaults: UserDefaults = .standard, notifications: NotificationScheduling? = nil) {
+        self.notifications = notifications ?? DeviceNotifications()
         self.defaults = ProcessInfo.processInfo.arguments.contains("--ui-testing")
             ? UserDefaults(suiteName: "TouchGrass.UITests") ?? defaults : defaults
         if ProcessInfo.processInfo.arguments.contains("--reset-ui-tests") {
@@ -27,6 +28,10 @@ final class WellnessStore: ObservableObject {
         history = self.defaults.data(forKey: "mobile.history")
             .flatMap { try? JSONDecoder().decode(ProgressHistory.self, from: $0) } ?? ProgressHistory()
         pausedUntil = self.defaults.object(forKey: "mobile.pausedUntil") as? Date
+    }
+
+    var remindersActive: Bool {
+        preferences.remindersEnabled && (notificationStatus == .authorized || notificationStatus == .provisional)
     }
 
     var today: DailyProgress { history.today() }
@@ -47,7 +52,7 @@ final class WellnessStore: ObservableObject {
 
     func enableNotifications() async {
         do {
-            preferences.remindersEnabled = try await notifications.requestAuthorization(options: [.alert, .sound])
+            preferences.remindersEnabled = try await notifications.requestAuthorization()
             if !preferences.remindersEnabled { message = "Allow notifications in Settings to receive break reminders." }
             persist()
             await refresh()
@@ -65,6 +70,19 @@ final class WellnessStore: ObservableObject {
             persist()
             await refresh()
         } catch { message = "Calendars could not be read. Please try again." }
+    }
+
+    func setRemindersEnabled(_ enabled: Bool) async {
+        if enabled { await enableNotifications() } else {
+            preferences.remindersEnabled = false
+            await refresh()
+        }
+    }
+
+    func pauseToday(now: Date = Date(), calendar: Calendar = .current) {
+        pausedUntil = BreakPlan.nextDay(after: now, calendar: calendar)
+        persist()
+        scheduleRefresh()
     }
 
     func pause(minutes: Int?) {
@@ -89,7 +107,7 @@ final class WellnessStore: ObservableObject {
 
     private func rebuildSchedule() async {
         persist()
-        notificationStatus = await notifications.notificationSettings().authorizationStatus
+        notificationStatus = await notifications.authorizationStatus()
         guard !Task.isCancelled else { return }
         objectWillChange.send()
         let now = Date()
@@ -109,7 +127,7 @@ final class WellnessStore: ObservableObject {
         let dates = allowed ? BreakPlan.dates(
             after: now, preferences: preferences, busy: busy, pausedUntil: pausedUntil
         ) : []
-        notifications.removeAllPendingNotificationRequests()
+        notifications.removeAllPending()
         nextBreak = nil
         do {
             for date in dates {

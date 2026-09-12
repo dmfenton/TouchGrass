@@ -49,7 +49,7 @@ struct TodayView: View {
                                 Button("Snooze 10 min") { store.pause(minutes: 10) }
                                 Menu("Pause") {
                                     Button("For one hour") { store.pause(minutes: 60) }
-                                    Button("For today") { store.pause(minutes: 24 * 60) }
+                                    Button("For today") { store.pauseToday() }
                                     Button("Resume now") { store.pause(minutes: nil) }
                                 }
                             }.buttonStyle(.bordered)
@@ -79,7 +79,7 @@ struct TodayView: View {
                     FentonCard {
                         Label("\(store.today.breaks) breaks · \(store.streak) day streak", systemImage: "checkmark.circle")
                     }
-                    if !store.preferences.remindersEnabled {
+                    if !store.remindersActive {
                         Button("Enable break reminders") { Task { await store.enableNotifications() } }
                             .buttonStyle(.bordered)
                     }

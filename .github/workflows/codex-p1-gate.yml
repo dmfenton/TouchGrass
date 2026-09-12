@@ -48,4 +48,4 @@ jobs:
     uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@92b9664657ea5cd0b01fc492f83f586ad34cd4c0
     with:
       pr_number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || '0' }}
-      runner_labels_json: '["self-hosted","lilserver"]'
+      runner_labels_json: '["ubuntu-latest"]'

@@ -12,12 +12,14 @@
 		6E4DF70B68AC11862A7EB16A /* BreakPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9097208F5FEC95CDDA4EF2B /* BreakPlan.swift */; };
 		77C26AC3ABA5C4EEA7791927 /* TouchGrassFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */; };
 		7DBA15BF8AC46265B2F45C6F /* OutdoorWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE96498E1064431EFA87171 /* OutdoorWeather.swift */; };
+		887B9C9B09A359154DAAFF38 /* NotificationScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */; };
 		8998467677395D2987EEFBD3 /* WellnessStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2FD834CF052CB38B562BE94 /* WellnessStore.swift */; };
 		9C65BE24D25B008AB363D2FD /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9F41125CACB6A665714DEB0 /* PreferencesView.swift */; };
 		9DBEFC58CC028E40D6BBD58A /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 9C3675FD0806AC79807C135A /* PrivacyInfo.xcprivacy */; };
 		A84DAB782EB7F027FB7375FC /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 467EAD5B587377BCE79334BD /* RootView.swift */; };
 		AF07C24C15D0B0FF81D882C8 /* ExerciseLibraryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68369748C308600F8B295D40 /* ExerciseLibraryView.swift */; };
 		C08E7AB31AA27D052904C53A /* TouchGrassMobileApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BEAAF7D4A27BDEA8B0C52D6 /* TouchGrassMobileApp.swift */; };
+		CE658CC884D47434DE38112E /* NotificationPermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */; };
 		DCE2F5DB214190B424D30A34 /* BreakPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */; };
 		F50FAA02F71FE31C2BC0CA06 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B20618C7466726139EFC6D /* Exercise.swift */; };
 /* End PBXBuildFile section */
@@ -42,6 +44,7 @@
 /* Begin PBXFileReference section */
 		05B20618C7466726139EFC6D /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		0BEAAF7D4A27BDEA8B0C52D6 /* TouchGrassMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassMobileApp.swift; sourceTree = "<group>"; };
+		27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		3265C25191A0E12E9B3D4547 /* TouchGrassMobileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TouchGrassMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		467EAD5B587377BCE79334BD /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPlanTests.swift; sourceTree = "<group>"; };
@@ -57,6 +60,7 @@
 		BCF21BB3CB69DC9C676AAFE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D9F41125CACB6A665714DEB0 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		DAE96498E1064431EFA87171 /* OutdoorWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OutdoorWeather.swift; sourceTree = "<group>"; };
+		EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationPermissionTests.swift; sourceTree = "<group>"; };
 		F9929AE872C75A67254D47CA /* TouchGrassMobile.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = TouchGrassMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -79,6 +83,7 @@
 				A9097208F5FEC95CDDA4EF2B /* BreakPlan.swift */,
 				68369748C308600F8B295D40 /* ExerciseLibraryView.swift */,
 				BCF21BB3CB69DC9C676AAFE3 /* Info.plist */,
+				27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */,
 				DAE96498E1064431EFA87171 /* OutdoorWeather.swift */,
 				D9F41125CACB6A665714DEB0 /* PreferencesView.swift */,
 				9C3675FD0806AC79807C135A /* PrivacyInfo.xcprivacy */,
@@ -122,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */,
+				EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */,
 			);
 			path = TouchGrassTests;
 			sourceTree = "<group>";
@@ -272,6 +278,7 @@
 				6E4DF70B68AC11862A7EB16A /* BreakPlan.swift in Sources */,
 				F50FAA02F71FE31C2BC0CA06 /* Exercise.swift in Sources */,
 				AF07C24C15D0B0FF81D882C8 /* ExerciseLibraryView.swift in Sources */,
+				887B9C9B09A359154DAAFF38 /* NotificationScheduler.swift in Sources */,
 				7DBA15BF8AC46265B2F45C6F /* OutdoorWeather.swift in Sources */,
 				9C65BE24D25B008AB363D2FD /* PreferencesView.swift in Sources */,
 				A84DAB782EB7F027FB7375FC /* RootView.swift in Sources */,
@@ -293,6 +300,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCE2F5DB214190B424D30A34 /* BreakPlanTests.swift in Sources */,
+				CE658CC884D47434DE38112E /* NotificationPermissionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
