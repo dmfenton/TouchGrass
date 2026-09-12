@@ -51,6 +51,25 @@ final class NotificationPermissionTests: XCTestCase {
         XCTAssertNotNil(store.message)
     }
 
+    @MainActor
+    func testCompletionAndSnoozeSurviveRelaunch() async {
+        let name = UUID().uuidString
+        let defaults = UserDefaults(suiteName: name)!
+        defer { defaults.removePersistentDomain(forName: name) }
+        let notifications = FakeNotifications()
+        let store = WellnessStore(defaults: defaults, notifications: notifications)
+        store.record(breaks: 1)
+        XCTAssertNotNil(store.resumeAt)
+        XCTAssertGreaterThan(store.resumeAt!.timeIntervalSinceNow, 29 * 60)
+        let now = Date()
+        store.snooze(now: now)
+        XCTAssertEqual(store.resumeAt, now.addingTimeInterval(600))
+        await store.refresh()
+        let restored = WellnessStore(defaults: defaults, notifications: notifications)
+        XCTAssertEqual(restored.resumeAt, store.resumeAt)
+        XCTAssertEqual(restored.today.breaks, 1)
+    }
+
     func testPauseTodayUsesLocalMidnightAcrossDaylightSaving() {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = TimeZone(identifier: "America/New_York")!

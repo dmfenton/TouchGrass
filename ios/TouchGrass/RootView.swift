@@ -29,7 +29,7 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: FentonSpacing.large) {
-                    Text("A little room to breathe.")
+                    Text("Time for a reset.")
                         .font(FentonTypography.title)
                         .accessibilityAddTraits(.isHeader)
                     Text("Step away. Move a little. Come back refreshed.")
@@ -38,21 +38,31 @@ struct TodayView: View {
                         VStack(alignment: .leading, spacing: FentonSpacing.medium) {
                             Label("Your next break", systemImage: "leaf.fill").font(.headline)
                             if let date = store.nextBreak {
-                                Text(date, style: .time).font(.largeTitle.monospacedDigit())
+                                Text(date.formatted(date: .abbreviated, time: .shortened)).font(.title2.monospacedDigit())
                             } else {
                                 Text(store.preferences.remindersEnabled ? "No break scheduled" : "Make space for a break")
                                     .font(.title2)
                             }
                             Button("Step outside", systemImage: "sun.max") { outside = true }
                                 .buttonStyle(.borderedProminent)
-                            HStack {
-                                Button("Snooze 10 min") { store.pause(minutes: 10) }
-                                Menu("Pause") {
-                                    Button("For one hour") { store.pause(minutes: 60) }
-                                    Button("For today") { store.pauseToday() }
-                                    Button("Resume now") { store.pause(minutes: nil) }
-                                }
-                            }.buttonStyle(.bordered)
+                            if let routine = ExerciseData.allExerciseSets.first {
+                                NavigationLink("Move indoors") { RoutineView(routine: routine) }
+                                    .buttonStyle(.bordered)
+                            }
+                            if store.remindersActive {
+                                HStack {
+                                    Button("Snooze 10 min") { store.snooze() }
+                                    Menu("Pause") {
+                                        Button("For one hour") { store.pause(minutes: 60) }
+                                        Button("For today") { store.pauseToday() }
+                                        Button("Resume now") { store.pause(minutes: nil) }
+                                    }
+                                }.buttonStyle(.bordered)
+                            } else {
+                                Button("Enable break reminders") { Task { await store.enableNotifications() } }
+                                    .buttonStyle(.bordered)
+                                Text("Choose when to be reminded in Settings.").font(.caption)
+                            }
                             if let until = store.pausedUntil, until > Date() {
                                 Text("Paused until \(until.formatted(date: .abbreviated, time: .shortened))")
                                     .font(.caption).foregroundStyle(.secondary)
@@ -77,11 +87,14 @@ struct TodayView: View {
                         }
                     }
                     FentonCard {
-                        Label("\(store.today.breaks) breaks · \(store.streak) day streak", systemImage: "checkmark.circle")
+                        Label("\(store.today.breaks) breaks · \(store.streak) workday streak", systemImage: "checkmark.circle")
                     }
-                    if !store.remindersActive {
-                        Button("Enable break reminders") { Task { await store.enableNotifications() } }
-                            .buttonStyle(.bordered)
+                    if let through = store.scheduledThrough {
+                        Text("""
+                        Reminders planned through \(through.formatted(date: .abbreviated, time: .shortened)).
+                        Open the app before then to keep them going.
+                        """)
+                            .font(.caption).foregroundStyle(.secondary)
                     }
                 }.padding(FentonSpacing.large)
             }
@@ -102,7 +115,7 @@ struct OutsideBreakView: View {
         NavigationStack {
             VStack(spacing: FentonSpacing.large) {
                 Image(systemName: "sun.max").font(.system(size: 64)).foregroundStyle(.green)
-                Text("Take it outside.").font(FentonTypography.title)
+                Text("Take three minutes outside.").font(FentonTypography.title)
                 Text("Look up. Let your eyes focus on something far away. Enjoy a few minutes of fresh air.")
                     .multilineTextAlignment(.center)
                 Text(started, style: .timer).font(.largeTitle.monospacedDigit())

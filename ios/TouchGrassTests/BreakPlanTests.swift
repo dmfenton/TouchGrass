@@ -43,6 +43,33 @@ final class BreakPlanTests: XCTestCase {
                                    pausedUntil: date(14, 11), calendar: calendar)
         XCTAssertEqual(dates.first, date(14, 11))
     }
+    func testSnoozeUsesExactTimeAndRespectsCompletionBuffer() {
+        let dates = BreakPlan.dates(after: date(14, 10, 1), preferences: enabled, busy: [],
+                                   resumeAt: date(14, 10, 11), calendar: calendar)
+        XCTAssertEqual(dates.first, date(14, 10, 11))
+        XCTAssertEqual(dates.dropFirst().first, date(14, 11))
+        let completed = BreakPlan.dates(after: date(14, 10, 29), preferences: enabled, busy: [],
+                                       resumeAt: date(14, 10, 59), calendar: calendar)
+        XCTAssertEqual(completed.first, date(14, 10, 59))
+    }
+
+    func testDeferredBreakRespectsMeetingsPauseAndWorkHours() {
+        let dates = BreakPlan.dates(after: date(14, 10, 1), preferences: enabled,
+                                   busy: [BusyPeriod(start: date(14, 10), end: date(14, 11))],
+                                   resumeAt: date(14, 10, 11), calendar: calendar)
+        XCTAssertEqual(dates.first, date(14, 11))
+        let evening = BreakPlan.dates(after: date(14, 16, 59), preferences: enabled, busy: [],
+                                     resumeAt: date(14, 17, 9), calendar: calendar)
+        XCTAssertEqual(evening.first, date(15, 9))
+        let paused = BreakPlan.dates(after: date(14, 10), preferences: enabled, busy: [],
+                                    pausedUntil: date(15, 9), resumeAt: date(14, 10, 10), calendar: calendar)
+        XCTAssertEqual(paused.first, date(15, 9))
+        var none = enabled
+        none.weekdays = []
+        XCTAssertTrue(BreakPlan.dates(after: date(), preferences: none, busy: [],
+                                     resumeAt: date(14, 10), calendar: calendar).isEmpty)
+    }
+
     func testNoWeekdaysProducesNoReminders() {
         var preferences = enabled
         preferences.weekdays = []
@@ -66,6 +93,14 @@ final class BreakPlanTests: XCTestCase {
         let restored = try JSONDecoder().decode(ProgressHistory.self, from: JSONEncoder().encode(history))
         XCTAssertEqual(restored.days, history.days)
     }
+    func testWorkdayStreakDoesNotPenalizeWeekend() {
+        var history = ProgressHistory()
+        history.record(breaks: 1, now: date(11), calendar: calendar)
+        history.record(breaks: 1, now: date(14), calendar: calendar)
+        XCTAssertEqual(history.streak(now: date(14), calendar: calendar, weekdays: [2, 3, 4, 5, 6]), 2)
+        XCTAssertEqual(history.streak(now: date(14), calendar: calendar, weekdays: []), 0)
+    }
+
     func testHistoryIsBounded() {
         var history = ProgressHistory()
         for offset in 0..<400 {
