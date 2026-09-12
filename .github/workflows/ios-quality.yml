@@ -34,9 +34,9 @@ jobs:
           persist-credentials: false
       - name: Install development tools
         run: brew install xcodegen swiftlint
+      - name: Install iOS simulator runtime
+        run: xcodebuild -downloadPlatform iOS
       - name: Check iOS
-        env:
-          TOUCHGRASS_SIMULATOR: platform=iOS Simulator,name=iPhone 16 Pro
         run: bash scripts/ios-check.sh
       - name: Upload test evidence
         if: always()

@@ -6,7 +6,7 @@ command -v swiftlint >/dev/null
 bash ios/ci_scripts/ci_post_clone.sh
 xcodegen generate --spec ios/project.yml
 build_dir="${TOUCHGRASS_BUILD_DIR:-.build-ios}"
-destination="${TOUCHGRASS_SIMULATOR:-platform=iOS Simulator,name=iPhone 17 Pro}"
+destination="${TOUCHGRASS_SIMULATOR:-$(python3 scripts/select_ios_simulator.py)}"
 mkdir -p "$build_dir"
 xcodebuild -project ios/TouchGrassMobile.xcodeproj -scheme TouchGrassMobile \
   -destination "$destination" -derivedDataPath "$build_dir" build-for-testing CODE_SIGNING_ALLOWED=NO -quiet
