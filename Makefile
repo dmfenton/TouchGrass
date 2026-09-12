@@ -214,3 +214,12 @@ audio-check:
 	@scripts/generate_exercise_audio.sh --check
 
 .DEFAULT_GOAL := help
+.PHONY: ios-setup ios-check ios-lint
+ios-setup:
+	@bash scripts/codex-worktree-setup.sh
+
+ios-check:
+	@bash scripts/ios-check.sh
+
+ios-lint:
+	@swiftlint lint --strict --no-cache --config ios/.swiftlint.yml --quiet

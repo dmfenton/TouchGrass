@@ -1,0 +1,46 @@
+name: iOS Quality
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ios-quality-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  quality:
+    name: iOS build, tests, lint and coverage
+    runs-on: macos-15
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Read shared package pin
+        id: platform
+        run: |
+          . .github/fenton-mobile.lock
+          echo "sha=$FENTON_MOBILE_SHA" >> "$GITHUB_OUTPUT"
+      - name: Check out shared design package
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: dmfenton/platform.dmfenton.net
+          ref: ${{ steps.platform.outputs.sha }}
+          path: vendor/platform.dmfenton.net
+          ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
+          persist-credentials: false
+      - name: Install development tools
+        run: brew install xcodegen swiftlint
+      - name: Check iOS
+        env:
+          TOUCHGRASS_SIMULATOR: platform=iOS Simulator,name=iPhone 16 Pro
+        run: bash scripts/ios-check.sh
+      - name: Upload test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: .build-ios/*.xcresult

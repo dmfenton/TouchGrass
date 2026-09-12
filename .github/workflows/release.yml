@@ -34,13 +34,15 @@ jobs:
     - name: Generate Changelog
       run: |
         VERSION=${{ github.event.inputs.version }}
-        echo "## Touch Grass v$VERSION" > RELEASE_NOTES.md
-        echo "" >> RELEASE_NOTES.md
-        echo "### Changes since last release:" >> RELEASE_NOTES.md
-        git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"- %s" >> RELEASE_NOTES.md
+        {
+          echo "## Touch Grass v$VERSION"
+          echo ""
+          echo "### Changes since last release:"
+          git log "$(git describe --tags --abbrev=0)..HEAD" --pretty=format:"- %s"
+        } > RELEASE_NOTES.md
     
     - name: Create Release PR
-      uses: peter-evans/create-pull-request@v5
+      uses: peter-evans/create-pull-request@v7
       with:
         title: "Release v${{ github.event.inputs.version }}"
         body: |

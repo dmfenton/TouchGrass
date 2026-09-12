@@ -1,0 +1,12 @@
+included:
+  - TouchGrass
+  - TouchGrassTests
+  - TouchGrassUITests
+excluded:
+  - TouchGrass/Info.plist
+line_length: 140
+identifier_name:
+  min_length: 2
+  excluded: [id]
+disabled_rules:
+  - trailing_comma

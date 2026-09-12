@@ -1,5 +1,14 @@
 # Touch Grass
 
+## iPhone and iPad development
+
+The native iOS app is in `ios/`, using the shared Fenton design system.
+Run `make ios-setup`, then `make ios-check`. Open `ios/TouchGrassMobile.xcodeproj`.
+See [release setup](docs/ios-release.md) and [Platform assessment](docs/platform-assessment.md).
+
+The sections below describe the original Mac app.
+
+
 [![CI](https://github.com/dmfenton/touchgrass/actions/workflows/ci.yml/badge.svg)](https://github.com/dmfenton/touchgrass/actions/workflows/ci.yml)
 [![macOS](https://img.shields.io/badge/macOS-13.0%2B-blue)](https://www.apple.com/macos/)
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange)](https://swift.org)

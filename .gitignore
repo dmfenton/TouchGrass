@@ -127,3 +127,11 @@ SHA256SUMS.txt
 
 # Xcode project backups
 *.pbxproj.backup
+
+# Pinned shared packages and iOS build outputs
+vendor/
+.build-ios/
+*.xcarchive
+*.ipa
+__pycache__/
+*.pyc
