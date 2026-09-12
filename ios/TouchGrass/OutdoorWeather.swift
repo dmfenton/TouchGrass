@@ -13,6 +13,15 @@ final class OutdoorWeather: NSObject, ObservableObject, @preconcurrency CLLocati
     }
     @Published private(set) var state = State.idle
     private let location = CLLocationManager()
+    private var lastAttempt: Date?
+    private var lastSuccess: Date?
+
+    func refreshIfNeeded(now: Date = Date()) {
+        guard !ProcessInfo.processInfo.arguments.contains("--ui-testing") else { return }
+        guard WeatherRefreshPolicy.shouldRefresh(now: now, lastAttempt: lastAttempt, lastSuccess: lastSuccess) else { return }
+        if case .loading = state { return }
+        refresh()
+    }
 
     override init() {
         super.init()
@@ -21,6 +30,7 @@ final class OutdoorWeather: NSObject, ObservableObject, @preconcurrency CLLocati
     }
 
     func refresh() {
+        lastAttempt = Date()
         state = .loading
         switch location.authorizationStatus {
         case .notDetermined: location.requestWhenInUseAuthorization()
@@ -44,6 +54,7 @@ final class OutdoorWeather: NSObject, ObservableObject, @preconcurrency CLLocati
             do {
                 let weather = try await WeatherService.shared.weather(for: coordinate, including: .current)
                 let attribution = try await WeatherService.shared.attribution
+                lastSuccess = Date()
                 state = .ready(weather, attribution)
             } catch { state = .unavailable("Weather is unavailable right now. Try again later.") }
         }
@@ -54,35 +65,58 @@ final class OutdoorWeather: NSObject, ObservableObject, @preconcurrency CLLocati
     }
 }
 
+enum WeatherRefreshPolicy {
+    static func shouldRefresh(now: Date, lastAttempt: Date?, lastSuccess: Date?) -> Bool {
+        if let lastSuccess, now.timeIntervalSince(lastSuccess) < 900 { return false }
+        if let lastAttempt, now.timeIntervalSince(lastAttempt) < 60 { return false }
+        return true
+    }
+
+    static func temperature(_ value: Measurement<UnitTemperature>, locale: Locale = .current) -> String {
+        value.formatted(.measurement(width: .abbreviated, usage: .weather,
+                                     numberFormatStyle: .number.precision(.fractionLength(0))).locale(locale))
+    }
+}
+
 struct OutdoorWeatherView: View {
     @StateObject private var weather = OutdoorWeather()
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
-        FentonCard {
-            VStack(alignment: .leading, spacing: FentonSpacing.medium) {
-                switch weather.state {
-                case .idle:
-                    Button("Check outdoor weather", systemImage: "cloud.sun") { weather.refresh() }
-                case .loading:
-                    ProgressView("Checking the weather…")
-                case .unavailable(let message):
-                    Text(message).foregroundStyle(.secondary)
-                    Button("Try weather again") { weather.refresh() }
-                case .ready(let current, let attribution):
-                    Label(current.temperature.formatted(), systemImage: current.symbolName).font(.title2)
-                    Text(current.condition.description)
-                    let markURL = colorScheme == .dark ? attribution.combinedMarkLightURL : attribution.combinedMarkDarkURL
-                    HStack {
-                        AsyncImage(url: markURL) { image in
-                            image.resizable().scaledToFit()
-                        } placeholder: { Text("Apple Weather") }
-                            .frame(width: 100, height: 20)
-                            .accessibilityLabel("Apple Weather")
-                        Link("Data sources", destination: attribution.legalPageURL).font(.caption)
-                    }
-                    Button("Refresh weather") { weather.refresh() }
+        VStack(alignment: .leading, spacing: FentonSpacing.small) {
+            switch weather.state {
+            case .idle, .loading:
+                Label("Checking outdoor weather…", systemImage: "cloud.sun")
+                    .foregroundStyle(.secondary)
+            case .unavailable(let message):
+                HStack(alignment: .top) {
+                    Text(message).font(.subheadline).foregroundStyle(.secondary)
+                    Spacer()
+                    Button("Retry") { weather.refresh() }
                 }
+            case .ready(let current, let attribution):
+                HStack(alignment: .firstTextBaseline) {
+                    Label(WeatherRefreshPolicy.temperature(current.temperature), systemImage: current.symbolName)
+                        .font(.title2.weight(.semibold))
+                    Text(current.condition.description).foregroundStyle(.secondary)
+                }
+                let markURL = colorScheme == .dark ? attribution.combinedMarkDarkURL : attribution.combinedMarkLightURL
+                HStack(spacing: FentonSpacing.medium) {
+                    AsyncImage(url: markURL) { image in
+                        image.resizable().scaledToFit()
+                    } placeholder: { Text("Apple Weather").font(.caption) }
+                        .frame(width: 84, height: 16).accessibilityLabel("Apple Weather")
+                    Link("Data sources", destination: attribution.legalPageURL).font(.caption)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .task(id: scenePhase) {
+            guard scenePhase == .active else { return }
+            while !Task.isCancelled {
+                weather.refreshIfNeeded()
+                do { try await Task.sleep(for: .seconds(60)) } catch { return }
             }
         }
     }

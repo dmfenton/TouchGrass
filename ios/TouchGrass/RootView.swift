@@ -29,80 +29,85 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: FentonSpacing.large) {
-                    Text("Time for a reset.")
-                        .font(FentonTypography.title)
-                        .accessibilityAddTraits(.isHeader)
-                    Text("Step away. Move a little. Come back refreshed.")
-                        .foregroundStyle(.secondary)
-                    FentonCard {
-                        VStack(alignment: .leading, spacing: FentonSpacing.medium) {
-                            Label("Your next break", systemImage: "leaf.fill").font(.headline)
-                            if let date = store.nextBreak {
-                                Text(date.formatted(date: .abbreviated, time: .shortened)).font(.title2.monospacedDigit())
-                            } else {
-                                Text(store.preferences.remindersEnabled ? "No break scheduled" : "Make space for a break")
-                                    .font(.title2)
-                            }
-                            Button("Step outside", systemImage: "sun.max") { outside = true }
-                                .buttonStyle(.borderedProminent)
-                            if let routine = ExerciseData.allExerciseSets.first {
-                                NavigationLink("Move indoors") { RoutineView(routine: routine) }
-                                    .buttonStyle(.bordered)
-                            }
-                            if store.remindersActive {
-                                HStack {
-                                    Button("Snooze 10 min") { store.snooze() }
-                                    Menu("Pause") {
-                                        Button("For one hour") { store.pause(minutes: 60) }
-                                        Button("For today") { store.pauseToday() }
-                                        Button("Resume now") { store.pause(minutes: nil) }
-                                    }
-                                }.buttonStyle(.bordered)
-                            } else {
-                                Button("Enable break reminders") { Task { await store.enableNotifications() } }
-                                    .buttonStyle(.bordered)
-                                Text("Choose when to be reminded in Settings.").font(.caption)
-                            }
-                            if let until = store.pausedUntil, until > Date() {
-                                Text("Paused until \(until.formatted(date: .abbreviated, time: .shortened))")
-                                    .font(.caption).foregroundStyle(.secondary)
-                            }
-                        }
-                    }
                     OutdoorWeatherView()
-                    FentonSectionHeader("Today")
-                    FentonCard {
-                        VStack(alignment: .leading, spacing: FentonSpacing.medium) {
-                            Label("Water", systemImage: "drop.fill").font(.headline)
-                            Text("\(store.today.glasses) of \(store.preferences.waterGoal) glasses")
-                            ProgressView(value: Double(min(store.today.glasses, store.preferences.waterGoal)),
-                                         total: Double(store.preferences.waterGoal))
-                            HStack {
-                                Button("Add a glass", systemImage: "plus") { store.record(water: 1) }
-                                    .buttonStyle(.borderedProminent)
-                                Button("Undo") { store.record(water: -1) }
-                                    .disabled(store.today.glasses == 0)
-                            }
-                            Text("One glass is 8 fl oz.").font(.caption).foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: FentonSpacing.medium) {
+                        Text("Take a breather.").font(FentonTypography.smallTitle)
+                        Text("A few minutes outside or a little movement.")
+                            .foregroundStyle(.secondary)
+                        Button { outside = true } label: {
+                            Label("Step outside", systemImage: "sun.max")
+                                .frame(maxWidth: .infinity).padding(.vertical, FentonSpacing.small)
+                        }.buttonStyle(.borderedProminent)
+                        if let routine = ExerciseData.allExerciseSets.first {
+                            NavigationLink("Move indoors") { RoutineView(routine: routine) }
+                                .frame(maxWidth: .infinity).padding(.vertical, FentonSpacing.small)
                         }
+                        Divider()
+                        reminderControls
                     }
-                    FentonCard {
-                        Label("\(store.today.breaks) breaks · \(store.streak) workday streak", systemImage: "checkmark.circle")
+                    .padding(FentonSpacing.medium)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground),
+                                in: RoundedRectangle(cornerRadius: FentonRadius.medium))
+                    VStack(alignment: .leading, spacing: FentonSpacing.medium) {
+                        HStack {
+                            Label("Water", systemImage: "drop").font(.headline)
+                            Spacer()
+                            Text("\(store.today.glasses) of \(store.preferences.waterGoal) glasses")
+                                .foregroundStyle(.secondary)
+                        }
+                        ProgressView(value: Double(min(store.today.glasses, store.preferences.waterGoal)),
+                                     total: Double(store.preferences.waterGoal))
+                        HStack {
+                            Button("Add a glass", systemImage: "plus") { store.record(water: 1) }
+                            Spacer()
+                            Button("Undo") { store.record(water: -1) }.disabled(store.today.glasses == 0)
+                        }.frame(minHeight: 44)
                     }
+                    .padding(FentonSpacing.medium)
+                    .background(Color(uiColor: .secondarySystemGroupedBackground),
+                                in: RoundedRectangle(cornerRadius: FentonRadius.medium))
+                    Text("\(store.today.breaks) \(store.today.breaks == 1 ? "break" : "breaks") · \(store.streak) workday streak")
+                        .font(.subheadline).foregroundStyle(.secondary)
                     if let through = store.scheduledThrough {
                         Text("""
                         Reminders planned through \(through.formatted(date: .abbreviated, time: .shortened)).
                         Open the app before then to keep them going.
-                        """)
-                            .font(.caption).foregroundStyle(.secondary)
+                        """).font(.caption).foregroundStyle(.secondary)
                     }
-                }.padding(FentonSpacing.large)
+                }.padding(FentonSpacing.medium)
             }
             .background(theme.palette(for: colorScheme).surface)
             .navigationTitle("Touch Grass")
-            .sheet(isPresented: $outside) {
-                OutsideBreakView()
+            .navigationBarTitleDisplayMode(.inline)
+            .sheet(isPresented: $outside) { OutsideBreakView() }
+        }
+    }
+
+    @ViewBuilder
+    private var reminderControls: some View {
+        if store.remindersActive {
+            if let until = store.pausedUntil, until > Date() {
+                Text("Paused until \(until.formatted(date: .abbreviated, time: .shortened))")
+                    .font(.subheadline)
+            } else if let date = store.nextBreak {
+                Text("Next break · \(date.formatted(date: .abbreviated, time: .shortened))")
+                    .font(.subheadline)
+            } else {
+                Text("No upcoming breaks. Check your work hours in Settings.").font(.subheadline)
             }
+            HStack {
+                Button("Snooze 10 min") { store.snooze() }
+                Spacer()
+                Menu("Pause") {
+                    Button("For one hour") { store.pause(minutes: 60) }
+                    Button("For today") { store.pauseToday() }
+                    Button("Resume now") { store.pause(minutes: nil) }
+                }
+            }.font(.subheadline).frame(minHeight: 44)
+        } else {
+            Button("Enable break reminders", systemImage: "bell") {
+                Task { await store.enableNotifications() }
+            }.font(.subheadline).frame(minHeight: 44)
         }
     }
 }
