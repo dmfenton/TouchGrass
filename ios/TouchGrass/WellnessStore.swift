@@ -11,6 +11,8 @@ final class WellnessStore: ObservableObject {
     @Published private(set) var calendars: [EKCalendar] = []
     @Published var message: String?
     @Published var pausedUntil: Date?
+    @Published private(set) var resumeAt: Date?
+    @Published private(set) var scheduledThrough: Date?
     private let defaults: UserDefaults
     private let events = EKEventStore()
     private let notifications: NotificationScheduling
@@ -27,6 +29,7 @@ final class WellnessStore: ObservableObject {
             .flatMap { try? JSONDecoder().decode(BreakPreferences.self, from: $0) } ?? BreakPreferences()
         history = self.defaults.data(forKey: "mobile.history")
             .flatMap { try? JSONDecoder().decode(ProgressHistory.self, from: $0) } ?? ProgressHistory()
+        resumeAt = self.defaults.object(forKey: "mobile.resumeAt") as? Date
         pausedUntil = self.defaults.object(forKey: "mobile.pausedUntil") as? Date
     }
 
@@ -35,17 +38,29 @@ final class WellnessStore: ObservableObject {
     }
 
     var today: DailyProgress { history.today() }
-    var streak: Int { history.streak() }
+    var streak: Int { history.streak(weekdays: preferences.weekdays) }
 
     func record(water: Int = 0, breaks: Int = 0) {
         history.record(water: water, breaks: breaks)
+        if breaks > 0 {
+            resumeAt = Date().addingTimeInterval(Double(preferences.intervalMinutes) * 60)
+            scheduleRefresh()
+        }
         persist()
+    }
+
+    func snooze(now: Date = Date()) {
+        pausedUntil = nil
+        resumeAt = now.addingTimeInterval(600)
+        persist()
+        scheduleRefresh()
     }
 
     func persist() {
         do {
             defaults.set(try JSONEncoder().encode(preferences), forKey: "mobile.preferences")
             defaults.set(try JSONEncoder().encode(history), forKey: "mobile.history")
+            defaults.set(resumeAt, forKey: "mobile.resumeAt")
             defaults.set(pausedUntil, forKey: "mobile.pausedUntil")
         } catch { message = "Your changes could not be saved. Please try again." }
     }
@@ -66,7 +81,10 @@ final class WellnessStore: ObservableObject {
                 return
             }
             calendars = events.calendars(for: .event)
-            preferences.calendarIDs = Set(calendars.map(\.calendarIdentifier))
+            if !defaults.bool(forKey: "mobile.calendarConfigured") {
+                preferences.calendarIDs = Set(calendars.map(\.calendarIdentifier))
+                defaults.set(true, forKey: "mobile.calendarConfigured")
+            }
             persist()
             await refresh()
         } catch { message = "Calendars could not be read. Please try again." }
@@ -80,12 +98,14 @@ final class WellnessStore: ObservableObject {
     }
 
     func pauseToday(now: Date = Date(), calendar: Calendar = .current) {
+        resumeAt = nil
         pausedUntil = BreakPlan.nextDay(after: now, calendar: calendar)
         persist()
         scheduleRefresh()
     }
 
     func pause(minutes: Int?) {
+        resumeAt = nil
         pausedUntil = minutes.map { Date().addingTimeInterval(Double($0) * 60) }
         persist()
         scheduleRefresh()
@@ -125,10 +145,11 @@ final class WellnessStore: ObservableObject {
         }
         let allowed = notificationStatus == .authorized || notificationStatus == .provisional
         let dates = allowed ? BreakPlan.dates(
-            after: now, preferences: preferences, busy: busy, pausedUntil: pausedUntil
+            after: now, preferences: preferences, busy: busy, pausedUntil: pausedUntil, resumeAt: resumeAt
         ) : []
         notifications.removeAllPending()
         nextBreak = nil
+        scheduledThrough = nil
         do {
             for date in dates {
                 guard !Task.isCancelled else { return }
@@ -136,13 +157,14 @@ final class WellnessStore: ObservableObject {
                 content.title = "Time for a little reset"
                 content.body = "Step outside, stretch, or take a drink of water."
                 content.sound = .default
-                let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+                let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: date)
                 let request = UNNotificationRequest(
                     identifier: "break-\(Int(date.timeIntervalSince1970))", content: content,
                     trigger: UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
                 )
                 try await notifications.add(request)
                 if nextBreak == nil { nextBreak = date }
+                scheduledThrough = date
             }
         } catch { message = "Some reminders could not be scheduled. Open the app to try again." }
     }

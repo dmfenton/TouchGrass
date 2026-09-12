@@ -36,16 +36,23 @@ struct RoutineView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var coach = ExerciseCoach()
     @State private var started: Date?
+    @State private var exerciseIndex = 0
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: FentonSpacing.large) {
                 Text(routine.description).font(.title3)
                 if let started { Text(started, style: .timer).font(.largeTitle.monospacedDigit()) }
-                ForEach(routine.exercises) { exercise in
+                if started == nil {
+                    Button("Start routine") { started = Date() }.buttonStyle(.borderedProminent)
+                } else {
+                    Text("Exercise \(exerciseIndex + 1) of \(routine.exercises.count)").font(.headline)
+                }
+                ForEach(started == nil ? routine.exercises : Array(routine.exercises.dropFirst(exerciseIndex).prefix(1))) { exercise in
                     FentonCard {
                         VStack(alignment: .leading, spacing: FentonSpacing.medium) {
                             Text(exercise.name).font(.headline)
+                            Text("\(exercise.duration) seconds").foregroundStyle(.secondary)
                             ForEach(Array(exercise.instructions.enumerated()), id: \.offset) { index, instruction in
                                 Text("\(index + 1). \(instruction)")
                             }
@@ -55,13 +62,20 @@ struct RoutineView: View {
                         }
                     }
                 }
-                if started == nil {
-                    Button("Start routine") { started = Date() }.buttonStyle(.borderedProminent)
-                } else {
-                    Button("Complete break") {
-                        store.record(breaks: 1)
-                        dismiss()
-                    }.buttonStyle(.borderedProminent)
+                if started != nil {
+                    if exerciseIndex + 1 < routine.exercises.count {
+                        Button("Next exercise") {
+                            coach.stop()
+                            exerciseIndex += 1
+                            started = Date()
+                        }.buttonStyle(.borderedProminent)
+                        Button("End routine") { dismiss() }
+                    } else {
+                        Button("Complete break") {
+                            store.record(breaks: 1)
+                            dismiss()
+                        }.buttonStyle(.borderedProminent)
+                    }
                 }
             }.padding(FentonSpacing.large)
         }.navigationTitle(routine.name)
