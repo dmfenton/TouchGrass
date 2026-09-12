@@ -7,6 +7,9 @@ included:
   - .
 excluded:
   - build
+  - .build-ios
+  - vendor
+  - ios # Enforced separately by ios/.swiftlint.yml and iOS Quality
   - releases
   - TouchGrass.xcodeproj
   - .git

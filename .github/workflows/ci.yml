@@ -41,7 +41,9 @@ jobs:
       run: brew install swiftlint
     
     - name: Run SwiftLint
-      run: swiftlint lint --strict --quiet --no-cache --config ios/.swiftlint.yml
+      run: |
+        swiftlint lint --strict --quiet --no-cache
+        swiftlint lint --strict --quiet --no-cache --config ios/.swiftlint.yml
 
     - name: Verify native signing policy
       run: python3 scripts/check_native_signing.py

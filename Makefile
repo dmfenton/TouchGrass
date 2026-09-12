@@ -62,7 +62,7 @@ clean:
 	@echo "✅ Clean complete"
 
 # Run linting
-lint:
+lint: ios-lint
 	@echo "🧹 Running SwiftLint..."
 	@swiftlint lint --quiet || (echo "❌ Lint failed. Run 'make lint-fix' to auto-fix some violations" && exit 1)
 	@echo "✅ Lint passed!"
