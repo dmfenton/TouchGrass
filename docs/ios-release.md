@@ -17,6 +17,8 @@ deploy key stored in `FENTON_PLATFORM_DEPLOY_KEY`; private keys never enter the 
 1. Run the quality gates and merge the reviewed commit to main. Fetch main before release.
 2. Use the existing Apple Distribution identity and the `Touch Grass iOS App Store` profile.
    The provisioning profile must include WeatherKit and match this app's exact bundle/team.
+   In Apple Developer, enable WeatherKit under both Capabilities and App Services for this App ID.
+   Enabling only the capability signs successfully but does not authorize weather requests.
 3. Run `python3 scripts/release_ios.py --version 0.1.0 --build 1` to archive, verify and export.
 4. For an authorized release, add `--upload`. Upload requires a clean checkout at `origin/main`.
 5. If Apple processing or tester assignment is interrupted, use the same version/build with

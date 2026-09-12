@@ -21,13 +21,56 @@ struct ExerciseLibraryView: View {
 }
 
 @MainActor
-final class ExerciseCoach: ObservableObject {
+final class ExerciseCoach: NSObject, ObservableObject, @preconcurrency AVSpeechSynthesizerDelegate {
+    @Published private(set) var isSpeaking = false
+    @Published private(set) var errorMessage: String?
     private let speech = AVSpeechSynthesizer()
-    func speak(_ text: String) {
-        speech.stopSpeaking(at: .immediate)
-        speech.speak(AVSpeechUtterance(string: text))
+    private var activeUtterance: AVSpeechUtterance?
+
+    override init() {
+        super.init()
+        speech.delegate = self
     }
-    func stop() { speech.stopSpeaking(at: .immediate) }
+
+    func speak(_ text: String) {
+        stop()
+        errorMessage = nil
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.playback, mode: .spokenAudio, options: .duckOthers)
+            try session.setActive(true)
+            let utterance = AVSpeechUtterance(string: text)
+            utterance.voice = AVSpeechSynthesisVoice(language: "en-US")
+            activeUtterance = utterance
+            isSpeaking = true
+            speech.speak(utterance)
+        } catch {
+            errorMessage = "Audio could not start. Check your volume and audio output, then try again."
+        }
+    }
+
+    func stop() {
+        activeUtterance = nil
+        speech.stopSpeaking(at: .immediate)
+        finishAudio()
+    }
+
+    private func finishAudio() {
+        isSpeaking = false
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
+        guard utterance === activeUtterance else { return }
+        activeUtterance = nil
+        finishAudio()
+    }
+
+    func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        guard utterance === activeUtterance else { return }
+        activeUtterance = nil
+        finishAudio()
+    }
 }
 
 struct RoutineView: View {
@@ -58,6 +101,13 @@ struct RoutineView: View {
                             }
                             Button("Read instructions", systemImage: "speaker.wave.2") {
                                 coach.speak(exercise.instructions.joined(separator: ". "))
+                            }.frame(minHeight: 44)
+                            if coach.isSpeaking {
+                                Button("Stop reading", systemImage: "stop.fill") { coach.stop() }
+                                    .frame(minHeight: 44)
+                            }
+                            if let message = coach.errorMessage {
+                                Text(message).font(.subheadline).foregroundStyle(.secondary)
                             }
                         }
                     }

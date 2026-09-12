@@ -49,7 +49,7 @@ final class TouchGrassFlowTests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.staticTexts["1 of 8 glasses"].waitForExistence(timeout: 10))
         app.swipeUp()
-        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "1 breaks")).firstMatch.exists)
+        XCTAssertTrue(app.staticTexts.containing(NSPredicate(format: "label CONTAINS %@", "1 break")).firstMatch.exists)
         app.tabBars.buttons["Move"].tap()
         XCTAssertTrue(app.navigationBars["A little movement"].waitForExistence(timeout: 5))
         app.tabBars.buttons["Settings"].tap()

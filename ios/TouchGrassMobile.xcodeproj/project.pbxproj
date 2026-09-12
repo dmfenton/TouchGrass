@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		024A4D4640D2A28A6B9FA3C7 /* FentonDesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = 32D23DB18DE674C9B6D278D1 /* FentonDesignSystem */; };
+		0D2067ECF8F070507A74E674 /* ExerciseCoachTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95D54BC8DB18E9AC0C3AD2DD /* ExerciseCoachTests.swift */; };
 		38DF5EAD2B95826716A6EAF0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6A6C83EF2F25218931F97BD2 /* Assets.xcassets */; };
 		6E4DF70B68AC11862A7EB16A /* BreakPlan.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9097208F5FEC95CDDA4EF2B /* BreakPlan.swift */; };
 		77C26AC3ABA5C4EEA7791927 /* TouchGrassFlowTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */; };
@@ -22,6 +23,7 @@
 		CE658CC884D47434DE38112E /* NotificationPermissionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */; };
 		DCE2F5DB214190B424D30A34 /* BreakPlanTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */; };
 		F50FAA02F71FE31C2BC0CA06 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05B20618C7466726139EFC6D /* Exercise.swift */; };
+		FAF2E3CA0290FBC8424FE2A4 /* WeatherRefreshTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1887D2F5910E62227B321CEF /* WeatherRefreshTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +46,7 @@
 /* Begin PBXFileReference section */
 		05B20618C7466726139EFC6D /* Exercise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		0BEAAF7D4A27BDEA8B0C52D6 /* TouchGrassMobileApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassMobileApp.swift; sourceTree = "<group>"; };
+		1887D2F5910E62227B321CEF /* WeatherRefreshTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherRefreshTests.swift; sourceTree = "<group>"; };
 		27ACFD69852CA51242CF5DC2 /* NotificationScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationScheduler.swift; sourceTree = "<group>"; };
 		3265C25191A0E12E9B3D4547 /* TouchGrassMobileTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TouchGrassMobileTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		467EAD5B587377BCE79334BD /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
@@ -52,6 +55,7 @@
 		6A6C83EF2F25218931F97BD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8E7F6FC08735E70ECC37AFB9 /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = ../vendor/platform.dmfenton.net/swift; sourceTree = SOURCE_ROOT; };
 		94F7349397E6BE54090D426A /* TouchGrass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TouchGrass.entitlements; sourceTree = "<group>"; };
+		95D54BC8DB18E9AC0C3AD2DD /* ExerciseCoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseCoachTests.swift; sourceTree = "<group>"; };
 		981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassFlowTests.swift; sourceTree = "<group>"; };
 		9C3675FD0806AC79807C135A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		A128CABECF0DD8F90E0A63E0 /* TouchGrassMobileUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = TouchGrassMobileUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -127,7 +131,9 @@
 			isa = PBXGroup;
 			children = (
 				4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */,
+				95D54BC8DB18E9AC0C3AD2DD /* ExerciseCoachTests.swift */,
 				EA59B0803249D471CABFFAAB /* NotificationPermissionTests.swift */,
+				1887D2F5910E62227B321CEF /* WeatherRefreshTests.swift */,
 			);
 			path = TouchGrassTests;
 			sourceTree = "<group>";
@@ -300,7 +306,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				DCE2F5DB214190B424D30A34 /* BreakPlanTests.swift in Sources */,
+				0D2067ECF8F070507A74E674 /* ExerciseCoachTests.swift in Sources */,
 				CE658CC884D47434DE38112E /* NotificationPermissionTests.swift in Sources */,
+				FAF2E3CA0290FBC8424FE2A4 /* WeatherRefreshTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
