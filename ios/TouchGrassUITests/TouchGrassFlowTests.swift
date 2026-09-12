@@ -15,6 +15,25 @@ final class TouchGrassFlowTests: XCTestCase {
         XCTAssertTrue(app.buttons["Step outside"].waitForExistence(timeout: 5))
     }
 
+    func testMultiExerciseRoutineCompletesOnlyAfterLastStep() {
+        let app = XCUIApplication()
+        app.launchArguments = ["--ui-testing", "--reset-ui-tests"]
+        app.launch()
+        app.tabBars.buttons["Move"].tap()
+        app.staticTexts["Upper Body & Posture"].tap()
+        XCTAssertTrue(app.buttons["Start routine"].waitForExistence(timeout: 5))
+        app.buttons["Start routine"].tap()
+        XCTAssertFalse(app.buttons["Complete break"].exists)
+        XCTAssertTrue(app.buttons["End routine"].exists)
+        for _ in 0..<3 {
+            app.buttons["Next exercise"].tap()
+        }
+        XCTAssertTrue(app.buttons["Complete break"].exists)
+        XCTAssertFalse(app.buttons["Next exercise"].exists)
+        app.buttons["Complete break"].tap()
+        XCTAssertTrue(app.navigationBars["A little movement"].waitForExistence(timeout: 5))
+    }
+
     func testHydrationAndCompletedBreakPersistAcrossLaunch() {
         let app = XCUIApplication()
         app.launchArguments = ["--ui-testing", "--reset-ui-tests"]

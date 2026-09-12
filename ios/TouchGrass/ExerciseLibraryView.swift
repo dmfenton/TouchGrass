@@ -69,11 +69,13 @@ struct RoutineView: View {
                             exerciseIndex += 1
                             started = Date()
                         }.buttonStyle(.borderedProminent)
+                        Button("End routine") { dismiss() }
+                    } else {
+                        Button("Complete break") {
+                            store.record(breaks: 1)
+                            dismiss()
+                        }.buttonStyle(.borderedProminent)
                     }
-                    Button("Complete break") {
-                        store.record(breaks: 1)
-                        dismiss()
-                    }.buttonStyle(.borderedProminent)
                 }
             }.padding(FentonSpacing.large)
         }.navigationTitle(routine.name)
