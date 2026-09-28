@@ -38,6 +38,7 @@ jobs:
             - 'TouchGrassApp.swift'
             - 'TouchGrass.xcodeproj/**'
             - 'Makefile'
+            - 'scripts/test.sh'
             - '.github/workflows/ci.yml'
           lint:
             - '**/*.swift'
@@ -60,6 +61,7 @@ jobs:
             - 'TouchGrass.entitlements'
             - 'Info.plist'
             - 'Local.xcconfig.example'
+            - 'AppIcon.icns'
             - 'Makefile'
             - '.github/workflows/ci.yml'
 
