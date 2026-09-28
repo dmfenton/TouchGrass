@@ -7,10 +7,67 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
+  changes:
+    name: Detect affected checks
+    runs-on: ubuntu-latest
+    outputs:
+      test: ${{ steps.filter.outputs.test }}
+      lint: ${{ steps.filter.outputs.lint }}
+      build: ${{ steps.filter.outputs.build }}
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dorny/paths-filter@v4
+      if: github.event_name != 'workflow_dispatch'
+      id: filter
+      with:
+        filters: |
+          test:
+            - 'Controllers/**'
+            - 'Managers/**'
+            - 'Models/**'
+            - 'Views/**'
+            - 'TouchGrassTests/**'
+            - 'Tests/**'
+            - 'Resources/**'
+            - 'Assets/**'
+            - 'TouchGrassApp.swift'
+            - 'TouchGrass.xcodeproj/**'
+            - 'Makefile'
+            - '.github/workflows/ci.yml'
+          lint:
+            - '**/*.swift'
+            - '.swiftlint.yml'
+            - 'ios/.swiftlint.yml'
+            - 'scripts/**'
+            - 'ios/project.yml'
+            - 'ios/TouchGrassMobile.xcodeproj/**'
+            - 'Makefile'
+            - '.github/workflows/**'
+          build:
+            - 'Controllers/**'
+            - 'Managers/**'
+            - 'Models/**'
+            - 'Views/**'
+            - 'Resources/**'
+            - 'Assets/**'
+            - 'TouchGrassApp.swift'
+            - 'TouchGrass.xcodeproj/**'
+            - 'TouchGrass.entitlements'
+            - 'Info.plist'
+            - 'Local.xcconfig.example'
+            - 'Makefile'
+            - '.github/workflows/ci.yml'
+
   test:
     name: Test
     runs-on: macos-latest
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.test == 'true'
     
     steps:
     - uses: actions/checkout@v4
@@ -33,6 +90,8 @@ jobs:
   lint:
     name: Lint
     runs-on: macos-latest
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.lint == 'true'
     
     steps:
     - uses: actions/checkout@v4
@@ -51,6 +110,8 @@ jobs:
   build:
     name: Build
     runs-on: macos-latest
+    needs: changes
+    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.build == 'true'
     
     steps:
     - uses: actions/checkout@v4
