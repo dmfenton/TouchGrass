@@ -43,6 +43,7 @@ jobs:
           lint:
             - '**/*.swift'
             - '.swiftlint.yml'
+            - 'TouchGrassTests/.swiftlint.yml'
             - 'ios/.swiftlint.yml'
             - 'scripts/**'
             - 'ios/project.yml'
