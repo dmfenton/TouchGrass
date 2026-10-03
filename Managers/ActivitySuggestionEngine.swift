@@ -139,6 +139,8 @@ class ActivitySuggestionEngine: ObservableObject {
     @Published var currentSuggestion: SuggestedActivity?
     
     private let reminderManager: ReminderManager
+    private let clock: () -> Date
+    private let startedAt: Date
     private let weatherService: WeatherServiceProtocol
     
     // Simple file logging for debugging
@@ -173,7 +175,9 @@ class ActivitySuggestionEngine: ObservableObject {
         }
     }
     
-    init(reminderManager: ReminderManager) {
+    init(reminderManager: ReminderManager, clock: @escaping () -> Date = Date.init) {
+        self.clock = clock
+        self.startedAt = clock()
         self.reminderManager = reminderManager
         self.weatherService = WeatherServiceFactory.create()
         
@@ -225,8 +229,8 @@ class ActivitySuggestionEngine: ObservableObject {
         return buildContextBase(weather: weather)
     }
     
-    private func buildContextBase(weather: WeatherInfo?) -> ActivityContext {
-        let now = Date()
+    func buildContextBase(weather: WeatherInfo?) -> ActivityContext {
+        let now = clock()
         _ = Calendar.current
         
         // Calculate available time
@@ -263,7 +267,8 @@ class ActivitySuggestionEngine: ObservableObject {
         let density: MeetingDensity = meetingCount < 3 ? .light : (meetingCount <= 5 ? .normal : .heavy)
         
         // Time since last break (calculate from activity tracker)
-        let timeSinceLastBreak: TimeInterval = 5400  // Default to 90 minutes
+        let lastBreak = reminderManager.activityTracker.lastActivityDate ?? startedAt
+        let timeSinceLastBreak = max(0, now.timeIntervalSince(lastBreak))
         
         return ActivityContext(
             currentTime: now,

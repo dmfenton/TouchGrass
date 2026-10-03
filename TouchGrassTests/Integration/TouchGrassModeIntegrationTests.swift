@@ -254,6 +254,35 @@ final class MorningActivityTimingTests: XCTestCase {
             .calculateBestActivity(for: context)
     }
 
+    func testProductionContextUsesPersistedBreakCompletion() throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        manager.activityTracker.completeBreak()
+        let completion = try XCTUnwrap(manager.activityTracker.lastActivityDate)
+        let engine = ActivitySuggestionEngine(reminderManager: manager) {
+            completion.addingTimeInterval(30)
+        }
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 30, accuracy: 0.01)
+    }
+
+    func testProductionContextStartsClockWhenThereIsNoCompletion() throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        var now = Date()
+        let engine = ActivitySuggestionEngine(reminderManager: manager) { now }
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 0)
+        now = now.addingTimeInterval(60)
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 60)
+        defaults.set(now.addingTimeInterval(30), forKey: "TouchGrass.lastActivityDate")
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 0)
+    }
+
     func testFreshMorningDoesNotPrioritizeWeather() throws {
         XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 0).title, "Perfect Weather Outside!")
         XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 3600).reason,
