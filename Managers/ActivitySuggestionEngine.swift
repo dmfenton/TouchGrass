@@ -521,7 +521,14 @@ class ActivitySuggestionEngine: ObservableObject {
         // Check if we've done outdoor today
         let hasOutdoorToday = context.todaysActivities.contains { $0.category == .outdoor }
         
-        if !hasOutdoorToday {
+        // Only suggest weather opportunity if:
+        // 1. Haven't done outdoor today AND
+        // 2. Either been working for 90+ minutes OR it's after lunch
+        let hour = Calendar.current.component(.hour, from: context.currentTime)
+        let workedEnough = context.timeSinceLastBreak > 5400  // 90 minutes
+        let afterLunch = hour >= 12
+
+        if !hasOutdoorToday && (workedEnough || afterLunch) {
             return SuggestedActivity(
                 type: "touchGrass",
                 title: "Perfect Weather Outside!",
@@ -629,13 +636,16 @@ class ActivitySuggestionEngine: ObservableObject {
             }
             
         case .midMorning:
-            // Prime time for outdoor if weather is good
-            if context.weather?.isIdealForOutdoor == true {
+            // Only suggest outdoor in mid-morning if:
+            // 1. Weather is ideal AND
+            // 2. Been working for at least 60 minutes (not just started work)
+            if context.weather?.isIdealForOutdoor == true &&
+               context.timeSinceLastBreak > 3600 {  // More than 1 hour since the last break
                 if let outdoor = activities.first(where: { $0.type == "touchGrass" }) {
                     return SuggestedActivity(
                         type: outdoor.type,
                         title: outdoor.title,
-                        reason: "Beautiful morning - start your day right!",
+                        reason: "Beautiful morning and you've been working for a while",
                         duration: outdoor.duration,
                         category: outdoor.category,
                         urgency: 0.7

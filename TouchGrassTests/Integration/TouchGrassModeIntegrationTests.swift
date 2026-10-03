@@ -237,3 +237,40 @@ class TouchGrassModeIntegrationTests: XCTestCase {
         // User can be reminded to drink water AND do an exercise
     }
 }
+
+final class MorningActivityTimingTests: XCTestCase {
+    private func suggestion(hour: Int, elapsed: TimeInterval) throws -> SuggestedActivity {
+        let date = try XCTUnwrap(Calendar.current.date(from: DateComponents(
+            year: 2026, month: 10, day: 3, hour: hour
+        )))
+        let context = ActivityContext(
+            currentTime: date, availableMinutes: 10,
+            weather: WeatherInfo(temperature: 68, condition: .sunny, isDaylight: true,
+                                 description: "Sunny", humidity: 0.5, feelsLike: 68),
+            timeSinceLastBreak: elapsed, todaysActivities: [], meetingDensity: .normal,
+            nextMeeting: nil, currentStreak: 0, waterIntake: 8, dailyWaterGoal: 8
+        )
+        return ActivitySuggestionEngine(reminderManager: ReminderManager())
+            .calculateBestActivity(for: context)
+    }
+
+    func testFreshMorningDoesNotPrioritizeWeather() throws {
+        XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 0).title, "Perfect Weather Outside!")
+        XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 3600).reason,
+                          "Beautiful morning and you've been working for a while")
+    }
+
+    func testMorningOutdoorPriorityStartsAfterAnHour() throws {
+        XCTAssertEqual(try suggestion(hour: 10, elapsed: 3601).reason,
+                       "Beautiful morning and you've been working for a while")
+    }
+
+    func testWeatherPriorityStartsAfterNinetyMinutes() throws {
+        XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 5400).title, "Perfect Weather Outside!")
+        XCTAssertEqual(try suggestion(hour: 10, elapsed: 5401).title, "Perfect Weather Outside!")
+    }
+
+    func testLunchAllowsWeatherOpportunityAfterARecentBreak() throws {
+        XCTAssertEqual(try suggestion(hour: 12, elapsed: 0).title, "Perfect Weather Outside!")
+    }
+}
