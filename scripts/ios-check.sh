@@ -1,6 +1,21 @@
 #!/bin/bash
 set -euo pipefail
 cd "$(dirname "$0")/.."
+lease_args=(run --app touch-grass)
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --device-type|--runtime|--queue-timeout)
+      [[ $# -ge 2 && -n "$2" && "$2" != --* ]] || { echo "Missing value for $1" >&2; exit 2; }
+      lease_args+=("$1" "$2")
+      shift 2
+      ;;
+    *) echo "Unknown simulator option: $1" >&2; exit 2 ;;
+  esac
+done
+if [[ -n "${FENTON_SIMULATOR_ID:-}" && ${#lease_args[@]} -gt 3 ]]; then
+  echo "Simulator selection belongs to the outer lease; remove nested selection options" >&2
+  exit 2
+fi
 command -v xcodegen >/dev/null
 command -v swiftlint >/dev/null
 bash ios/ci_scripts/ci_post_clone.sh
@@ -20,7 +35,7 @@ if [[ -n "${FENTON_SIMULATOR_ID:-}" ]]; then
   scripts/simulator.sh guard "$FENTON_SIMULATOR_LEASE" "$FENTON_SIMULATOR_ID"
   "${test_command[@]}"
 else
-  scripts/simulator.sh run --app touch-grass -- "${test_command[@]}"
+  scripts/simulator.sh "${lease_args[@]}" -- "${test_command[@]}"
 fi
 swiftlint lint --fix --no-cache --config ios/.swiftlint.yml --quiet
 swiftlint lint --strict --no-cache --config ios/.swiftlint.yml --quiet

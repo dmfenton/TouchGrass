@@ -8,7 +8,8 @@ Preserve unrelated changes. Check branch, HEAD, and worktree status before editi
 
 - `bash scripts/codex-worktree-setup.sh` resolves the immutable shared Platform package, generates iOS, and enables the tracked validation hook for this worktree.
 - `bash scripts/ios-check.sh`: compile, simulator tests, SwiftLint fixes and strict lint, core coverage, signing source checks.
-- Use the shared helper for device selection; pass a compatible `--device-type` / `--runtime` to its run command when needed.
+- Use `bash scripts/ios-check.sh --device-type TYPE --runtime RUNTIME` for compatible device selection;
+  `--queue-timeout SECONDS` bounds its lease wait. Selection options apply only to native test execution.
 - `bash scripts/test.sh` tests the existing Mac target. Never swallow test or lint failures.
 - `ios/project.yml` is the iOS project source of truth; commit its generated project alongside changes.
 - Pin `FentonDesignSystem` through `.github/fenton-mobile.lock`; reuse its components, tokens, and semantic theme.
