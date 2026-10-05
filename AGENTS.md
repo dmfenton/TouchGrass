@@ -35,7 +35,7 @@ Require real tests and no swallowed failures. Never weaken a gate just to get a 
 
 ## Shared simulator lifecycle
 
-- Use `bash scripts/ios-check.sh` through the pinned `scripts/simulator.sh` helper.
+- Use `bash scripts/ios-check.sh`; it leases only native tests through `scripts/simulator.sh`.
 - Two managed boot slots are shared across the whole Mac and all app worktrees; busy tests queue.
 - Do not create per-task devices, take the first booted user device, or run simulator tests outside
   a lease. Keep Xcode parallel simulator testing disabled. Generic builds and Swift package tests

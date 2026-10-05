@@ -7,6 +7,9 @@ pin="$(tr -d '[:space:]' < "$repo/fenton-simulator.lock")"
 common="$(git -C "$repo" rev-parse --path-format=absolute --git-common-dir)"
 main="$(dirname "$common")"
 source="${FENTON_PLATFORM_SOURCE:-$(dirname "$main")/platform.dmfenton.net}"
+if [[ -z "${FENTON_PLATFORM_SOURCE:-}" && ! -e "$source/.git" && -e "$repo/vendor/platform.dmfenton.net/.git" ]]; then
+  source="$repo/vendor/platform.dmfenton.net"
+fi
 tool="$common/fenton-simulator-tool/$pin"
 if [[ ! -f "$tool/tools/simulators/cli.py" ]]; then
   git -C "$source" cat-file -e "$pin^{commit}" || {

@@ -30,6 +30,7 @@ jobs:
               - 'ios/**'
               - '.github/fenton-mobile.lock'
               - 'scripts/ios-check.sh'
+              - 'scripts/codex-worktree-setup.sh'
               - 'scripts/simulator.sh'
               - 'fenton-simulator.lock'
               - 'scripts/select_ios_simulator.py'
