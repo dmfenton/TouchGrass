@@ -30,6 +30,9 @@ jobs:
               - 'ios/**'
               - '.github/fenton-mobile.lock'
               - 'scripts/ios-check.sh'
+              - 'scripts/codex-worktree-setup.sh'
+              - 'scripts/simulator.sh'
+              - 'fenton-simulator.lock'
               - 'scripts/select_ios_simulator.py'
               - 'scripts/check_ios_coverage.py'
               - '.github/workflows/ios-quality.yml'
@@ -57,6 +60,17 @@ jobs:
           path: vendor/platform.dmfenton.net
           ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
           persist-credentials: false
+      - name: Resolve simulator tooling pin
+        id: simulator_tool
+        run: echo "sha=$(tr -d '[:space:]' < fenton-simulator.lock)" >> "$GITHUB_OUTPUT"
+      - name: Check out simulator tooling
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          repository: dmfenton/platform.dmfenton.net
+          ref: ${{ steps.simulator_tool.outputs.sha }}
+          ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
+          path: vendor/simulator-platform
+          persist-credentials: false
       - name: Install development tools
         run: brew install xcodegen swiftlint
       - name: Select Xcode
@@ -64,6 +78,8 @@ jobs:
       - name: Verify simulator runtime
         run: xcrun simctl list runtimes
       - name: Check iOS
+        env:
+          FENTON_PLATFORM_SOURCE: ${{ github.workspace }}/vendor/simulator-platform
         run: bash scripts/ios-check.sh
       - name: Upload test evidence
         if: always()
