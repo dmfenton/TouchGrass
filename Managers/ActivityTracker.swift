@@ -21,6 +21,10 @@ class ActivityTracker: ObservableObject {
     private let activityHistoryKey = "TouchGrass.activityHistory"
     
     // MARK: - Computed Properties
+    var lastActivityDate: Date? {
+        defaults.object(forKey: lastActivityDateKey) as? Date
+    }
+
     var hasCompletedToday: Bool {
         guard let lastDate = defaults.object(forKey: lastActivityDateKey) as? Date else {
             return false

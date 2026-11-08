@@ -139,6 +139,8 @@ class ActivitySuggestionEngine: ObservableObject {
     @Published var currentSuggestion: SuggestedActivity?
     
     private let reminderManager: ReminderManager
+    private let clock: () -> Date
+    private let startedAt: Date
     private let weatherService: WeatherServiceProtocol
     
     // Simple file logging for debugging
@@ -173,7 +175,9 @@ class ActivitySuggestionEngine: ObservableObject {
         }
     }
     
-    init(reminderManager: ReminderManager) {
+    init(reminderManager: ReminderManager, clock: @escaping () -> Date = Date.init) {
+        self.clock = clock
+        self.startedAt = clock()
         self.reminderManager = reminderManager
         self.weatherService = WeatherServiceFactory.create()
         
@@ -225,8 +229,8 @@ class ActivitySuggestionEngine: ObservableObject {
         return buildContextBase(weather: weather)
     }
     
-    private func buildContextBase(weather: WeatherInfo?) -> ActivityContext {
-        let now = Date()
+    func buildContextBase(weather: WeatherInfo?) -> ActivityContext {
+        let now = clock()
         _ = Calendar.current
         
         // Calculate available time
@@ -263,7 +267,7 @@ class ActivitySuggestionEngine: ObservableObject {
         let density: MeetingDensity = meetingCount < 3 ? .light : (meetingCount <= 5 ? .normal : .heavy)
         
         // Time since last break (calculate from activity tracker)
-        let timeSinceLastBreak: TimeInterval = 5400  // Default to 90 minutes
+        let timeSinceLastBreak = elapsedBreakTime(at: now)
         
         return ActivityContext(
             currentTime: now,
@@ -279,6 +283,26 @@ class ActivitySuggestionEngine: ObservableObject {
         )
     }
     
+    private func elapsedBreakTime(at now: Date) -> TimeInterval {
+        let calendar = Calendar.current
+        let workdayStart = calendar.date(
+            bySettingHour: reminderManager.currentWorkStartHour,
+            minute: reminderManager.currentWorkStartMinute,
+            second: 0,
+            of: now
+        ) ?? now
+        let anchor: Date
+        if let lastBreak = reminderManager.activityTracker.lastActivityDate,
+           calendar.isDate(lastBreak, inSameDayAs: now) || lastBreak > now {
+            anchor = max(lastBreak, workdayStart)
+        } else {
+            // An old completion cannot count off-hours as continuous work.
+            // Engines that stay open overnight restart at today's work boundary.
+            anchor = max(startedAt, workdayStart)
+        }
+        return max(0, now.timeIntervalSince(anchor))
+    }
+
     private func getTodaysActivities() -> [CompletedActivity] {
         // Simplified for now - will integrate with ActivityTracker properly later
         return []
@@ -521,7 +545,14 @@ class ActivitySuggestionEngine: ObservableObject {
         // Check if we've done outdoor today
         let hasOutdoorToday = context.todaysActivities.contains { $0.category == .outdoor }
         
-        if !hasOutdoorToday {
+        // Only suggest weather opportunity if:
+        // 1. Haven't done outdoor today AND
+        // 2. Either been working for 90+ minutes OR it's after lunch
+        let hour = Calendar.current.component(.hour, from: context.currentTime)
+        let workedEnough = context.timeSinceLastBreak > 5400  // 90 minutes
+        let afterLunch = hour >= 12
+
+        if !hasOutdoorToday && (workedEnough || afterLunch) {
             return SuggestedActivity(
                 type: "touchGrass",
                 title: "Perfect Weather Outside!",
@@ -629,13 +660,16 @@ class ActivitySuggestionEngine: ObservableObject {
             }
             
         case .midMorning:
-            // Prime time for outdoor if weather is good
-            if context.weather?.isIdealForOutdoor == true {
+            // Only suggest outdoor in mid-morning if:
+            // 1. Weather is ideal AND
+            // 2. Been working for at least 60 minutes (not just started work)
+            if context.weather?.isIdealForOutdoor == true &&
+               context.timeSinceLastBreak > 3600 {  // More than 1 hour since the last break
                 if let outdoor = activities.first(where: { $0.type == "touchGrass" }) {
                     return SuggestedActivity(
                         type: outdoor.type,
                         title: outdoor.title,
-                        reason: "Beautiful morning - start your day right!",
+                        reason: "Beautiful morning and you've been working for a while",
                         duration: outdoor.duration,
                         category: outdoor.category,
                         urgency: 0.7

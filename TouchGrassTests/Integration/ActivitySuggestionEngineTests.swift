@@ -77,7 +77,7 @@ class ActivitySuggestionEngineTests: XCTestCase {
             currentTime: Date(),
             availableMinutes: 10,
             weather: perfectWeather,
-            timeSinceLastBreak: 3600,
+            timeSinceLastBreak: 5401,
             todaysActivities: [],  // No outdoor today
             meetingDensity: .normal,
             nextMeeting: nil,

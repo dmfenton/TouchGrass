@@ -237,3 +237,127 @@ class TouchGrassModeIntegrationTests: XCTestCase {
         // User can be reminded to drink water AND do an exercise
     }
 }
+
+final class MorningActivityTimingTests: XCTestCase {
+    private func suggestion(hour: Int, elapsed: TimeInterval) throws -> SuggestedActivity {
+        let date = try XCTUnwrap(Calendar.current.date(from: DateComponents(
+            year: 2026, month: 10, day: 3, hour: hour
+        )))
+        let context = ActivityContext(
+            currentTime: date, availableMinutes: 10,
+            weather: WeatherInfo(temperature: 68, condition: .sunny, isDaylight: true,
+                                 description: "Sunny", humidity: 0.5, feelsLike: 68),
+            timeSinceLastBreak: elapsed, todaysActivities: [], meetingDensity: .normal,
+            nextMeeting: nil, currentStreak: 0, waterIntake: 8, dailyWaterGoal: 8
+        )
+        return ActivitySuggestionEngine(reminderManager: ReminderManager())
+            .calculateBestActivity(for: context)
+    }
+
+    func testProductionContextUsesPersistedBreakCompletion() throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        manager.activityTracker.completeBreak()
+        let completion = try XCTUnwrap(manager.activityTracker.lastActivityDate)
+        let engine = ActivitySuggestionEngine(reminderManager: manager) {
+            completion.addingTimeInterval(30)
+        }
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 30, accuracy: 0.01)
+    }
+
+    func testProductionContextStartsClockWhenThereIsNoCompletion() throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        var now = Date()
+        let engine = ActivitySuggestionEngine(reminderManager: manager) { now }
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 0)
+        now = now.addingTimeInterval(60)
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 60)
+        defaults.set(now.addingTimeInterval(30), forKey: "TouchGrass.lastActivityDate")
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 0)
+    }
+
+    func testFreshMorningDoesNotPrioritizeWeather() throws {
+        XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 0).title, "Perfect Weather Outside!")
+        XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 3600).reason,
+                          "Beautiful morning and you've been working for a while")
+    }
+
+    private func checkWorkdayReset(
+        hasCompletion: Bool, startsToday: Bool, completionBeforeWork: Bool = false
+    ) throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        let workdayStart = try XCTUnwrap(Calendar.current.date(from: DateComponents(
+            year: 2026, month: 11, day: 9,
+            hour: manager.currentWorkStartHour, minute: manager.currentWorkStartMinute
+        )))
+        let previousDay = try XCTUnwrap(Calendar.current.date(byAdding: .day, value: -1, to: workdayStart))
+        if hasCompletion {
+            let completion = completionBeforeWork ? workdayStart.addingTimeInterval(-3600) : previousDay
+            defaults.set(completion, forKey: "TouchGrass.lastActivityDate")
+        }
+        var now = startsToday ? workdayStart.addingTimeInterval(900) : previousDay
+        let engine = ActivitySuggestionEngine(reminderManager: manager) { now }
+        now = workdayStart.addingTimeInterval(900)
+        let context = engine.buildContextBase(weather: nil)
+        XCTAssertEqual(context.timeSinceLastBreak, startsToday ? 0 : 900, accuracy: 0.01)
+        XCTAssertNotEqual(engine.calculateBestActivity(for: context).title, "Recovery Walk")
+    }
+
+    func testPreviousDayCompletionStartsAtReturningSession() throws {
+        try checkWorkdayReset(hasCompletion: true, startsToday: true)
+    }
+
+    func testRunningEngineResetsPriorDayCompletionAtWorkStart() throws {
+        try checkWorkdayReset(hasCompletion: true, startsToday: false)
+    }
+
+    func testRunningEngineWithoutHistoryResetsAtWorkStart() throws {
+        try checkWorkdayReset(hasCompletion: false, startsToday: false)
+    }
+
+    func testCompletionBeforeWorkDoesNotCountOffHours() throws {
+        try checkWorkdayReset(hasCompletion: true, startsToday: false, completionBeforeWork: true)
+    }
+
+    func testSameWorkdayCompletionSurvivesEngineRestart() throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        let workdayStart = try XCTUnwrap(Calendar.current.date(from: DateComponents(
+            year: 2026, month: 11, day: 9,
+            hour: manager.currentWorkStartHour, minute: manager.currentWorkStartMinute
+        )))
+        defaults.set(workdayStart.addingTimeInterval(3600), forKey: "TouchGrass.lastActivityDate")
+        let engine = ActivitySuggestionEngine(reminderManager: manager) {
+            workdayStart.addingTimeInterval(5400)
+        }
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 1800, accuracy: 0.01)
+    }
+
+    func testMorningOutdoorPriorityStartsAfterAnHour() throws {
+        XCTAssertEqual(try suggestion(hour: 10, elapsed: 3601).reason,
+                       "Beautiful morning and you've been working for a while")
+    }
+
+    func testWeatherPriorityStartsAfterNinetyMinutes() throws {
+        XCTAssertNotEqual(try suggestion(hour: 10, elapsed: 5400).title, "Perfect Weather Outside!")
+        XCTAssertEqual(try suggestion(hour: 10, elapsed: 5401).title, "Perfect Weather Outside!")
+    }
+
+    func testLunchAllowsWeatherOpportunityAfterARecentBreak() throws {
+        XCTAssertEqual(try suggestion(hour: 12, elapsed: 0).title, "Perfect Weather Outside!")
+    }
+}
