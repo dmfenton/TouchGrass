@@ -267,8 +267,7 @@ class ActivitySuggestionEngine: ObservableObject {
         let density: MeetingDensity = meetingCount < 3 ? .light : (meetingCount <= 5 ? .normal : .heavy)
         
         // Time since last break (calculate from activity tracker)
-        let lastBreak = reminderManager.activityTracker.lastActivityDate ?? startedAt
-        let timeSinceLastBreak = max(0, now.timeIntervalSince(lastBreak))
+        let timeSinceLastBreak = elapsedBreakTime(at: now)
         
         return ActivityContext(
             currentTime: now,
@@ -284,6 +283,26 @@ class ActivitySuggestionEngine: ObservableObject {
         )
     }
     
+    private func elapsedBreakTime(at now: Date) -> TimeInterval {
+        let calendar = Calendar.current
+        let workdayStart = calendar.date(
+            bySettingHour: reminderManager.currentWorkStartHour,
+            minute: reminderManager.currentWorkStartMinute,
+            second: 0,
+            of: now
+        ) ?? now
+        let anchor: Date
+        if let lastBreak = reminderManager.activityTracker.lastActivityDate,
+           calendar.isDate(lastBreak, inSameDayAs: now) || lastBreak > now {
+            anchor = max(lastBreak, workdayStart)
+        } else {
+            // An old completion cannot count off-hours as continuous work.
+            // Engines that stay open overnight restart at today's work boundary.
+            anchor = max(startedAt, workdayStart)
+        }
+        return max(0, now.timeIntervalSince(anchor))
+    }
+
     private func getTodaysActivities() -> [CompletedActivity] {
         // Simplified for now - will integrate with ActivityTracker properly later
         return []

@@ -289,6 +289,64 @@ final class MorningActivityTimingTests: XCTestCase {
                           "Beautiful morning and you've been working for a while")
     }
 
+    private func checkWorkdayReset(
+        hasCompletion: Bool, startsToday: Bool, completionBeforeWork: Bool = false
+    ) throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        let workdayStart = try XCTUnwrap(Calendar.current.date(from: DateComponents(
+            year: 2026, month: 11, day: 9,
+            hour: manager.currentWorkStartHour, minute: manager.currentWorkStartMinute
+        )))
+        let previousDay = try XCTUnwrap(Calendar.current.date(byAdding: .day, value: -1, to: workdayStart))
+        if hasCompletion {
+            let completion = completionBeforeWork ? workdayStart.addingTimeInterval(-3600) : previousDay
+            defaults.set(completion, forKey: "TouchGrass.lastActivityDate")
+        }
+        var now = startsToday ? workdayStart.addingTimeInterval(900) : previousDay
+        let engine = ActivitySuggestionEngine(reminderManager: manager) { now }
+        now = workdayStart.addingTimeInterval(900)
+        let context = engine.buildContextBase(weather: nil)
+        XCTAssertEqual(context.timeSinceLastBreak, startsToday ? 0 : 900, accuracy: 0.01)
+        XCTAssertNotEqual(engine.calculateBestActivity(for: context).title, "Recovery Walk")
+    }
+
+    func testPreviousDayCompletionStartsAtReturningSession() throws {
+        try checkWorkdayReset(hasCompletion: true, startsToday: true)
+    }
+
+    func testRunningEngineResetsPriorDayCompletionAtWorkStart() throws {
+        try checkWorkdayReset(hasCompletion: true, startsToday: false)
+    }
+
+    func testRunningEngineWithoutHistoryResetsAtWorkStart() throws {
+        try checkWorkdayReset(hasCompletion: false, startsToday: false)
+    }
+
+    func testCompletionBeforeWorkDoesNotCountOffHours() throws {
+        try checkWorkdayReset(hasCompletion: true, startsToday: false, completionBeforeWork: true)
+    }
+
+    func testSameWorkdayCompletionSurvivesEngineRestart() throws {
+        let suiteName = "MorningActivityTimingTests.\(UUID().uuidString)"
+        let defaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { defaults.removePersistentDomain(forName: suiteName) }
+        let manager = ReminderManager()
+        manager.activityTracker = ActivityTracker(userDefaults: defaults)
+        let workdayStart = try XCTUnwrap(Calendar.current.date(from: DateComponents(
+            year: 2026, month: 11, day: 9,
+            hour: manager.currentWorkStartHour, minute: manager.currentWorkStartMinute
+        )))
+        defaults.set(workdayStart.addingTimeInterval(3600), forKey: "TouchGrass.lastActivityDate")
+        let engine = ActivitySuggestionEngine(reminderManager: manager) {
+            workdayStart.addingTimeInterval(5400)
+        }
+        XCTAssertEqual(engine.buildContextBase(weather: nil).timeSinceLastBreak, 1800, accuracy: 0.01)
+    }
+
     func testMorningOutdoorPriorityStartsAfterAnHour() throws {
         XCTAssertEqual(try suggestion(hour: 10, elapsed: 3601).reason,
                        "Beautiful morning and you've been working for a while")
