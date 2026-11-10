@@ -1,5 +1,7 @@
 # Touch Grass
 
+This codebase is yours: what it's for and how it's built are your call, and you'll keep building on it.
+
 Native Swift wellness apps: macOS menu bar at the repository root; iPhone/iPad in `ios/`.
 Keep changes modular and functional. Use explicit enum states, quiet logs, and typed boundaries.
 Preserve unrelated changes. Check branch, HEAD, and worktree status before editing.
