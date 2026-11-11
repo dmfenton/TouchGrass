@@ -4,8 +4,6 @@ run-name: 'Codex review gate PR #${{ github.event.pull_request.number || github.
 on:
   schedule:
     - cron: '17 * * * *'
-  push:
-    branches: [main]
   pull_request_target:
     types: [opened, reopened, synchronize, ready_for_review, edited, closed]
   pull_request_review:
@@ -31,7 +29,6 @@ permissions:
 jobs:
   enforce:
     if: >-
-      github.event_name == 'push' ||
       github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request_target' &&
@@ -45,7 +42,7 @@ jobs:
           (contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
             (contains(github.event.comment.body, '@codex review') ||
               contains(github.event.changes.body.from, '@codex review')))))
-    uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@c1434d8aab2f074a565dc53d826e704e91bb2507
+    uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@9317e210fb2985d7864d5c9cb3b054eb8df6be6f
     with:
       pr_number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || '0' }}
       runner_labels_json: '["ubuntu-latest"]'
