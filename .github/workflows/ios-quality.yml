@@ -14,7 +14,7 @@ concurrency:
 jobs:
   changes:
     name: Detect iOS inputs
-    runs-on: ubuntu-latest
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && '["self-hosted","pr-isolated","touchgrass-pr"]' || '["self-hosted","touchgrass-docker","lilserver"]') }}
     outputs:
       ios: ${{ steps.filter.outputs.ios }}
     steps:
@@ -39,10 +39,15 @@ jobs:
 
   quality:
     name: iOS build, tests, lint and coverage
-    runs-on: macos-26
+    # PRs use the isolated one-job macOS pool; pushes and dispatches the trusted Mac.
+    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && '["self-hosted","pr-isolated-macos","touchgrass-pr-macos"]' || '["self-hosted","touchgrass-macos"]') }}
     timeout-minutes: 25
     needs: changes
     if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.ios == 'true'
+    # Self-hosted Macs have no passwordless sudo: select Xcode per job. They ship
+    # one Xcode at /Applications/Xcode.app (the hosted image pinned Xcode_26.6.app).
+    env:
+      DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -71,10 +76,14 @@ jobs:
           ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
           path: vendor/simulator-platform
           persist-credentials: false
-      - name: Install development tools
-        run: brew install xcodegen swiftlint
-      - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+      # Self-hosted Macs are persistent: tools are preinstalled, never installed by a job.
+      - name: Verify toolchain
+        run: |
+          test -d "$DEVELOPER_DIR" || { echo "missing on runner: Xcode ($DEVELOPER_DIR)"; exit 1; }
+          xcodebuild -version
+          for tool in xcodegen swiftlint; do
+            command -v "$tool" >/dev/null || { echo "missing on runner: $tool — brew install it"; exit 1; }
+          done
       - name: Verify simulator runtime
         run: xcrun simctl list runtimes
       - name: Check iOS

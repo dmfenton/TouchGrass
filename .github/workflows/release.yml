@@ -10,7 +10,8 @@ on:
 jobs:
   prepare-release:
     name: Prepare Release
-    runs-on: macos-latest
+    # Version bump and release PR need no macOS: trusted lilserver pool.
+    runs-on: ["self-hosted","touchgrass-docker","lilserver"]
     
     steps:
     - uses: actions/checkout@v4
@@ -28,8 +29,10 @@ jobs:
         VERSION=${{ github.event.inputs.version }}
         # Update VERSION file
         echo "$VERSION" > VERSION
-        # Update Info.plist
-        /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" Info.plist
+        # Update Info.plist (Linux runner: no PlistBuddy)
+        sed -i "/<key>CFBundleShortVersionString<\/key>/{n;s|<string>[^<]*</string>|<string>$VERSION</string>|;}" Info.plist
+        grep -A1 '<key>CFBundleShortVersionString</key>' Info.plist | grep -qF "<string>$VERSION</string>" \
+          || { echo "Failed to set CFBundleShortVersionString in Info.plist"; exit 1; }
     
     - name: Generate Changelog
       run: |

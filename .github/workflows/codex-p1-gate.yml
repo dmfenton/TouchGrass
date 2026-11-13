@@ -45,4 +45,4 @@ jobs:
     uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@9317e210fb2985d7864d5c9cb3b054eb8df6be6f
     with:
       pr_number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || '0' }}
-      runner_labels_json: '["ubuntu-latest"]'
+      runner_labels_json: '["self-hosted","pr-isolated","touchgrass-pr"]'

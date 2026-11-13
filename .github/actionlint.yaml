@@ -1,0 +1,11 @@
+self-hosted-runner:
+  labels:
+    - lilserver
+    - touchgrass-docker
+    - touchgrass-macos
+    - touchgrass-pr
+    - touchgrass-pr-docker
+    - touchgrass-pr-macos
+    - pr-isolated
+    - pr-isolated-docker
+    - pr-isolated-macos
