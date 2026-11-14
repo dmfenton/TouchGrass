@@ -39,8 +39,10 @@ requested explicitly, right after the PR is ready.
    2 with the same command. Round 2 is final. A round with no P0/P1 finding is already final.
 5. After the final round, fix any remaining blockers in child commits (never amend or rebase the
    reviewed commit), rerun the checks, resolve those threads, and dispatch the gate:
-   `gh workflow run codex-p1-gate.yml -f pr_number=<PR>`. Never request a third review or open a
-   replacement PR to reset the budget.
+   `gh workflow run codex-p1-gate.yml -f pr_number=<PR>` (in a Claude cloud session, which has no
+   GraphQL: `gh api -X POST repos/<owner>/<repo>/actions/workflows/codex-p1-gate.yml/dispatches
+   -f ref=main -f 'inputs[pr_number]=<PR>'`). Never request a third review or open a replacement
+   PR to reset the budget.
 6. Merge when the `Codex review gate` status and every repository check are green and live
    `reviewThreads` shows zero unresolved Codex threads (in a Claude cloud session, read
    `gh api repos/<owner>/<repo>/pulls/<PR>/ccr/review_threads`). Merging is not deploying.
