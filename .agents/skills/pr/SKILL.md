@@ -49,7 +49,7 @@ requested explicitly, right after the PR is ready.
 
 The gate publishes "Exact-head Codex review is not ready" for every failure, including an open
 P0/P1 thread or a non-`main` base. Open the status link and read the run log for the real reason
-before acting. Dependabot PRs always fail the gate by design; do not request reviews on them.
+before acting. Dependabot PRs go through the gate like any other PR: request the review with the script and merge once the gate and CI pass. Runs Dependabot itself triggers get no gate job (and no write token), so a Dependabot head shows no gate status until its review completes.
 
 `scripts/request-review.py` is a copy of the canonical script in `dmfenton/codex-review-gate`;
 change it there first, then copy it here unchanged.
