@@ -20,6 +20,16 @@ Preserve unrelated changes. Check branch, HEAD, and worktree status before editi
 - Test clock boundaries, calendar conflicts, denied permissions, persistence, and foreground refresh.
 - Enforce at least 95% coverage on scheduling/progress logic; use simulator interaction for UI verification.
 
+## Pull requests and the Codex review gate
+
+- Open and land every PR through `.agents/skills/pr/SKILL.md`. Never push to `main`.
+- The required `Codex review gate` status comes from the pinned `dmfenton/codex-review-gate`
+  workflow (`.github/workflows/codex-p1-gate.yml`). Mark the PR ready once checks pass and request
+  the review immediately with `python3 scripts/request-review.py <PR> --request`; never post
+  `@codex review` by hand. At most two rounds; P0/P1 findings block, and every other finding gets
+  a fix or a one-line reply before its thread is resolved.
+- Merge only when the gate and every repository check pass and no Codex thread is unresolved.
+
 ## Release and signing
 
 - Release only when authorized. An upload is not TestFlight delivery: verify Apple processing and tester-group assignment.
