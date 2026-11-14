@@ -39,11 +39,11 @@ jobs:
 
   quality:
     name: iOS build, tests, lint and coverage
-    # PRs use the isolated one-job macOS pool; pushes and dispatches the trusted Mac.
-    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && '["self-hosted","pr-isolated-macos","touchgrass-pr-macos"]' || '["self-hosted","touchgrass-macos"]') }}
+    # Pushes and dispatches only, on the trusted Mac. A pull request's iOS check runs in Xcode Cloud.
+    runs-on: [self-hosted, touchgrass-macos]
     timeout-minutes: 25
     needs: changes
-    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.ios == 'true'
+    if: github.event_name != 'pull_request' && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.ios == 'true')
     # Self-hosted Macs have no passwordless sudo: select Xcode per job. They ship
     # one Xcode at /Applications/Xcode.app (the hosted image pinned Xcode_26.6.app).
     env:

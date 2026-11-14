@@ -12,8 +12,10 @@ permissions:
   pull-requests: read
 
 # Pull-request code never runs on the persistent trusted runners: PRs use the
-# isolated one-job touchgrass-pr pools (Linux, Linux with nested Docker, macOS).
-# Pushes to main and manual dispatches use the trusted lilserver and Mac runners.
+# isolated one-job touchgrass-pr pools (Linux, Linux with nested Docker). The
+# macOS test and build checks for a pull request run in Xcode Cloud, never on a
+# self-hosted Mac. Pushes to main and manual dispatches use the trusted
+# lilserver and Mac runners.
 jobs:
   changes:
     name: Detect affected checks
@@ -71,9 +73,9 @@ jobs:
 
   test:
     name: Test
-    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && '["self-hosted","pr-isolated-macos","touchgrass-pr-macos"]' || '["self-hosted","touchgrass-macos"]') }}
+    runs-on: [self-hosted, touchgrass-macos]
     needs: changes
-    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.test == 'true'
+    if: github.event_name != 'pull_request' && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.test == 'true')
     # Self-hosted Macs have no passwordless sudo: select Xcode per job.
     env:
       DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
@@ -127,9 +129,9 @@ jobs:
     
   build:
     name: Build
-    runs-on: ${{ fromJSON(github.event_name == 'pull_request' && '["self-hosted","pr-isolated-macos","touchgrass-pr-macos"]' || '["self-hosted","touchgrass-macos"]') }}
+    runs-on: [self-hosted, touchgrass-macos]
     needs: changes
-    if: github.event_name == 'workflow_dispatch' || needs.changes.outputs.build == 'true'
+    if: github.event_name != 'pull_request' && (github.event_name == 'workflow_dispatch' || needs.changes.outputs.build == 'true')
     # Self-hosted Macs have no passwordless sudo: select Xcode per job.
     env:
       DEVELOPER_DIR: /Applications/Xcode.app/Contents/Developer
