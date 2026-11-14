@@ -17,7 +17,7 @@ fi
 
 if [ ! -d "$platform_root/.git" ]; then
   mkdir -p "$(dirname "$platform_root")"
-  git clone --filter=blob:none https://github.com/dmfenton/platform.dmfenton.net.git "$platform_root"
+  git clone --filter=blob:none https://github.com/dmfenton/platform.git "$platform_root"
 fi
 
 if ! git -C "$platform_root" cat-file -e "$FENTON_MOBILE_SHA^{commit}"; then
