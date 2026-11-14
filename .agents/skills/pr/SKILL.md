@@ -32,8 +32,9 @@ requested explicitly, right after the PR is ready.
    Without `--request` the script only reports whether a request is allowed. Never post
    `@codex review` by hand: the script refuses a draft, a head that already has a review, a review
    that is running or pending, and a third round.
-3. Wait for CI and the review. Triage every finding in one pass: fix P0/P1 findings and anything
-   that will actually bite; answer the rest with a one-line reason and resolve the thread.
+3. Wait for CI and the review. Triage every finding in one pass, by this repository's review
+   rule: fix P0/P1 findings and anything that will actually bite; answer the rest on the thread
+   with a one-line reason, then resolve it.
 4. If round 1 reported P0/P1 findings, push all fixes together, rerun the checks, and request round
    2 with the same command. Round 2 is final. A round with no P0/P1 finding is already final.
 5. After the final round, fix any remaining blockers in child commits (never amend or rebase the
@@ -41,7 +42,7 @@ requested explicitly, right after the PR is ready.
    `gh workflow run codex-p1-gate.yml -f pr_number=<PR>`. Never request a third review or open a
    replacement PR to reset the budget.
 6. Merge when the `Codex review gate` status and every repository check are green and live
-   `reviewThreads` shows no unresolved P0/P1 Codex thread (in a Claude cloud session, read
+   `reviewThreads` shows zero unresolved Codex threads (in a Claude cloud session, read
    `gh api repos/<owner>/<repo>/pulls/<PR>/ccr/review_threads`). Merging is not deploying.
 
 The gate publishes "Exact-head Codex review is not ready" for every failure, including an open
