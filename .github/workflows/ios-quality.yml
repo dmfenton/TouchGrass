@@ -39,7 +39,7 @@ jobs:
 
   quality:
     name: iOS build, tests, lint and coverage
-    # Pushes and dispatches only, on the trusted Mac. A pull request's iOS check runs in Xcode Cloud.
+    # Pushes and dispatches only, on the trusted Mac. The author's machine checks iOS changes before a PR opens.
     runs-on: [self-hosted, touchgrass-macos]
     timeout-minutes: 25
     needs: changes

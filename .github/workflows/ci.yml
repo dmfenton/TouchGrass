@@ -12,10 +12,10 @@ permissions:
   pull-requests: read
 
 # Pull-request code never runs on the persistent trusted runners: PRs use the
-# isolated one-job touchgrass-pr pools (Linux, Linux with nested Docker). The
-# macOS test and build checks for a pull request run in Xcode Cloud, never on a
-# self-hosted Mac. Pushes to main and manual dispatches use the trusted
-# lilserver and Mac runners.
+# isolated one-job touchgrass-pr pools (Linux, Linux with nested Docker). Apple
+# code is never built for a pull request: the author's machine checks it before
+# the PR opens, and Xcode Cloud builds only releases. Pushes to main and manual
+# dispatches use the trusted lilserver and Mac runners.
 jobs:
   changes:
     name: Detect affected checks
