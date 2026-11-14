@@ -42,7 +42,7 @@ jobs:
           (contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) &&
             (contains(github.event.comment.body, '@codex review') ||
               contains(github.event.changes.body.from, '@codex review')))))
-    uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@94940ecc494f2aa1e0f728d27da289a16e4fa5dd
+    uses: dmfenton/codex-review-gate/.github/workflows/codex-review-gate.yml@379ab5ee41bfcdf6b3ed2bb5d3c1a7523bd26452
     with:
       pr_number: ${{ github.event.pull_request.number || github.event.issue.number || inputs.pr_number || '0' }}
       runner_labels_json: '["self-hosted","pr-isolated","touchgrass-pr"]'
