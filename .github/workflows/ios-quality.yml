@@ -38,8 +38,12 @@ jobs:
               - '.github/workflows/ios-quality.yml'
 
   quality:
-    name: iOS build, tests, lint and coverage
-    # Pushes and dispatches only, on the trusted Mac. The author's machine checks iOS changes before a PR opens.
+    name: iOS build and lint
+    # Pushes and dispatches only, on the trusted Mac. The author's machine runs the full
+    # `scripts/ios-check.sh` (simulator tests and coverage) before a PR opens. This job runs
+    # `--no-tests` and never boots a simulator: a simulator booted first by the CI account owns the
+    # host-wide cfprefsd shared-memory segment (apple.sim.cfprefs.user.daemonv) and breaks every UI
+    # test in Daniel's simulators until it is unlinked (2026-11-21).
     runs-on: [self-hosted, touchgrass-macos]
     timeout-minutes: 25
     needs: changes
@@ -65,17 +69,6 @@ jobs:
           path: vendor/platform.dmfenton.net
           ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
           persist-credentials: false
-      - name: Resolve simulator tooling pin
-        id: simulator_tool
-        run: echo "sha=$(tr -d '[:space:]' < fenton-simulator.lock)" >> "$GITHUB_OUTPUT"
-      - name: Check out simulator tooling
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          repository: dmfenton/platform
-          ref: ${{ steps.simulator_tool.outputs.sha }}
-          ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
-          path: vendor/simulator-platform
-          persist-credentials: false
       # Self-hosted Macs are persistent: tools are preinstalled, never installed by a job.
       - name: Verify toolchain
         run: |
@@ -84,15 +77,5 @@ jobs:
           for tool in xcodegen swiftlint; do
             command -v "$tool" >/dev/null || { echo "missing on runner: $tool — brew install it"; exit 1; }
           done
-      - name: Verify simulator runtime
-        run: xcrun simctl list runtimes
-      - name: Check iOS
-        env:
-          FENTON_PLATFORM_SOURCE: ${{ github.workspace }}/vendor/simulator-platform
-        run: bash scripts/ios-check.sh
-      - name: Upload test evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-test-results
-          path: .build-ios/*.xcresult
+      - name: Check iOS without simulator tests
+        run: bash scripts/ios-check.sh --no-tests
