@@ -12,7 +12,8 @@ settings:
     CURRENT_PROJECT_VERSION: '1'
 packages:
   FentonPlatform:
-    path: ../vendor/platform.dmfenton.net/swift
+    url: https://github.com/dmfenton/platform.git
+    from: 1.0.0
 targets:
   TouchGrassMobile:
     type: application

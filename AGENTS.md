@@ -8,14 +8,16 @@ Preserve unrelated changes. Check branch, HEAD, and worktree status before editi
 
 ## Setup and validation
 
-- `bash scripts/codex-worktree-setup.sh` resolves the immutable shared Platform package, generates iOS, and enables the tracked validation hook for this worktree.
+- `bash scripts/codex-worktree-setup.sh` generates iOS and enables the tracked validation hook for this worktree.
 - `bash scripts/ios-check.sh`: compile, simulator tests, SwiftLint fixes and strict lint, core coverage, signing source checks.
 - `bash scripts/ios-check.sh --no-tests`: compile, strict lint and signing checks without a simulator. Laptop CI uses it: the CI account never boots an iOS simulator, because one it boots first owns the host-wide cfprefsd shared-memory segment and breaks every UI test in Daniel's simulators (2026-11-21). Run the full check before an iOS PR.
 - Use `bash scripts/ios-check.sh --device-type TYPE --runtime RUNTIME` for compatible device selection;
   `--queue-timeout SECONDS` bounds its lease wait. Selection options apply only to native test execution.
 - `bash scripts/test.sh` tests the existing Mac target. Never swallow test or lint failures.
 - `ios/project.yml` is the iOS project source of truth; commit its generated project alongside changes.
-- Pin `FentonDesignSystem` through `.github/fenton-mobile.lock`; reuse its components, tokens, and semantic theme.
+- `FentonDesignSystem` comes from a Platform release tag (`from:` in `ios/project.yml`; dmfenton/platform
+  `docs/consuming-platform.md`); `Package.resolved` records the exact commit. To move to a new
+  release, change the tag, resolve packages, and open one PR. Reuse its components, tokens, and semantic theme.
 - Do not add a backend, agent, identity, or Platform process without a concrete remote requirement.
 - Keep calendar and progress data on-device. Never log private events or commit signing material.
 - Test clock boundaries, calendar conflicts, denied permissions, persistence, and foreground refresh.
@@ -59,5 +61,5 @@ Require real tests and no swallowed failures. Never weaken a gate just to get a 
   after their owned command exits. Device/app data is retained; never erase/delete for cleanup.
 - `scripts/simulator.sh status` reports owners/queue; `cleanup` reconciles only abandoned managed
   leases after their child jobs exit. Never stop intake agents, native services or unrelated jobs.
-- `fenton-simulator.lock` pins local tooling independently of the production Platform pin.
-  Set `FENTON_PLATFORM_SOURCE` only when the authorized local Platform clone is elsewhere.
+- `scripts/simulator.sh` runs the pool tool installed once per Mac by dmfenton/machine
+  (`~/.local/bin/fenton-simulator`, the newest Platform release); there is no per-repo pin.

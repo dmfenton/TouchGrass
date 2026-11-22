@@ -27,12 +27,12 @@ if [[ -n "${FENTON_SIMULATOR_ID:-}" && ${#lease_args[@]} -gt 3 ]]; then
 fi
 command -v xcodegen >/dev/null
 command -v swiftlint >/dev/null
-bash ios/ci_scripts/ci_post_clone.sh
 xcodegen generate --spec ios/project.yml
 build_dir="${TOUCHGRASS_BUILD_DIR:-.build-ios}"
 mkdir -p "$build_dir"
 xcodebuild -project ios/TouchGrassMobile.xcodeproj -scheme TouchGrassMobile \
-  -destination "generic/platform=iOS Simulator" -derivedDataPath "$build_dir" build-for-testing CODE_SIGNING_ALLOWED=NO -quiet
+  -destination "generic/platform=iOS Simulator" -derivedDataPath "$build_dir" -scmProvider system \
+  build-for-testing CODE_SIGNING_ALLOWED=NO -quiet
 if [[ $run_tests == 0 ]]; then
   swiftlint lint --strict --no-cache --config ios/.swiftlint.yml --quiet
   python3 scripts/check_native_signing.py
