@@ -10,6 +10,7 @@ Preserve unrelated changes. Check branch, HEAD, and worktree status before editi
 
 - `bash scripts/codex-worktree-setup.sh` resolves the immutable shared Platform package, generates iOS, and enables the tracked validation hook for this worktree.
 - `bash scripts/ios-check.sh`: compile, simulator tests, SwiftLint fixes and strict lint, core coverage, signing source checks.
+- `bash scripts/ios-check.sh --no-tests`: compile, strict lint and signing checks without a simulator. Laptop CI uses it: the CI account never boots an iOS simulator, because one it boots first owns the host-wide cfprefsd shared-memory segment and breaks every UI test in Daniel's simulators (2026-11-21). Run the full check before an iOS PR.
 - Use `bash scripts/ios-check.sh --device-type TYPE --runtime RUNTIME` for compatible device selection;
   `--queue-timeout SECONDS` bounds its lease wait. Selection options apply only to native test execution.
 - `bash scripts/test.sh` tests the existing Mac target. Never swallow test or lint failures.
