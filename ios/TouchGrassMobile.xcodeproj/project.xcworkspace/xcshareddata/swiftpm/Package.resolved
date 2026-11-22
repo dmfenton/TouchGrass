@@ -1,0 +1,15 @@
+{
+  "originHash" : "fb96526c312df3a84f873e67b4e7bac82dccd4de59c9dea0b98c4a8c392e3590",
+  "pins" : [
+    {
+      "identity" : "platform",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dmfenton/platform.git",
+      "state" : {
+        "revision" : "75fcb5c0770be4de3dcefa33251157a3ef5dfe13",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

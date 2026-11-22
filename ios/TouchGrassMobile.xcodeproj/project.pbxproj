@@ -53,7 +53,6 @@
 		4B5500EDEFB11D8FB7726BF3 /* BreakPlanTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BreakPlanTests.swift; sourceTree = "<group>"; };
 		68369748C308600F8B295D40 /* ExerciseLibraryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseLibraryView.swift; sourceTree = "<group>"; };
 		6A6C83EF2F25218931F97BD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		8E7F6FC08735E70ECC37AFB9 /* swift */ = {isa = PBXFileReference; lastKnownFileType = folder; name = swift; path = ../vendor/platform.dmfenton.net/swift; sourceTree = SOURCE_ROOT; };
 		94F7349397E6BE54090D426A /* TouchGrass.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = TouchGrass.entitlements; sourceTree = "<group>"; };
 		95D54BC8DB18E9AC0C3AD2DD /* ExerciseCoachTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExerciseCoachTests.swift; sourceTree = "<group>"; };
 		981463312DC3D47FDB2E507C /* TouchGrassFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TouchGrassFlowTests.swift; sourceTree = "<group>"; };
@@ -103,20 +102,11 @@
 			isa = PBXGroup;
 			children = (
 				F2D1076A1BE666C7AAD2F151 /* Models */,
-				6ABB7E172E2400F8F2E5FED0 /* Packages */,
 				02877A113F4AD57D26386022 /* TouchGrass */,
 				96484AC5F1AA023A3BFAB194 /* TouchGrassTests */,
 				93E504BF791567A837AD9571 /* TouchGrassUITests */,
 				EAE8B9EB1D4B99F69F51602E /* Products */,
 			);
-			sourceTree = "<group>";
-		};
-		6ABB7E172E2400F8F2E5FED0 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				8E7F6FC08735E70ECC37AFB9 /* swift */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		93E504BF791567A837AD9571 /* TouchGrassUITests */ = {
@@ -250,7 +240,7 @@
 			mainGroup = 612E0AE418DFE86951710AA1;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				F0E8E6ED52585EF48E09731D /* XCLocalSwiftPackageReference "../vendor/platform.dmfenton.net/swift" */,
+				B31937FA1FEDCBDFCBC1933E /* XCRemoteSwiftPackageReference "platform" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = EAE8B9EB1D4B99F69F51602E /* Products */;
@@ -600,16 +590,21 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		F0E8E6ED52585EF48E09731D /* XCLocalSwiftPackageReference "../vendor/platform.dmfenton.net/swift" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../vendor/platform.dmfenton.net/swift;
+/* Begin XCRemoteSwiftPackageReference section */
+		B31937FA1FEDCBDFCBC1933E /* XCRemoteSwiftPackageReference "platform" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/dmfenton/platform.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
 		};
-/* End XCLocalSwiftPackageReference section */
+/* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		32D23DB18DE674C9B6D278D1 /* FentonDesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
+			package = B31937FA1FEDCBDFCBC1933E /* XCRemoteSwiftPackageReference "platform" */;
 			productName = FentonDesignSystem;
 		};
 /* End XCSwiftPackageProductDependency section */
