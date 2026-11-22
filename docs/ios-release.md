@@ -6,11 +6,12 @@ existing App Store Connect record **Time to Touch Grass**, Apple ID `6759848550`
 
 ## Development and quality
 
-`make ios-setup` installs no credentials. It resolves the pinned Fenton shared package and regenerates
-Xcode. `make ios-check` compiles, runs unit and UI tests, applies SwiftLint fixes, enforces strict lint,
+`make ios-setup` installs no credentials. It regenerates Xcode; Xcode resolves the Fenton shared package
+from the Platform release tag in `ios/project.yml`, and `Package.resolved` records the exact commit. `make ios-check` compiles, runs unit and UI tests, applies SwiftLint fixes, enforces strict lint,
 checks at least 95% scheduling/progress coverage, and checks signing policy. Codex exposes these same
 actions through `.codex/environments/environment.toml`. CI fetches Platform with a dedicated read-only
-deploy key stored in `FENTON_PLATFORM_DEPLOY_KEY`; private keys never enter the repository.
+deploy key stored in `FENTON_PLATFORM_DEPLOY_KEY` (`scripts/ci/platform-git-access.sh`); private keys
+never enter the repository.
 
 ## Distribution
 

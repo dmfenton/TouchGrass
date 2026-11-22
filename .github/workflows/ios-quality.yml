@@ -28,11 +28,10 @@ jobs:
           filters: |
             ios:
               - 'ios/**'
-              - '.github/fenton-mobile.lock'
+              - 'scripts/ci/platform-git-access.sh'
               - 'scripts/ios-check.sh'
               - 'scripts/codex-worktree-setup.sh'
               - 'scripts/simulator.sh'
-              - 'fenton-simulator.lock'
               - 'scripts/select_ios_simulator.py'
               - 'scripts/check_ios_coverage.py'
               - '.github/workflows/ios-quality.yml'
@@ -57,19 +56,11 @@ jobs:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
-      - name: Read shared package pin
-        id: platform
-        run: |
-          . .github/fenton-mobile.lock
-          echo "sha=$FENTON_MOBILE_SHA" >> "$GITHUB_OUTPUT"
-      - name: Check out shared design package
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
-        with:
-          repository: dmfenton/platform
-          ref: ${{ steps.platform.outputs.sha }}
-          path: vendor/platform.dmfenton.net
-          ssh-key: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
-          persist-credentials: false
+      # Lets SwiftPM fetch the tagged Platform package from the private repository.
+      - name: Platform git access
+        env:
+          KEY: ${{ secrets.FENTON_PLATFORM_DEPLOY_KEY }}
+        run: bash scripts/ci/platform-git-access.sh
       # Self-hosted Macs are persistent: tools are preinstalled, never installed by a job.
       - name: Verify toolchain
         run: |
