@@ -38,7 +38,8 @@ jobs:
               - '.github/workflows/ios-quality.yml'
 
   quality:
-    name: iOS build and lint
+    # Name kept only because main's branch protection requires this check; it runs no tests.
+    name: iOS build, tests, lint and coverage
     # Pushes and dispatches only, on the trusted Mac. The author's machine runs the full
     # `scripts/ios-check.sh` (simulator tests and coverage) before a PR opens. This job runs
     # `--no-tests` and never boots a simulator: a simulator booted first by the CI account owns the
